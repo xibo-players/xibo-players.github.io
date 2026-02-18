@@ -36,3 +36,23 @@ Description: Kiosk session scripts for Xibo digital signage players
  session holder with health monitoring, dunst notification config, and
  a systemd user unit for the player process.
 
+Package: xiboplayer-pwa
+Version: 0.2.0-1
+Architecture: all
+Maintainer: Pau Aliagas <pau@linuxnow.com>
+Depends: chromium | google-chrome-stable, jq, xdg-utils, systemd
+Recommends: x11-xserver-utils, xdotool
+Conflicts: xiboplayer-electron
+Filename: ./xiboplayer-pwa_0.2.0-1_all.deb
+Size: 4116
+MD5sum: 1c06be525ae0dcfc7926c79dd9270b09
+SHA1: e4ccf840d247efb7d9644f3cfdbbd7a5efcafbed
+SHA256: 58b41cd2f0f7207e659d447eb05996defb2f4139ee5a33925f00a8b8ece3f60a
+Section: misc
+Priority: optional
+Homepage: https://github.com/xibo-players/xiboplayer-chromium
+Description: Xibo PWA digital signage player (browser kiosk)
+ Xibo PWA digital signage player for kiosk deployments on Ubuntu.
+ Launches a fullscreen browser pointing at a Xibo CMS PWA player URL,
+ with automatic restart and screen-blanking prevention.
+
