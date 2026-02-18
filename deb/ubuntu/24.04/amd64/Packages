@@ -24,9 +24,9 @@ Depends: gnome-kiosk, dunst, unclutter, zenity
 Recommends: keyd
 Filename: ./xibo-kiosk_0.2.0_all.deb
 Size: 5664
-MD5sum: cc6de1cfa58915625fec3976952eaf8f
-SHA1: 7f13419ea36d035734190e594b9e0468e297a328
-SHA256: 1162d401e9308a7f3d6abd8be5ec974d7000e59afc368a1e92d9355fa06cdc34
+MD5sum: 0eb567e24ce86283986dc31a234556f9
+SHA1: 849ba678e3df61e1f98aabaa223437f10b579d53
+SHA256: c6a21cc393c5da882e4e93f3b14b462f5ca6ec48bc7da996536a86d6f9f5df1d
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xibo-kiosk
