@@ -492,22 +492,7 @@ sudo apt install xibo-kiosk</pre>
         <h2>Kiosk images</h2>
         <p class="section-desc">Pre-built bootable images for quick deployment. Flash to USB or SD card, boot, and register with your CMS.</p>
 
-        <div class="pkg-grid">
-            <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (x86_64)</h3>
-                <p class="desc">Minimal Fedora install with GNOME Kiosk, auto-login, and xibo-kiosk + xiboplayer-electron pre-installed. For standard PCs and thin clients.</p>
-                <div class="meta">
-                    <span class="badge" style="background:var(--badge-soon-bg); border-color:var(--badge-soon-border); color:var(--badge-soon-color);">Coming soon</span>
-                </div>
-            </div>
-            <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (aarch64)</h3>
-                <p class="desc">ARM64 variant for Raspberry Pi 5 and similar single-board computers. Same kiosk stack, optimized for ARM.</p>
-                <div class="meta">
-                    <span class="badge" style="background:var(--badge-soon-bg); border-color:var(--badge-soon-border); color:var(--badge-soon-color);">Coming soon</span>
-                </div>
-            </div>
-        </div>
+        <div id="images-list" class="loading">Loading kiosk images...</div>
     </section>
 
     <!-- How it works -->
@@ -708,9 +693,54 @@ function updateToggleIcon(theme) {
     updateToggleIcon(theme);
 })();
 
+// Fetch kiosk images from GitHub Releases
+async function loadKioskImages() {
+    const el = document.getElementById('images-list');
+    try {
+        const resp = await fetch('https://api.github.com/repos/xibo-players/xibo-kiosk/releases/latest');
+        if (!resp.ok) throw new Error('No release');
+        const release = await resp.json();
+        const images = (release.assets || []).filter(a =>
+            a.name.endsWith('.iso') || a.name.endsWith('.qcow2') || a.name.endsWith('.raw.xz') || a.name.endsWith('.xz')
+        );
+        if (images.length === 0) {
+            el.innerHTML = '<div class="pkg-grid">' +
+                '<div class="pkg-card" style="cursor:default;"><h3>No images yet</h3>' +
+                '<p class="desc">Kiosk images will appear here after the first tagged release.</p></div></div>';
+            return;
+        }
+        let html = '<table class="browse-table"><thead><tr><th>Image</th><th>Format</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
+        for (const img of images) {
+            const size = img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
+            const arch = img.name.includes('x86_64') ? 'x86_64'
+                : img.name.includes('aarch64') ? 'aarch64' : '—';
+            const fmt = img.name.endsWith('.iso') ? 'ISO installer'
+                : img.name.endsWith('.qcow2') ? 'QCOW2 (VM)'
+                : img.name.endsWith('.raw.xz') ? 'Raw disk (SD/USB)'
+                : img.name.endsWith('.xz') ? 'Compressed' : 'Image';
+            html += '<tr>' +
+                '<td><a href="' + img.browser_download_url + '">' + img.name + '</a></td>' +
+                '<td>' + fmt + '</td>' +
+                '<td>' + size + '</td>' +
+                '<td><span class="badge arch">' + arch + '</span></td>' +
+                '<td><a href="' + release.html_url + '">' + release.tag_name + '</a></td>' +
+                '</tr>';
+        }
+        html += '</tbody></table>';
+        html += '<p style="margin-top:12px; font-size:0.85em; color:var(--gray-500);">Images include: GNOME Kiosk session, auto-login, xibo-kiosk + xiboplayer-electron pre-installed. ' +
+            '<a href="https://github.com/xibo-players/xibo-kiosk/releases">All releases</a></p>';
+        el.innerHTML = html;
+    } catch (e) {
+        el.innerHTML = '<div class="pkg-grid">' +
+            '<div class="pkg-card" style="cursor:default;"><h3>Kiosk images</h3>' +
+            '<p class="desc">Images are available from <a href="https://github.com/xibo-players/xibo-kiosk/releases">GitHub Releases</a>.</p></div></div>';
+    }
+}
+
 // Load package lists
 loadDebPackages();
 loadRpmPackages();
+loadKioskImages();
 </script>
 
 </body>
