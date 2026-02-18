@@ -42,7 +42,7 @@ jobs:
     name: Regenerate RPM + DEB repositories
     runs-on: ubuntu-latest
     container:
-      image: fedora:${{ env.FEDORA_VER }}
+      image: fedora:43
 
     steps:
       - uses: actions/checkout@v4
