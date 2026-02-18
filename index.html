@@ -128,49 +128,39 @@
 
     <div class="setup-block">
         <h3>Quick setup</h3>
-        <pre><span class="comment"># Add the repository</span>
+        <pre><span class="comment"># Add the repository (single repo for all packages)</span>
 sudo dnf config-manager addrepo \
-  --set=baseurl=https://dnf.xiboplayer.org/xibo-kiosk/rpm/fedora/43/\$basearch/ \
+  --set=baseurl=https://dnf.xiboplayer.org/rpm/fedora/43/\$basearch/ \
   --set=gpgcheck=0 \
-  --id=xibo-kiosk
+  --id=xibo-players
 
 <span class="comment"># Install packages</span>
-sudo dnf install xibo-kiosk</pre>
+sudo dnf install xibo-kiosk xiboplayer-electron</pre>
     </div>
 
     <div class="grid">
         <div class="card">
             <h3>xibo-kiosk</h3>
             <p>GNOME Kiosk session scripts, systemd user unit, keyd shortcuts, first-boot registration wizard.</p>
-            <div class="arch">
-                <a href="/xibo-kiosk/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64</a>
-                <a href="/xibo-kiosk/rpm/fedora/43/aarch64/repodata/repomd.xml">aarch64</a>
-                <a href="/xibo-kiosk/rpm/fedora/43/noarch/repodata/repomd.xml">noarch</a>
-            </div>
         </div>
         <div class="card">
             <h3>xiboplayer-electron</h3>
             <p>Electron-based Xibo player with offline support and service worker caching.</p>
-            <div class="arch">
-                <a href="/xiboplayer-electron/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64</a>
-            </div>
         </div>
         <div class="card">
             <h3>xiboplayer-chromium</h3>
             <p>Chromium kiosk wrapper for Xibo PWA player.</p>
-            <div class="arch">
-                <a href="/xiboplayer-chromium/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64</a>
-            </div>
         </div>
         <div class="card">
             <h3>arexibo</h3>
             <p>Native Rust-based Xibo player with Qt6 WebEngine, dual architecture.</p>
-            <div class="arch">
-                <a href="/arexibo/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64</a>
-                <a href="/arexibo/rpm/fedora/43/aarch64/repodata/repomd.xml">aarch64</a>
-            </div>
         </div>
     </div>
+    <p style="margin-top:10px; font-size:0.9em; color:#666;">
+        <a href="/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repodata</a> |
+        <a href="/rpm/fedora/43/aarch64/repodata/repomd.xml">aarch64 repodata</a> |
+        <a href="/rpm/fedora/43/noarch/repodata/repomd.xml">noarch repodata</a>
+    </p>
 
     <!-- APT / DEB -->
     <h2>APT Repository (Ubuntu 24.04)</h2>
@@ -178,8 +168,8 @@ sudo dnf install xibo-kiosk</pre>
 
     <div class="setup-block">
         <h3>Quick setup</h3>
-        <pre><span class="comment"># Add the repository</span>
-echo "deb [trusted=yes] https://dnf.xiboplayer.org/xibo-kiosk/deb/ubuntu/24.04 all/" \
+        <pre><span class="comment"># Add the repository (single repo for all packages)</span>
+echo "deb [trusted=yes] https://dnf.xiboplayer.org/deb/ubuntu/24.04 all/" \
   | sudo tee /etc/apt/sources.list.d/xibo-players.list
 
 <span class="comment"># Install packages</span>
@@ -190,12 +180,13 @@ sudo apt update &amp;&amp; sudo apt install xibo-kiosk</pre>
         <div class="card accent-green">
             <h3>xibo-kiosk</h3>
             <p>Kiosk session scripts for Ubuntu-based signage players.</p>
-            <div class="arch">
-                <a href="/xibo-kiosk/deb/ubuntu/24.04/Release" style="background:#e6f4ea;color:#28a745;">Release</a>
-                <a href="/xibo-kiosk/deb/ubuntu/24.04/all/Packages" style="background:#e6f4ea;color:#28a745;">Packages</a>
-            </div>
         </div>
     </div>
+    <p style="margin-top:10px; font-size:0.9em; color:#666;">
+        <a href="/deb/ubuntu/24.04/Release">Release</a> |
+        <a href="/deb/ubuntu/24.04/all/Packages">Packages (all)</a> |
+        <a href="/deb/ubuntu/24.04/amd64/Packages">Packages (amd64)</a>
+    </p>
 
     <!-- Kiosk Images -->
     <h2>Kiosk Images</h2>
