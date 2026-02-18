@@ -331,6 +331,12 @@ jobs:
       # ── Commit and push ─────────────────────────────────────────────
       - name: Push changes
         run: |
+          # Debug: show where we are
+          echo "PWD=$(pwd) | WORKSPACE=$GITHUB_WORKSPACE"
+          ls -d .git 2>&1 || echo "No .git in cwd"
+          ls -d "$GITHUB_WORKSPACE/.git" 2>&1 || echo "No .git in WORKSPACE"
+          # Ensure we're in the git repo
+          cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
