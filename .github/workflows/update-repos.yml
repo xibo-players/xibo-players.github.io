@@ -45,8 +45,16 @@ jobs:
       # Must match FEDORA_VER above (env context not allowed in container.image)
       image: fedora:43
 
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Install tools
         run: dnf install -y createrepo_c dpkg dpkg-dev git curl jq gnupg2
@@ -54,7 +62,6 @@ jobs:
       - name: Download release assets from all repos
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
-        shell: bash
         run: |
           REPOS=(
             "xibo-players/xiboplayer-chromium"
@@ -94,7 +101,6 @@ jobs:
 
       # ── RPM: generate repodata with baseurl → GitHub Releases ──────
       - name: Generate per-repo RPM repodata
-        shell: bash
         run: |
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
@@ -160,7 +166,6 @@ jobs:
           done
 
       - name: Merge RPM repos into unified index
-        shell: bash
         run: |
           WORKDIR="$(pwd)"
 
@@ -192,7 +197,6 @@ jobs:
       # Since GitHub Pages serves from this repo, small DEBs are stored here.
       # Files >95MB are skipped (GitHub's 100MB git file limit).
       - name: Update DEB repository
-        shell: bash
         run: |
           REPO_BASE="deb/ubuntu/${UBUNTU_VER}"
           SIZE_LIMIT=$((FILE_SIZE_LIMIT_MB * 1048576))
@@ -298,7 +302,6 @@ jobs:
         env:
           DEB_GPG_KEY: ${{ secrets.DEB_GPG_KEY }}
           DEB_GPG_PASSPHRASE: ${{ secrets.DEB_GPG_PASSPHRASE }}
-        shell: bash
         run: |
           RELEASE_FILE="deb/ubuntu/${UBUNTU_VER}/Release"
 
@@ -325,7 +328,6 @@ jobs:
 
       # ── Commit and push ─────────────────────────────────────────────
       - name: Push changes
-        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
