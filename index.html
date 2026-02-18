@@ -18,7 +18,56 @@
             --gray-500: #656d76;
             --gray-700: #32383f;
             --gray-900: #1f2328;
+            --card-bg: #fff;
+            --pre-bg: #24292e;
+            --pre-fg: #e6edf3;
+            --code-bg: #eef;
+            --info-bg: #ddf4ff;
+            --info-border: #b6e3ff;
+            --info-color: #0550ae;
+            --badge-rpm-bg: #ddf4ff;
+            --badge-rpm-border: #b6e3ff;
+            --badge-rpm-color: #0550ae;
+            --badge-deb-bg: #dafbe1;
+            --badge-deb-border: #aceebb;
+            --badge-deb-color: #116329;
+            --badge-arch-bg: #fff8c5;
+            --badge-arch-border: #eac54f;
+            --badge-arch-color: #6a5901;
+            --badge-soon-bg: #fff3cd;
+            --badge-soon-border: #eed079;
+            --badge-soon-color: #856404;
             --radius: 8px;
+        }
+        [data-theme="dark"] {
+            --blue: #58a6ff;
+            --blue-dark: #388bfd;
+            --green: #3fb950;
+            --gray-50: #0d1117;
+            --gray-100: #161b22;
+            --gray-200: #30363d;
+            --gray-500: #8b949e;
+            --gray-700: #c9d1d9;
+            --gray-900: #e6edf3;
+            --card-bg: #161b22;
+            --pre-bg: #0d1117;
+            --pre-fg: #c9d1d9;
+            --code-bg: #1c2333;
+            --info-bg: #0d1f3c;
+            --info-border: #1f3d6e;
+            --info-color: #58a6ff;
+            --badge-rpm-bg: #0d1f3c;
+            --badge-rpm-border: #1f3d6e;
+            --badge-rpm-color: #58a6ff;
+            --badge-deb-bg: #0d2818;
+            --badge-deb-border: #1a4731;
+            --badge-deb-color: #3fb950;
+            --badge-arch-bg: #2a2000;
+            --badge-arch-border: #4d3e00;
+            --badge-arch-color: #e3b341;
+            --badge-soon-bg: #2a2000;
+            --badge-soon-border: #4d3e00;
+            --badge-soon-color: #e3b341;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -31,6 +80,9 @@
         /* Hero */
         .hero {
             background: linear-gradient(135deg, #0550ae 0%, #0969da 50%, #218bff 100%);
+        }
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, #0a1929 0%, #0d2240 50%, #0f2d5e 100%);
             color: #fff;
             padding: 56px 20px 48px;
             text-align: center;
@@ -55,7 +107,7 @@
             display: flex;
             justify-content: center;
             gap: 0;
-            background: #fff;
+            background: var(--card-bg);
             border-bottom: 1px solid var(--gray-200);
             position: sticky;
             top: 0;
@@ -93,7 +145,7 @@
             margin: 20px 0;
         }
         .pkg-card {
-            background: #fff;
+            background: var(--card-bg);
             border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             padding: 20px;
@@ -129,13 +181,13 @@
             border: 1px solid var(--gray-200);
             color: var(--gray-700);
         }
-        .badge.rpm { background: #ddf4ff; border-color: #b6e3ff; color: #0550ae; }
-        .badge.deb { background: #dafbe1; border-color: #aceebb; color: #116329; }
-        .badge.arch { background: #fff8c5; border-color: #eac54f; color: #6a5901; }
+        .badge.rpm { background: var(--badge-rpm-bg); border-color: var(--badge-rpm-border); color: var(--badge-rpm-color); }
+        .badge.deb { background: var(--badge-deb-bg); border-color: var(--badge-deb-border); color: var(--badge-deb-color); }
+        .badge.arch { background: var(--badge-arch-bg); border-color: var(--badge-arch-border); color: var(--badge-arch-color); }
 
         /* Setup block */
         .setup-block {
-            background: #fff;
+            background: var(--card-bg);
             border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             margin: 16px 0;
@@ -162,8 +214,8 @@
         }
         .copy-btn:hover { color: var(--blue); border-color: var(--blue); }
         pre {
-            background: #24292e;
-            color: #e6edf3;
+            background: var(--pre-bg);
+            color: var(--pre-fg);
             padding: 16px;
             overflow-x: auto;
             font-size: 13px;
@@ -190,7 +242,7 @@
             padding: 10px 12px;
             border-bottom: 1px solid var(--gray-100);
         }
-        .browse-table tr:hover td { background: #f6f8fa; }
+        .browse-table tr:hover td { background: var(--gray-100); }
         .browse-table a { color: var(--blue); text-decoration: none; }
         .browse-table a:hover { text-decoration: underline; }
 
@@ -219,13 +271,13 @@
 
         /* Info box */
         .info-box {
-            background: #ddf4ff;
-            border: 1px solid #b6e3ff;
+            background: var(--info-bg);
+            border: 1px solid var(--info-border);
             border-radius: var(--radius);
             padding: 16px 20px;
             margin: 16px 0;
             font-size: 0.9em;
-            color: #0550ae;
+            color: var(--info-color);
         }
 
         /* Loading */
@@ -242,6 +294,21 @@
         }
         footer a { color: var(--gray-500); }
         footer a:hover { color: var(--blue); }
+
+        /* Theme toggle */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 1em;
+            line-height: 1;
+            color: var(--gray-500);
+            transition: border-color 0.15s;
+            margin-left: 8px;
+        }
+        .theme-toggle:hover { border-color: var(--blue); }
 
         /* Responsive */
         @media (max-width: 640px) {
@@ -269,6 +336,7 @@
     <a href="#setup">Setup</a>
     <a href="#browse">Browse</a>
     <a href="#images">Images</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme" aria-label="Toggle theme">&#x1F319;</button>
 </nav>
 
 <div class="container">
@@ -341,7 +409,7 @@
                 <pre id="dnf-add"><span class="c"># Add the xibo-players DNF repository</span>
 sudo dnf config-manager addrepo \
   --set=baseurl=https://dnf.xiboplayer.org/rpm/fedora/43/\$basearch/ \
-  --set=gpgcheck=0 \
+  --set=gpgcheck=1 \
   --id=xibo-players</pre>
             </div>
             <div class="setup-block">
@@ -429,14 +497,14 @@ sudo apt install xibo-kiosk</pre>
                 <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (x86_64)</h3>
                 <p class="desc">Minimal Fedora install with GNOME Kiosk, auto-login, and xibo-kiosk + xiboplayer-electron pre-installed. For standard PCs and thin clients.</p>
                 <div class="meta">
-                    <span class="badge" style="background:#fff3cd; border-color:#eed079; color:#856404;">Coming soon</span>
+                    <span class="badge" style="background:var(--badge-soon-bg); border-color:var(--badge-soon-border); color:var(--badge-soon-color);">Coming soon</span>
                 </div>
             </div>
             <div class="pkg-card" style="cursor:default;">
                 <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (aarch64)</h3>
                 <p class="desc">ARM64 variant for Raspberry Pi 5 and similar single-board computers. Same kiosk stack, optimized for ARM.</p>
                 <div class="meta">
-                    <span class="badge" style="background:#fff3cd; border-color:#eed079; color:#856404;">Coming soon</span>
+                    <span class="badge" style="background:var(--badge-soon-bg); border-color:var(--badge-soon-border); color:var(--badge-soon-color);">Coming soon</span>
                 </div>
             </div>
         </div>
@@ -457,11 +525,11 @@ sudo apt install xibo-kiosk</pre>
                 </tr>
                 <tr>
                     <td><span class="badge rpm">RPM</span></td>
-                    <td>Repository metadata (repodata XML) is hosted here. When <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">dnf install</code> runs, it reads metadata from this site but downloads the actual <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">.rpm</code> files directly from each project's <a href="https://github.com/xibo-players">GitHub Releases</a>. This keeps the repository lightweight.</td>
+                    <td>Repository metadata (repodata XML) is hosted here. When <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">dnf install</code> runs, it reads metadata from this site but downloads the actual <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">.rpm</code> files directly from each project's <a href="https://github.com/xibo-players">GitHub Releases</a>. This keeps the repository lightweight.</td>
                 </tr>
                 <tr>
                     <td><span class="badge deb">DEB</span></td>
-                    <td>Both metadata and <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">.deb</code> packages are hosted directly in this repository. APT downloads everything from here.</td>
+                    <td>Both metadata and <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">.deb</code> packages are hosted directly in this repository. APT downloads everything from here.</td>
                 </tr>
             </table>
 
@@ -617,6 +685,28 @@ async function loadRpmPackages() {
     html += '</tbody></table>';
     el.innerHTML = html;
 }
+
+// Theme toggle
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateToggleIcon(next);
+}
+function updateToggleIcon(theme) {
+    const btn = document.querySelector('.theme-toggle');
+    if (btn) btn.innerHTML = theme === 'dark' ? '&#x2600;' : '&#x1F319;';
+}
+// Init theme: saved preference > system preference > light
+(function() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    updateToggleIcon(theme);
+})();
 
 // Load package lists
 loadDebPackages();
