@@ -44,10 +44,10 @@ Depends: chromium | google-chrome-stable, jq, xdg-utils, systemd
 Recommends: x11-xserver-utils, xdotool
 Conflicts: xiboplayer-electron
 Filename: ./xiboplayer-chromium_0.2.0-1_all.deb
-Size: 4122
-MD5sum: 52319eb5919fa7141ca7c210789df4f6
-SHA1: 95752dafd4e769a503001ba4ed1b243dc5ff3ffc
-SHA256: 2e1ccb64da46914fa786b911e2e7f4677cde6d64f367bac5d295d7d51bfc22d8
+Size: 4120
+MD5sum: 49173c70aaf3c0b8286a4e1936fdaf43
+SHA1: 1c2386f1e801b7e3931282f46d15fbc4f2bb4319
+SHA256: 89400300ad632ffd87cc5c255569fb15a88ce975168013bffd410b0f460ab869
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xiboplayer-chromium
