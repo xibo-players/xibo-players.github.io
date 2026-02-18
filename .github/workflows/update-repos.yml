@@ -42,6 +42,7 @@ jobs:
     name: Regenerate RPM + DEB repositories
     runs-on: ubuntu-latest
     container:
+      # Must match FEDORA_VER above (env context not allowed in container.image)
       image: fedora:43
 
     steps:
