@@ -4,10 +4,10 @@ Architecture: amd64
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
 Filename: ./arexibo_0.3.1-1_amd64.deb
-Size: 5461800
-MD5sum: 0038efe75edc5400206b54de88b7ea62
-SHA1: dc1778da8f258b0e1cdb83d8bffc2ffd7bcd17ee
-SHA256: 5873969ec1c2c2c809e530d7d4fc9fc7f45d8747dd47f252969795655820bb58
+Size: 5461890
+MD5sum: a08b859fe758a5276ff23d4bbc6879b9
+SHA1: 7689c11dfff35f422df331963ef25e356ff53e8f
+SHA256: d88912018cb6bf5ded746fe39bc5436be6cf70e1b301c7c9ea15a9ad58f59f9a
 Section: misc
 Priority: optional
 Homepage: https://github.com/linuxnow/arexibo
