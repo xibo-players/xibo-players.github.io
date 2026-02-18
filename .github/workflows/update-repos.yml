@@ -264,32 +264,34 @@ jobs:
             fi
           done
 
-          # Generate Release file with checksums
-          cd "$REPO_BASE"
-          {
-            echo "Origin: xibo-players"
-            echo "Label: Xibo Players"
-            echo "Suite: stable"
-            echo "Codename: noble"
-            echo "Architectures: amd64 arm64 all"
-            echo "Components: main"
-            echo "Date: $(date -Ru)"
-            echo "MD5Sum:"
-            for f in */Packages */Packages.gz; do
-              [ -f "$f" ] || continue
-              echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-            done
-            echo "SHA1:"
-            for f in */Packages */Packages.gz; do
-              [ -f "$f" ] || continue
-              echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-            done
-            echo "SHA256:"
-            for f in */Packages */Packages.gz; do
-              [ -f "$f" ] || continue
-              echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-            done
-          } > Release
+          # Generate Release file with checksums (subshell to avoid changing cwd)
+          (
+            cd "$REPO_BASE"
+            {
+              echo "Origin: xibo-players"
+              echo "Label: Xibo Players"
+              echo "Suite: stable"
+              echo "Codename: noble"
+              echo "Architectures: amd64 arm64 all"
+              echo "Components: main"
+              echo "Date: $(date -Ru)"
+              echo "MD5Sum:"
+              for f in */Packages */Packages.gz; do
+                [ -f "$f" ] || continue
+                echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+              done
+              echo "SHA1:"
+              for f in */Packages */Packages.gz; do
+                [ -f "$f" ] || continue
+                echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+              done
+              echo "SHA256:"
+              for f in */Packages */Packages.gz; do
+                [ -f "$f" ] || continue
+                echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+              done
+            } > Release
+          )
 
       - name: GPG-sign DEB Release file
         if: env.DEB_GPG_KEY != ''
