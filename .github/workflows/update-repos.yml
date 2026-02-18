@@ -51,13 +51,15 @@ jobs:
         working-directory: ${{ github.workspace }}
 
     steps:
+      # git must be installed BEFORE checkout, otherwise checkout falls
+      # back to tarball extraction (no .git dir → can't commit/push)
+      - name: Install git
+        run: dnf install -y git
+
       - uses: actions/checkout@v4
 
       - name: Install tools
-        run: dnf install -y createrepo_c dpkg dpkg-dev git curl jq gnupg2
-
-      - name: Mark workspace as safe for git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        run: dnf install -y createrepo_c dpkg dpkg-dev curl jq gnupg2
 
       - name: Download release assets from all repos
         env:
@@ -329,12 +331,6 @@ jobs:
       # ── Commit and push ─────────────────────────────────────────────
       - name: Push changes
         run: |
-          echo "PWD: $(pwd)"
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          ls -la .git 2>&1 || echo "No .git here"
-          cd "$GITHUB_WORKSPACE" || cd "/__w/xibo-players.github.io/xibo-players.github.io"
-          echo "PWD after cd: $(pwd)"
-          ls -la .git 2>&1 || echo "Still no .git"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
