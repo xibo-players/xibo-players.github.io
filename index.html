@@ -80,12 +80,12 @@
         /* Hero */
         .hero {
             background: linear-gradient(135deg, #0550ae 0%, #0969da 50%, #218bff 100%);
-        }
-        [data-theme="dark"] .hero {
-            background: linear-gradient(135deg, #0a1929 0%, #0d2240 50%, #0f2d5e 100%);
             color: #fff;
             padding: 56px 20px 48px;
             text-align: center;
+        }
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, #0a1929 0%, #0d2240 50%, #0f2d5e 100%);
         }
         .hero h1 { font-size: 2.4em; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
         .hero p { font-size: 1.15em; opacity: 0.9; max-width: 560px; margin: 0 auto 24px; }
@@ -280,6 +280,8 @@
             color: var(--info-color);
         }
 
+        /* Arch tabs (reuses .tab-bar style) */
+
         /* Loading */
         .loading { color: var(--gray-500); font-style: italic; padding: 20px 0; }
 
@@ -470,21 +472,15 @@ sudo apt install xibo-kiosk</pre>
         </div>
 
         <div class="tab-content active" data-tab-content="browse-rpm">
+            <div class="tab-bar" id="rpm-arch-filter"></div>
             <div id="rpm-list" class="loading">Loading RPM package list...</div>
         </div>
 
         <div class="tab-content" data-tab-content="browse-deb">
+            <div class="tab-bar" id="deb-arch-filter"></div>
             <div id="deb-list" class="loading">Loading DEB package list...</div>
         </div>
 
-        <p style="margin-top:16px; font-size:0.85em; color:var(--gray-500);">
-            Raw metadata:
-            <a href="/rpm/fedora/43/x86_64/repodata/repomd.xml">RPM repomd (x86_64)</a> &middot;
-            <a href="/rpm/fedora/43/aarch64/repodata/repomd.xml">RPM repomd (aarch64)</a> &middot;
-            <a href="/rpm/fedora/43/noarch/repodata/repomd.xml">RPM repomd (noarch)</a> &middot;
-            <a href="/deb/ubuntu/24.04/Release">DEB Release</a> &middot;
-            <a href="/deb/ubuntu/24.04/all/Packages">DEB Packages</a>
-        </p>
     </section>
 
     <!-- Images -->
@@ -570,105 +566,144 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// Fetch and display DEB packages
+// --- Architecture filtering ---
+function renderArchFilter(filterEl, archs, activeArch, onSelect) {
+    filterEl.innerHTML = '';
+    archs.forEach(function(arch) {
+        var btn = document.createElement('button');
+        btn.textContent = arch;
+        if (activeArch === arch) btn.classList.add('active');
+        btn.onclick = function() { onSelect(arch); };
+        filterEl.appendChild(btn);
+    });
+}
+
+// --- DEB packages ---
+var debData = [];
+var debArch = 'amd64';
+
+function renderDebTable() {
+    var el = document.getElementById('deb-list');
+    var filtered = debArch ? debData.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : debData;
+    if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No packages for this architecture.</p>'; return; }
+    var html = '<table class="browse-table"><thead><tr><th>Package</th><th>Version</th><th>Arch</th><th>Size</th><th>Description</th></tr></thead><tbody>';
+    filtered.forEach(function(p) {
+        var bytes = parseInt(p.Size) || 0;
+        var size = !bytes ? '—' : bytes > 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(1) + ' KB';
+        var homepage = p.Homepage || '#';
+        var desc = (p.Description || '').split('\n')[0];
+        var note = p._releaseOnly ? ' <span class="badge" style="font-size:0.7em;">GitHub Release</span>' : '';
+        html += '<tr><td><a href="' + homepage + '">' + (p.Package || '?') + '</a>' + note + '</td>' +
+            '<td>' + (p.Version || '?') + '</td>' +
+            '<td><span class="badge arch">' + (p.Architecture || '?') + '</span></td>' +
+            '<td>' + size + '</td><td>' + desc + '</td></tr>';
+    });
+    el.innerHTML = html + '</tbody></table>';
+}
+
+function setupDebFilter() {
+    var archs = ['amd64', 'arm64'];
+    var filterEl = document.getElementById('deb-arch-filter');
+    function update(arch) { debArch = arch; renderArchFilter(filterEl, archs, debArch, update); renderDebTable(); }
+    renderArchFilter(filterEl, archs, debArch, update);
+    renderDebTable();
+}
+
 async function loadDebPackages() {
-    const el = document.getElementById('deb-list');
+    var el = document.getElementById('deb-list');
     try {
-        const urls = [
-            '/deb/ubuntu/24.04/all/Packages',
-            '/deb/ubuntu/24.04/amd64/Packages'
-        ];
-        const pkgs = new Map();
-        for (const url of urls) {
-            const resp = await fetch(url);
+        var urls = ['/deb/ubuntu/24.04/all/Packages', '/deb/ubuntu/24.04/amd64/Packages', '/deb/ubuntu/24.04/arm64/Packages'];
+        var pkgs = new Map();
+        for (var i = 0; i < urls.length; i++) {
+            var resp = await fetch(urls[i]);
             if (!resp.ok) continue;
-            const text = await resp.text();
+            var text = await resp.text();
             if (!text.trim()) continue;
-            const blocks = text.trim().split('\n\n');
-            for (const block of blocks) {
-                const fields = {};
-                let lastKey = '';
-                for (const line of block.split('\n')) {
-                    if (line.startsWith(' ')) {
-                        if (lastKey) fields[lastKey] += '\n' + line;
-                    } else {
-                        const idx = line.indexOf(': ');
-                        if (idx > 0) {
-                            lastKey = line.substring(0, idx);
-                            fields[lastKey] = line.substring(idx + 2);
-                        }
-                    }
-                }
-                const key = `${fields.Package}-${fields.Version}-${fields.Architecture}`;
+            text.trim().split('\n\n').forEach(function(block) {
+                var fields = {}, lastKey = '';
+                block.split('\n').forEach(function(line) {
+                    if (line.startsWith(' ')) { if (lastKey) fields[lastKey] += '\n' + line; }
+                    else { var idx = line.indexOf(': '); if (idx > 0) { lastKey = line.substring(0, idx); fields[lastKey] = line.substring(idx + 2); } }
+                });
+                var key = fields.Package + '-' + fields.Version + '-' + fields.Architecture;
                 if (!pkgs.has(key)) pkgs.set(key, fields);
-            }
+            });
         }
-        if (pkgs.size === 0) {
-            el.innerHTML = '<p style="color:var(--gray-500)">No DEB packages found.</p>';
-            return;
+        // Also fetch DEBs from GitHub Releases (packages too large for apt repo)
+        var ghRepos = [{ name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' }];
+        for (var j = 0; j < ghRepos.length; j++) {
+            try {
+                var r = await fetch('https://api.github.com/repos/' + ghRepos[j].repo + '/releases/latest');
+                if (!r.ok) continue;
+                var rel = await r.json();
+                (rel.assets || []).filter(function(a) { return a.name.endsWith('.deb'); }).forEach(function(deb) {
+                    var arch = deb.name.includes('_amd64') ? 'amd64' : deb.name.includes('_arm64') ? 'arm64' : 'all';
+                    var ver = (rel.tag_name || '').replace(/^v/, '');
+                    var key = ghRepos[j].name + '-' + ver + '-' + arch;
+                    if (!pkgs.has(key)) pkgs.set(key, {
+                        Package: ghRepos[j].name, Version: ver, Architecture: arch, Size: String(deb.size),
+                        Homepage: 'https://github.com/' + ghRepos[j].repo,
+                        Description: 'Electron-based Xibo player (install from GitHub Releases)', _releaseOnly: true
+                    });
+                });
+            } catch (e) { /* skip */ }
         }
-        let html = '<table class="browse-table"><thead><tr><th>Package</th><th>Version</th><th>Arch</th><th>Size</th><th>Description</th></tr></thead><tbody>';
-        for (const [, p] of pkgs) {
-            const size = p.Size ? (parseInt(p.Size) / 1024).toFixed(1) + ' KB' : '—';
-            const homepage = p.Homepage || '#';
-            const desc = (p.Description || '').split('\n')[0];
-            html += `<tr>
-                <td><a href="${homepage}">${p.Package || '?'}</a></td>
-                <td>${p.Version || '?'}</td>
-                <td><span class="badge arch">${p.Architecture || '?'}</span></td>
-                <td>${size}</td>
-                <td>${desc}</td>
-            </tr>`;
-        }
-        html += '</tbody></table>';
-        el.innerHTML = html;
+        debData = Array.from(pkgs.values());
+        if (debData.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No DEB packages found.</p>'; return; }
+        setupDebFilter();
     } catch (e) {
-        el.innerHTML = '<p style="color:var(--gray-500)">Could not load DEB packages. <a href="/deb/ubuntu/24.04/all/Packages">View raw Packages file</a>.</p>';
+        el.innerHTML = '<p style="color:var(--gray-500)">Could not load DEB packages.</p>';
     }
 }
 
-// Fetch RPM packages from GitHub Releases API
+// --- RPM packages ---
+var rpmData = [];
+var rpmArch = 'x86_64';
+
+function renderRpmTable() {
+    var el = document.getElementById('rpm-list');
+    var filtered = rpmArch ? rpmData.filter(function(p) { return p.arch === rpmArch || p.arch === 'noarch'; }) : rpmData;
+    if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No packages for this architecture.</p>'; return; }
+    var html = '<table class="browse-table"><thead><tr><th>Package</th><th>File</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
+    filtered.forEach(function(r) {
+        html += '<tr><td><a href="https://github.com/' + r.repo + '">' + r.name + '</a></td>' +
+            '<td><a href="' + r.url + '">' + r.file + '</a></td>' +
+            '<td>' + r.size + '</td><td><span class="badge arch">' + r.arch + '</span></td>' +
+            '<td><a href="' + r.releaseUrl + '">' + r.tag + '</a></td></tr>';
+    });
+    el.innerHTML = html + '</tbody></table>';
+}
+
+function setupRpmFilter() {
+    var archs = ['x86_64', 'aarch64'];
+    var filterEl = document.getElementById('rpm-arch-filter');
+    function update(arch) { rpmArch = arch; renderArchFilter(filterEl, archs, rpmArch, update); renderRpmTable(); }
+    renderArchFilter(filterEl, archs, rpmArch, update);
+    renderRpmTable();
+}
+
 async function loadRpmPackages() {
-    const el = document.getElementById('rpm-list');
-    const repos = [
+    var el = document.getElementById('rpm-list');
+    var repos = [
         { name: 'xibo-kiosk', repo: 'xibo-players/xibo-kiosk' },
         { name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' },
         { name: 'xiboplayer-chromium', repo: 'xibo-players/xiboplayer-chromium' },
         { name: 'arexibo', repo: 'xibo-players/arexibo' },
     ];
-
-    let html = '<table class="browse-table"><thead><tr><th>Package</th><th>File</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
-    let hasAny = false;
-
-    for (const { name, repo } of repos) {
+    for (var i = 0; i < repos.length; i++) {
         try {
-            const resp = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
+            var resp = await fetch('https://api.github.com/repos/' + repos[i].repo + '/releases/latest');
             if (!resp.ok) continue;
-            const release = await resp.json();
-            const rpms = (release.assets || []).filter(a => a.name.endsWith('.rpm'));
-            for (const rpm of rpms) {
-                hasAny = true;
-                const size = (rpm.size / 1024).toFixed(0) + ' KB';
-                const arch = rpm.name.includes('.x86_64.') ? 'x86_64'
-                    : rpm.name.includes('.aarch64.') ? 'aarch64'
-                    : rpm.name.includes('.noarch.') ? 'noarch' : '?';
-                html += `<tr>
-                    <td><a href="https://github.com/${repo}">${name}</a></td>
-                    <td><a href="${rpm.browser_download_url}">${rpm.name}</a></td>
-                    <td>${size}</td>
-                    <td><span class="badge arch">${arch}</span></td>
-                    <td><a href="${release.html_url}">${release.tag_name}</a></td>
-                </tr>`;
-            }
+            var release = await resp.json();
+            (release.assets || []).filter(function(a) { return a.name.endsWith('.rpm'); }).forEach(function(rpm) {
+                var arch = rpm.name.includes('.x86_64.') ? 'x86_64' : rpm.name.includes('.aarch64.') ? 'aarch64' : rpm.name.includes('.noarch.') ? 'noarch' : '?';
+                var rpmSize = rpm.size > 1048576 ? (rpm.size / 1048576).toFixed(1) + ' MB' : (rpm.size / 1024).toFixed(0) + ' KB';
+                rpmData.push({ name: repos[i].name, repo: repos[i].repo, file: rpm.name, url: rpm.browser_download_url, size: rpmSize, arch: arch, tag: release.tag_name, releaseUrl: release.html_url });
+            });
         } catch (e) { /* skip */ }
     }
-
-    if (!hasAny) {
-        el.innerHTML = '<p style="color:var(--gray-500)">No RPM releases found yet. Packages will appear here after the first tagged release.</p>';
-        return;
-    }
-    html += '</tbody></table>';
-    el.innerHTML = html;
+    if (rpmData.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No RPM releases found yet.</p>'; return; }
+    setupRpmFilter();
 }
 
 // Theme toggle
@@ -711,7 +746,7 @@ async function loadKioskImages() {
         }
         let html = '<table class="browse-table"><thead><tr><th>Image</th><th>Format</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
         for (const img of images) {
-            const size = img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
+            const size = img.size > 1073741824 ? (img.size / 1073741824).toFixed(1) + ' GB' : img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
             const arch = img.name.includes('x86_64') ? 'x86_64'
                 : img.name.includes('aarch64') ? 'aarch64' : '—';
             const fmt = img.name.endsWith('.iso') ? 'ISO installer'
