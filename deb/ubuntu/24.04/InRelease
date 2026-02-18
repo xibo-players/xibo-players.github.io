@@ -1,0 +1,47 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: xibo-players
+Label: Xibo Players
+Suite: stable
+Codename: noble
+Architectures: amd64 arm64 all
+Components: main
+Date: Wed, 18 Feb 2026 12:03:21 +0000
+MD5Sum:
+ e0472af20dfc7b6c309905f80f08b552 793 all/Packages
+ e0472af20dfc7b6c309905f80f08b552 793 amd64/Packages
+ e0472af20dfc7b6c309905f80f08b552 793 arm64/Packages
+ f79c79c3e23055ce598e7cc1af6f8488 528 all/Packages.gz
+ f79c79c3e23055ce598e7cc1af6f8488 528 amd64/Packages.gz
+ f79c79c3e23055ce598e7cc1af6f8488 528 arm64/Packages.gz
+SHA1:
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 all/Packages
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 amd64/Packages
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 arm64/Packages
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 all/Packages.gz
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 amd64/Packages.gz
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 arm64/Packages.gz
+SHA256:
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 all/Packages
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 amd64/Packages
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 arm64/Packages
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 all/Packages.gz
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 amd64/Packages.gz
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 arm64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEIGJVTKKPl/NcYbpZ+wQZ5iSA84oFAmmVqosACgkQ+wQZ5iSA
+84oD5RAAs8ELnDaJYDyls9MjiR6BKoWeN8p24+TP3dpt3TOiAZkUZbHPoji4se5E
+wQoEjTJquqg7PW6UyrqUX8Dy6NvAIPZH3YmsrRtVg4xL3YHgpSVRQEyRZnWaA959
+IUpv1r+qbMTXg4q9czxfInk0z8CNwhOp3RxcSizL1Q081p1jxRdja7HUH1ZyeaDw
+p4DxvJKy1yozuDWK7sQ4SNQUtzzEI61xfW/FcGCFYlAfdhgMu9scGO35fw1VzZzV
+/u5X+JYQex6+/3zKpSafj8RJ5nxONDLxcMNes97VAjFxydEV3d0fg9oLnf8lB2/A
+oYyZ+EVOrXT0AK+yW6VsBkBaj/em9kDK2J1rz8qEY10xm21ghCi7f5ZIAXjxfzrV
+aBGQUsCxqxYR/t83MPr6ld5H/gj/6I4bP/dkX7YbBbjdDB3a7Ni4QMXlvS3ZFVv5
+vn7nOpGFYZm5GuTE2azWQaBtIj6esPxs9YIkOhlmiC7CGXM8mcoDh+ydMfpcDdhX
+kke+4oaP8Qw2zxqLqalvv+lcjdjUtoc34/iB4AXn1e6hAC8LpwNTDrZA+jQe8YpO
+macVfubSypmtuGComETPDYsRWga5mqEw4/f6UDbzOptmQ8cJAeNYbi7uKuNfo2xJ
+uLXqSzCb4zq6sY0ZT5uNF33VlmMJzZQ3FcJzWJKDPU6NtgXfqdg=
+=KI3t
+-----END PGP SIGNATURE-----

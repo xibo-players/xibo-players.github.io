@@ -1,0 +1,20 @@
+Package: xibo-kiosk
+Version: 0.2.0
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Depends: gnome-kiosk, dunst, unclutter, zenity
+Recommends: keyd
+Filename: ./xibo-kiosk_0.2.0_all.deb
+Size: 5662
+MD5sum: 77ba918a60119dd1bc709d22d3897e07
+SHA1: 7e345c8c9231f6b0cc34c80aec77f4ae7b12d9dd
+SHA256: 580f49fc81459c3d5f1b65dca89c2ea697c50470fc9237666b4f32c926e86165
+Section: misc
+Priority: optional
+Homepage: https://github.com/xibo-players/xibo-kiosk
+Description: Kiosk session scripts for Xibo digital signage players
+ Kiosk session scripts for running Xibo digital signage players as full-screen
+ displays under GNOME Kiosk. Includes a first-boot registration wizard,
+ session holder with health monitoring, dunst notification config, and
+ a systemd user unit for the player process.
+

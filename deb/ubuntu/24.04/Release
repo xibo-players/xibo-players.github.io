@@ -1,0 +1,28 @@
+Origin: xibo-players
+Label: Xibo Players
+Suite: stable
+Codename: noble
+Architectures: amd64 arm64 all
+Components: main
+Date: Wed, 18 Feb 2026 12:03:21 +0000
+MD5Sum:
+ e0472af20dfc7b6c309905f80f08b552 793 all/Packages
+ e0472af20dfc7b6c309905f80f08b552 793 amd64/Packages
+ e0472af20dfc7b6c309905f80f08b552 793 arm64/Packages
+ f79c79c3e23055ce598e7cc1af6f8488 528 all/Packages.gz
+ f79c79c3e23055ce598e7cc1af6f8488 528 amd64/Packages.gz
+ f79c79c3e23055ce598e7cc1af6f8488 528 arm64/Packages.gz
+SHA1:
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 all/Packages
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 amd64/Packages
+ 40d45378883ec66a8c92a41c07b45ba527183491 793 arm64/Packages
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 all/Packages.gz
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 amd64/Packages.gz
+ 86c13a4a4bb1aaef29ab594f3fcd06eaf443c434 528 arm64/Packages.gz
+SHA256:
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 all/Packages
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 amd64/Packages
+ 492d7e5515f26e1c6807e16059729eca7e8631b31519014d0fb32cd84b2d2de4 793 arm64/Packages
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 all/Packages.gz
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 amd64/Packages.gz
+ fbdd31bcceb56730a3fbdf8a5b2475db18ea27f6c33f804c9b1d9c31cebf17cc 528 arm64/Packages.gz
