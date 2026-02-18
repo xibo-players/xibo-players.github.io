@@ -1,0 +1,340 @@
+name: Update Package Repositories
+
+# Centralized workflow that regenerates RPM + DEB repository metadata
+# from GitHub Release assets across all xibo-players repos.
+#
+# Triggered by repository_dispatch from build-rpm.yml / build-deb.yml
+# after they create a GitHub Release. Can also be run manually.
+#
+# Uses a concurrency group to serialize updates — if multiple repos
+# trigger simultaneously, intermediate runs are auto-cancelled and
+# only the latest pending run executes (which regenerates everything
+# from scratch, so no data is lost).
+#
+# RPMs:  only metadata stored here (repodata XML); dnf downloads
+#        actual RPMs from GitHub Releases via baseurl.
+# DEBs:  actual .deb files copied here (apt requires them at the
+#        same URL as Packages). Files >95MB are skipped (GitHub's
+#        100MB limit). Those packages are available via GitHub
+#        Releases for manual install (gh release download + dpkg -i).
+# Images: stored in GitHub Releases only; linked from pages.
+
+on:
+  repository_dispatch:
+    types: [update-repos]
+  workflow_dispatch:
+
+concurrency:
+  group: update-repos
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  FEDORA_VER: '43'
+  UBUNTU_VER: '24.04'
+  # Skip .deb files larger than this (MB) — GitHub rejects >100MB
+  FILE_SIZE_LIMIT_MB: '95'
+
+jobs:
+  update:
+    name: Regenerate RPM + DEB repositories
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:${{ env.FEDORA_VER }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: dnf install -y createrepo_c dpkg dpkg-dev git curl jq gnupg2
+
+      - name: Download release assets from all repos
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          REPOS=(
+            "xibo-players/xiboplayer-chromium"
+            "xibo-players/xiboplayer-electron"
+            "xibo-players/xibo-kiosk"
+            "xibo-players/arexibo"
+          )
+
+          for repo in "${REPOS[@]}"; do
+            pkg=$(basename "$repo")
+            echo "::group::$pkg"
+            mkdir -p /tmp/assets/$pkg
+
+            # Get latest non-draft release
+            release=$(curl -sfH "Authorization: token $GH_TOKEN" \
+              "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null || echo '{}')
+
+            tag=$(echo "$release" | jq -r '.tag_name // empty')
+            if [ -z "$tag" ]; then
+              echo "No release found, skipping"
+              echo "::endgroup::"
+              continue
+            fi
+            echo "Release: $tag"
+            echo "$tag" > /tmp/assets/$pkg/.tag
+            echo "$repo" > /tmp/assets/$pkg/.repo
+
+            # Download all assets
+            echo "$release" | jq -r '.assets[] | "\(.name)\t\(.size)\t\(.browser_download_url)"' | \
+            while IFS=$'\t' read -r name size url; do
+              size_mb=$((size / 1048576))
+              echo "  ${name} (${size_mb}MB)"
+              curl -sL -o "/tmp/assets/$pkg/$name" "$url"
+            done
+            echo "::endgroup::"
+          done
+
+      # ── RPM: generate repodata with baseurl → GitHub Releases ──────
+      - name: Generate per-repo RPM repodata
+        shell: bash
+        run: |
+          for pkg_dir in /tmp/assets/*/; do
+            pkg=$(basename "$pkg_dir")
+            [ -f "$pkg_dir/.tag" ] || continue
+            tag=$(cat "$pkg_dir/.tag")
+            repo=$(cat "$pkg_dir/.repo")
+            baseurl="https://github.com/$repo/releases/download/$tag"
+
+            # Check if this repo has RPMs
+            shopt -s nullglob
+            rpms=("$pkg_dir"*.rpm)
+            shopt -u nullglob
+            [ ${#rpms[@]} -gt 0 ] || continue
+
+            echo "::group::RPM: $pkg (baseurl: $baseurl)"
+
+            # Create temp arch dirs
+            for arch in x86_64 aarch64 noarch; do
+              mkdir -p /tmp/rpm-repo/$pkg/$arch
+            done
+
+            # Distribute RPMs by arch
+            for rpm in "${rpms[@]}"; do
+              name=$(basename "$rpm")
+              # Skip GPG key files
+              [[ "$name" == RPM-GPG-KEY-* ]] && continue
+              case "$name" in
+                *.x86_64.rpm)  cp "$rpm" /tmp/rpm-repo/$pkg/x86_64/ ;;
+                *.aarch64.rpm) cp "$rpm" /tmp/rpm-repo/$pkg/aarch64/ ;;
+                *.noarch.rpm)
+                  cp "$rpm" /tmp/rpm-repo/$pkg/x86_64/
+                  cp "$rpm" /tmp/rpm-repo/$pkg/aarch64/
+                  cp "$rpm" /tmp/rpm-repo/$pkg/noarch/
+                  ;;
+              esac
+            done
+
+            # Generate repodata per arch
+            for arch in x86_64 aarch64 noarch; do
+              if ls /tmp/rpm-repo/$pkg/$arch/*.rpm &>/dev/null; then
+                echo "  createrepo_c $arch"
+                createrepo_c --baseurl "$baseurl" /tmp/rpm-repo/$pkg/$arch/
+              fi
+            done
+
+            # Save repodata to _repos structure (no RPM binaries stored)
+            for arch in x86_64 aarch64 noarch; do
+              target="_repos/$pkg/rpm/fedora/${FEDORA_VER}/$arch"
+              rm -rf "$target"
+              if [ -d "/tmp/rpm-repo/$pkg/$arch/repodata" ]; then
+                mkdir -p "$target"
+                cp -r /tmp/rpm-repo/$pkg/$arch/repodata "$target/"
+              fi
+            done
+
+            # Copy GPG public key
+            if ls "$pkg_dir"RPM-GPG-KEY-* &>/dev/null; then
+              mkdir -p rpm
+              cp "$pkg_dir"RPM-GPG-KEY-* rpm/
+            fi
+
+            echo "::endgroup::"
+          done
+
+      - name: Merge RPM repos into unified index
+        shell: bash
+        run: |
+          WORKDIR="$(pwd)"
+
+          for arch in x86_64 aarch64 noarch; do
+            output="rpm/fedora/${FEDORA_VER}/$arch"
+            mkdir -p "$output"
+
+            # Collect all per-repo repodata dirs for this arch
+            repos=()
+            for repo_dir in _repos/*/rpm/fedora/${FEDORA_VER}/$arch; do
+              if [ -d "$repo_dir/repodata" ]; then
+                repos+=("--repo" "${WORKDIR}/$repo_dir")
+              fi
+            done
+
+            repo_count=$(( ${#repos[@]} / 2 ))
+            if [ $repo_count -gt 0 ]; then
+              echo "Merging $arch: $repo_count repo(s)"
+              rm -rf "$output/repodata"
+              mergerepo_c "${repos[@]}" -o "${WORKDIR}/$output"
+            fi
+          done
+
+          echo "RPM repodata files:"
+          find rpm/fedora/ -name 'repomd.xml' 2>/dev/null
+
+      # ── DEB: download .deb files + regenerate Packages index ────────
+      # apt requires actual .deb files at the URL referenced by Packages.
+      # Since GitHub Pages serves from this repo, small DEBs are stored here.
+      # Files >95MB are skipped (GitHub's 100MB git file limit).
+      - name: Update DEB repository
+        shell: bash
+        run: |
+          REPO_BASE="deb/ubuntu/${UBUNTU_VER}"
+          SIZE_LIMIT=$((FILE_SIZE_LIMIT_MB * 1048576))
+
+          for arch in amd64 arm64 all; do
+            mkdir -p "$REPO_BASE/$arch"
+          done
+
+          # Remove old .deb files (will re-download current versions from releases)
+          find "$REPO_BASE" -name '*.deb' -delete
+
+          for pkg_dir in /tmp/assets/*/; do
+            pkg=$(basename "$pkg_dir")
+            [ -f "$pkg_dir/.tag" ] || continue
+
+            shopt -s nullglob
+            debs=("$pkg_dir"*.deb)
+            shopt -u nullglob
+            [ ${#debs[@]} -gt 0 ] || continue
+
+            echo "::group::DEB: $pkg"
+
+            for deb in "${debs[@]}"; do
+              name=$(basename "$deb")
+              size=$(stat -c%s "$deb")
+              size_mb=$((size / 1048576))
+
+              if [ "$size" -gt "$SIZE_LIMIT" ]; then
+                echo "  SKIP $name (${size_mb}MB > ${FILE_SIZE_LIMIT_MB}MB — install from GitHub Releases)"
+                continue
+              fi
+
+              # Detect architecture
+              arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
+              case "$arch" in
+                amd64) cp "$deb" "$REPO_BASE/amd64/"; echo "  amd64: $name (${size_mb}MB)" ;;
+                arm64) cp "$deb" "$REPO_BASE/arm64/"; echo "  arm64: $name (${size_mb}MB)" ;;
+                all)
+                  cp "$deb" "$REPO_BASE/amd64/"
+                  cp "$deb" "$REPO_BASE/arm64/"
+                  cp "$deb" "$REPO_BASE/all/"
+                  echo "  all: $name (${size_mb}MB)"
+                  ;;
+                *) echo "  SKIP $name (unknown arch: $arch)" ;;
+              esac
+            done
+
+            # Copy GPG public key
+            if ls "$pkg_dir"DEB-GPG-KEY-* &>/dev/null; then
+              cp "$pkg_dir"DEB-GPG-KEY-* deb/
+            fi
+
+            echo "::endgroup::"
+          done
+
+          # Rebuild Packages index for each arch
+          echo "Rebuilding APT indices..."
+          for arch in amd64 arm64 all; do
+            arch_dir="$REPO_BASE/$arch"
+            shopt -s nullglob
+            deb_files=("$arch_dir"/*.deb)
+            shopt -u nullglob
+            if [ ${#deb_files[@]} -gt 0 ]; then
+              echo "  $arch: ${#deb_files[@]} packages"
+              (cd "$arch_dir" && dpkg-scanpackages . /dev/null > Packages && gzip -9c Packages > Packages.gz)
+            else
+              # Empty arch — remove stale indices
+              rm -f "$arch_dir/Packages" "$arch_dir/Packages.gz"
+            fi
+          done
+
+          # Generate Release file with checksums
+          cd "$REPO_BASE"
+          {
+            echo "Origin: xibo-players"
+            echo "Label: Xibo Players"
+            echo "Suite: stable"
+            echo "Codename: noble"
+            echo "Architectures: amd64 arm64 all"
+            echo "Components: main"
+            echo "Date: $(date -Ru)"
+            echo "MD5Sum:"
+            for f in */Packages */Packages.gz; do
+              [ -f "$f" ] || continue
+              echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+            done
+            echo "SHA1:"
+            for f in */Packages */Packages.gz; do
+              [ -f "$f" ] || continue
+              echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+            done
+            echo "SHA256:"
+            for f in */Packages */Packages.gz; do
+              [ -f "$f" ] || continue
+              echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+            done
+          } > Release
+
+      - name: GPG-sign DEB Release file
+        if: env.DEB_GPG_KEY != ''
+        env:
+          DEB_GPG_KEY: ${{ secrets.DEB_GPG_KEY }}
+          DEB_GPG_PASSPHRASE: ${{ secrets.DEB_GPG_PASSPHRASE }}
+        shell: bash
+        run: |
+          RELEASE_FILE="deb/ubuntu/${UBUNTU_VER}/Release"
+
+          # Configure GPG for non-interactive signing
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "${DEB_GPG_PASSPHRASE:-}" > /tmp/gpg-passphrase
+          chmod 600 /tmp/gpg-passphrase
+          echo "batch" > ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          echo "passphrase-file /tmp/gpg-passphrase" >> ~/.gnupg/gpg.conf
+
+          echo "$DEB_GPG_KEY" | base64 -d | gpg --batch --pinentry-mode loopback \
+            --passphrase "${DEB_GPG_PASSPHRASE}" --import
+
+          rm -f "${RELEASE_FILE}.gpg" "$(dirname ${RELEASE_FILE})/InRelease"
+
+          gpg --armor --detach-sign --output "${RELEASE_FILE}.gpg" "${RELEASE_FILE}"
+          gpg --armor --clearsign --output "$(dirname ${RELEASE_FILE})/InRelease" "${RELEASE_FILE}"
+
+          rm -f /tmp/gpg-passphrase
+          echo "Signed: Release.gpg + InRelease"
+
+      # ── Commit and push ─────────────────────────────────────────────
+      - name: Push changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          # Build informative commit message
+          TRIGGER="${{ github.event.client_payload.package || 'manual' }}"
+          git commit -m "Update repositories (trigger: ${TRIGGER})"
+
+          git push
