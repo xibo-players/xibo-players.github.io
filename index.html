@@ -410,9 +410,7 @@
                 </div>
                 <pre id="dnf-add"><span class="c"># Add the xibo-players DNF repository</span>
 sudo dnf config-manager addrepo \
-  --set=baseurl=https://dnf.xiboplayer.org/rpm/fedora/43/\$basearch/ \
-  --set=gpgcheck=1 \
-  --id=xibo-players</pre>
+  --from-repofile=https://dnf.xiboplayer.org/rpm/xibo-players.repo</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
@@ -438,16 +436,20 @@ sudo systemctl set-default graphical.target
 
         <div class="tab-content" data-tab-content="ubuntu">
             <div class="info-box">
-                DEB packages are served directly from this repository. Currently available: <strong>xibo-kiosk</strong> (all architectures).
+                DEB packages are served directly from this repository. Currently available: <strong>xibo-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>1. Add the repository</h3>
+                    <h3>1. Add the GPG key and repository</h3>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><span class="c"># Add the xibo-players APT repository</span>
-echo "deb [trusted=yes] https://dnf.xiboplayer.org/deb/ubuntu/24.04 all/" \
-  | sudo tee /etc/apt/sources.list.d/xibo-players.list</pre>
+                <pre><span class="c"># Import the signing key</span>
+curl -fsSL https://dnf.xiboplayer.org/deb/GPG-KEY.asc \
+  | sudo gpg --dearmor -o /usr/share/keyrings/xibo-players.gpg
+
+<span class="c"># Add the repository</span>
+sudo curl -fsSL https://dnf.xiboplayer.org/deb/xibo-players.sources \
+  -o /etc/apt/sources.list.d/xibo-players.sources</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
