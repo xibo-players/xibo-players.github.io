@@ -53,11 +53,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Mark workspace as safe for git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
       - name: Install tools
         run: dnf install -y createrepo_c dpkg dpkg-dev git curl jq gnupg2
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
       - name: Download release assets from all repos
         env:
