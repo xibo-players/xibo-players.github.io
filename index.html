@@ -5,212 +5,623 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xibo Players - Package Repository</title>
     <style>
+        :root {
+            --blue: #0969da;
+            --blue-dark: #0550ae;
+            --green: #1a7f37;
+            --orange: #bf5700;
+            --purple: #6639ba;
+            --rust: #b7410e;
+            --gray-50: #f6f8fa;
+            --gray-100: #eaeef2;
+            --gray-200: #d0d7de;
+            --gray-500: #656d76;
+            --gray-700: #32383f;
+            --gray-900: #1f2328;
+            --radius: 8px;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+            color: var(--gray-900);
+            background: var(--gray-50);
             line-height: 1.6;
-            color: #1a1a2e;
-            background: #fafbfc;
         }
-        header {
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #0550ae 0%, #0969da 50%, #218bff 100%);
+            color: #fff;
+            padding: 56px 20px 48px;
             text-align: center;
-            margin-bottom: 40px;
         }
-        header h1 {
-            font-size: 2em;
-            color: #0066cc;
+        .hero h1 { font-size: 2.4em; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .hero p { font-size: 1.15em; opacity: 0.9; max-width: 560px; margin: 0 auto 24px; }
+        .hero-links a {
+            display: inline-block;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 6px;
+            padding: 6px 16px;
+            margin: 4px;
+            font-size: 0.9em;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+        .hero-links a:hover { background: rgba(255,255,255,0.15); }
+
+        /* Nav tabs */
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: #fff;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .nav a {
+            padding: 14px 24px;
+            text-decoration: none;
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 0.95em;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .nav a:hover, .nav a.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+        /* Main content */
+        .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 40px 0; }
+        section + section { border-top: 1px solid var(--gray-100); }
+
+        h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--gray-900);
             margin-bottom: 8px;
         }
-        header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-        h2 {
-            color: #0066cc;
-            font-size: 1.4em;
-            margin: 35px 0 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e1e4e8;
-        }
-        .section-desc {
-            color: #555;
-            margin-bottom: 15px;
-        }
-        .grid {
+        .section-desc { color: var(--gray-500); margin-bottom: 20px; }
+
+        /* Package grid */
+        .pkg-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
         }
-        @media (max-width: 640px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-        .card {
+        .pkg-card {
             background: #fff;
-            border: 1px solid #e1e4e8;
-            border-left: 4px solid #0066cc;
-            padding: 18px;
-            border-radius: 6px;
-        }
-        .card h3 {
-            font-size: 1.05em;
-            margin-bottom: 4px;
-        }
-        .card p { color: #555; font-size: 0.92em; }
-        .card .arch {
-            margin-top: 8px;
-            font-size: 0.85em;
-        }
-        .card .arch a {
-            display: inline-block;
-            background: #e8f0fe;
-            color: #0066cc;
-            padding: 2px 8px;
-            border-radius: 3px;
-            margin-right: 4px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.15s, border-color 0.15s;
             text-decoration: none;
+            color: inherit;
         }
-        .card .arch a:hover { background: #d0e2fd; }
-        .card.accent-green  { border-left-color: #28a745; }
-        .card.accent-orange { border-left-color: #e67e22; }
-        .card.accent-purple { border-left-color: #6f42c1; }
-        a { color: #0066cc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        pre {
-            background: #24292e;
-            color: #e1e4e8;
-            padding: 16px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 13px;
-            line-height: 1.5;
-            margin: 10px 0;
+        .pkg-card:hover { border-color: var(--blue); box-shadow: 0 2px 12px rgba(9,105,218,0.1); }
+        .pkg-card h3 {
+            font-size: 1.05em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        pre .comment { color: #6a737d; }
-        code {
-            background: #eef;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.9em;
+        .pkg-card h3 .icon { font-size: 1.3em; }
+        .pkg-card .desc { color: var(--gray-500); font-size: 0.9em; flex: 1; }
+        .pkg-card .meta {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
+        .badge {
+            display: inline-block;
+            font-size: 0.78em;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+        .badge.rpm { background: #ddf4ff; border-color: #b6e3ff; color: #0550ae; }
+        .badge.deb { background: #dafbe1; border-color: #aceebb; color: #116329; }
+        .badge.arch { background: #fff8c5; border-color: #eac54f; color: #6a5901; }
+
+        /* Setup block */
         .setup-block {
             background: #fff;
-            border: 1px solid #e1e4e8;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        .setup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .setup-header h3 { font-size: 0.95em; font-weight: 600; }
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--gray-200);
             border-radius: 6px;
-            padding: 20px;
-            margin: 10px 0;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: color 0.15s, border-color 0.15s;
         }
-        .setup-block h3 {
-            margin-bottom: 10px;
-            font-size: 1em;
+        .copy-btn:hover { color: var(--blue); border-color: var(--blue); }
+        pre {
+            background: #24292e;
+            color: #e6edf3;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
         }
-        footer {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #e1e4e8;
-            text-align: center;
-            color: #999;
+        pre .c { color: #8b949e; }
+
+        /* Browse table */
+        .browse-table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 0.9em;
+        }
+        .browse-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: var(--gray-50);
+            border-bottom: 2px solid var(--gray-200);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        .browse-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .browse-table tr:hover td { background: #f6f8fa; }
+        .browse-table a { color: var(--blue); text-decoration: none; }
+        .browse-table a:hover { text-decoration: underline; }
+
+        /* Tabs within sections */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .tab-bar button {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .tab-bar button:hover { color: var(--gray-900); }
+        .tab-bar button.active { color: var(--blue); border-bottom-color: var(--blue); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Info box */
+        .info-box {
+            background: #ddf4ff;
+            border: 1px solid #b6e3ff;
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.9em;
+            color: #0550ae;
+        }
+
+        /* Loading */
+        .loading { color: var(--gray-500); font-style: italic; padding: 20px 0; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+            font-size: 0.85em;
+            border-top: 1px solid var(--gray-100);
+            margin-top: 20px;
+        }
+        footer a { color: var(--gray-500); }
+        footer a:hover { color: var(--blue); }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .hero { padding: 36px 16px 32px; }
+            .hero h1 { font-size: 1.8em; }
+            .nav a { padding: 12px 14px; font-size: 0.85em; }
+            .pkg-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Xibo Players</h1>
-        <p>Package repository for Xibo digital signage players</p>
-    </header>
 
-    <!-- DNF / RPM -->
-    <h2>DNF Repository (Fedora 43)</h2>
-    <p class="section-desc">RPM packages with GPG-signed metadata. Actual packages are served from GitHub Releases.</p>
+<div class="hero">
+    <h1>Xibo Players</h1>
+    <p>Open-source digital signage players for Xibo CMS. Install via DNF or APT from a single unified repository.</p>
+    <div class="hero-links">
+        <a href="https://github.com/xibo-players">GitHub</a>
+        <a href="#setup">Setup guide</a>
+        <a href="#browse">Browse packages</a>
+    </div>
+</div>
 
-    <div class="setup-block">
-        <h3>Quick setup</h3>
-        <pre><span class="comment"># Add the repository (single repo for all packages)</span>
+<nav class="nav">
+    <a href="#packages">Packages</a>
+    <a href="#setup">Setup</a>
+    <a href="#browse">Browse</a>
+    <a href="#images">Images</a>
+</nav>
+
+<div class="container">
+
+    <!-- Packages -->
+    <section id="packages">
+        <h2>Available packages</h2>
+        <p class="section-desc">All packages are available for Fedora 43 (RPM). Select packages also support Ubuntu 24.04 (DEB).</p>
+
+        <div class="pkg-grid">
+            <a class="pkg-card" href="https://github.com/xibo-players/xibo-kiosk">
+                <h3><span class="icon">&#x1F5A5;</span> xibo-kiosk</h3>
+                <p class="desc">GNOME Kiosk session with auto-login, first-boot registration wizard, health monitoring, dunst notifications, and keyd shortcuts.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
+                    <span class="badge">noarch</span>
+                </div>
+            </a>
+            <a class="pkg-card" href="https://github.com/xibo-players/xiboplayer-electron">
+                <h3><span class="icon">&#x26A1;</span> xiboplayer-electron</h3>
+                <p class="desc">Electron-based Xibo player with offline support, service worker caching, and automatic CMS registration.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge arch">x86_64</span>
+                </div>
+            </a>
+            <a class="pkg-card" href="https://github.com/xibo-players/xiboplayer-chromium">
+                <h3><span class="icon">&#x1F310;</span> xiboplayer-chromium</h3>
+                <p class="desc">Chromium kiosk wrapper that runs the Xibo PWA player in a locked-down browser window.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge">noarch</span>
+                </div>
+            </a>
+            <a class="pkg-card" href="https://github.com/xibo-players/arexibo">
+                <h3><span class="icon">&#x1F980;</span> arexibo</h3>
+                <p class="desc">Native Rust-based Xibo player with Qt6 WebEngine. High performance, dual architecture.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Setup -->
+    <section id="setup">
+        <h2>Repository setup</h2>
+        <p class="section-desc">Add the repository once, then install any package with your system package manager.</p>
+
+        <div class="tab-bar" data-tabs="setup">
+            <button class="active" data-tab="fedora">Fedora (DNF)</button>
+            <button data-tab="ubuntu">Ubuntu (APT)</button>
+        </div>
+
+        <div class="tab-content active" data-tab-content="fedora">
+            <div class="info-box">
+                A single repository serves all xibo-players packages. RPM metadata is hosted here; actual packages are downloaded directly from each project's GitHub Releases.
+            </div>
+            <div class="setup-block">
+                <div class="setup-header">
+                    <h3>1. Add the repository</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre id="dnf-add"><span class="c"># Add the xibo-players DNF repository</span>
 sudo dnf config-manager addrepo \
   --set=baseurl=https://dnf.xiboplayer.org/rpm/fedora/43/\$basearch/ \
   --set=gpgcheck=0 \
-  --id=xibo-players
-
-<span class="comment"># Install packages</span>
-sudo dnf install xibo-kiosk xiboplayer-electron</pre>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <h3>xibo-kiosk</h3>
-            <p>GNOME Kiosk session scripts, systemd user unit, keyd shortcuts, first-boot registration wizard.</p>
+  --id=xibo-players</pre>
+            </div>
+            <div class="setup-block">
+                <div class="setup-header">
+                    <h3>2. Install packages</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="c"># Install one or more packages</span>
+sudo dnf install xibo-kiosk
+sudo dnf install xiboplayer-electron
+sudo dnf install xiboplayer-chromium
+sudo dnf install arexibo</pre>
+            </div>
+            <div class="setup-block">
+                <div class="setup-header">
+                    <h3>3. Start the kiosk session</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="c"># Enable auto-login on tty1 (reboot to start)</span>
+sudo systemctl set-default graphical.target
+<span class="c"># The kiosk session starts automatically on the next boot</span></pre>
+            </div>
         </div>
-        <div class="card">
-            <h3>xiboplayer-electron</h3>
-            <p>Electron-based Xibo player with offline support and service worker caching.</p>
-        </div>
-        <div class="card">
-            <h3>xiboplayer-chromium</h3>
-            <p>Chromium kiosk wrapper for Xibo PWA player.</p>
-        </div>
-        <div class="card">
-            <h3>arexibo</h3>
-            <p>Native Rust-based Xibo player with Qt6 WebEngine, dual architecture.</p>
-        </div>
-    </div>
-    <p style="margin-top:10px; font-size:0.9em; color:#666;">
-        <a href="/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repodata</a> |
-        <a href="/rpm/fedora/43/aarch64/repodata/repomd.xml">aarch64 repodata</a> |
-        <a href="/rpm/fedora/43/noarch/repodata/repomd.xml">noarch repodata</a>
-    </p>
 
-    <!-- APT / DEB -->
-    <h2>APT Repository (Ubuntu 24.04)</h2>
-    <p class="section-desc">DEB packages with GPG-signed Release files.</p>
-
-    <div class="setup-block">
-        <h3>Quick setup</h3>
-        <pre><span class="comment"># Add the repository (single repo for all packages)</span>
+        <div class="tab-content" data-tab-content="ubuntu">
+            <div class="info-box">
+                DEB packages are served directly from this repository. Currently available: <strong>xibo-kiosk</strong> (all architectures).
+            </div>
+            <div class="setup-block">
+                <div class="setup-header">
+                    <h3>1. Add the repository</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="c"># Add the xibo-players APT repository</span>
 echo "deb [trusted=yes] https://dnf.xiboplayer.org/deb/ubuntu/24.04 all/" \
-  | sudo tee /etc/apt/sources.list.d/xibo-players.list
-
-<span class="comment"># Install packages</span>
-sudo apt update &amp;&amp; sudo apt install xibo-kiosk</pre>
-    </div>
-
-    <div class="grid">
-        <div class="card accent-green">
-            <h3>xibo-kiosk</h3>
-            <p>Kiosk session scripts for Ubuntu-based signage players.</p>
+  | sudo tee /etc/apt/sources.list.d/xibo-players.list</pre>
+            </div>
+            <div class="setup-block">
+                <div class="setup-header">
+                    <h3>2. Install packages</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre><span class="c"># Update and install</span>
+sudo apt update
+sudo apt install xibo-kiosk</pre>
+            </div>
         </div>
-    </div>
-    <p style="margin-top:10px; font-size:0.9em; color:#666;">
-        <a href="/deb/ubuntu/24.04/Release">Release</a> |
-        <a href="/deb/ubuntu/24.04/all/Packages">Packages (all)</a> |
-        <a href="/deb/ubuntu/24.04/amd64/Packages">Packages (amd64)</a>
+    </section>
+
+    <!-- Browse -->
+    <section id="browse">
+        <h2>Browse packages</h2>
+        <p class="section-desc">View all packages available in the repository.</p>
+
+        <div class="tab-bar" data-tabs="browse">
+            <button class="active" data-tab="browse-rpm">RPM packages</button>
+            <button data-tab="browse-deb">DEB packages</button>
+        </div>
+
+        <div class="tab-content active" data-tab-content="browse-rpm">
+            <div id="rpm-list" class="loading">Loading RPM package list...</div>
+        </div>
+
+        <div class="tab-content" data-tab-content="browse-deb">
+            <div id="deb-list" class="loading">Loading DEB package list...</div>
+        </div>
+
+        <p style="margin-top:16px; font-size:0.85em; color:var(--gray-500);">
+            Raw metadata:
+            <a href="/rpm/fedora/43/x86_64/repodata/repomd.xml">RPM repomd (x86_64)</a> &middot;
+            <a href="/rpm/fedora/43/aarch64/repodata/repomd.xml">RPM repomd (aarch64)</a> &middot;
+            <a href="/rpm/fedora/43/noarch/repodata/repomd.xml">RPM repomd (noarch)</a> &middot;
+            <a href="/deb/ubuntu/24.04/Release">DEB Release</a> &middot;
+            <a href="/deb/ubuntu/24.04/all/Packages">DEB Packages</a>
+        </p>
+    </section>
+
+    <!-- Images -->
+    <section id="images">
+        <h2>Kiosk images</h2>
+        <p class="section-desc">Pre-built bootable images for quick deployment. Flash to USB or SD card, boot, and register with your CMS.</p>
+
+        <div class="pkg-grid">
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (x86_64)</h3>
+                <p class="desc">Minimal Fedora install with GNOME Kiosk, auto-login, and xibo-kiosk + xiboplayer-electron pre-installed. For standard PCs and thin clients.</p>
+                <div class="meta">
+                    <span class="badge" style="background:#fff3cd; border-color:#eed079; color:#856404;">Coming soon</span>
+                </div>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F4BF;</span> Fedora 43 Kiosk (aarch64)</h3>
+                <p class="desc">ARM64 variant for Raspberry Pi 5 and similar single-board computers. Same kiosk stack, optimized for ARM.</p>
+                <div class="meta">
+                    <span class="badge" style="background:#fff3cd; border-color:#eed079; color:#856404;">Coming soon</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how">
+        <h2>How it works</h2>
+        <p class="section-desc">Architecture of the package repository.</p>
+
+        <div class="setup-block" style="padding:20px;">
+            <p style="margin-bottom:12px;">This is a <strong>unified package repository</strong> serving all xibo-players projects from a single URL.</p>
+
+            <table class="browse-table" style="margin:16px 0;">
+                <tr>
+                    <th style="width:100px;">Format</th>
+                    <th>How packages are served</th>
+                </tr>
+                <tr>
+                    <td><span class="badge rpm">RPM</span></td>
+                    <td>Repository metadata (repodata XML) is hosted here. When <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">dnf install</code> runs, it reads metadata from this site but downloads the actual <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">.rpm</code> files directly from each project's <a href="https://github.com/xibo-players">GitHub Releases</a>. This keeps the repository lightweight.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge deb">DEB</span></td>
+                    <td>Both metadata and <code style="background:#eef;padding:2px 6px;border-radius:3px;font-size:0.85em;">.deb</code> packages are hosted directly in this repository. APT downloads everything from here.</td>
+                </tr>
+            </table>
+
+            <p style="font-size:0.9em; color:var(--gray-500);">Each project's CI automatically publishes to this central repository on every release. Repository metadata is rebuilt and merged by GitHub Actions.</p>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <p>
+        <a href="https://github.com/xibo-players">github.com/xibo-players</a>
+        &middot; Open-source digital signage
+        &middot; Powered by <a href="https://pages.github.com">GitHub Pages</a>
     </p>
+</footer>
 
-    <!-- Kiosk Images -->
-    <h2>Kiosk Images</h2>
-    <p class="section-desc">Pre-built bootable images for quick deployment of signage displays.</p>
+<script>
+// Tabs
+document.querySelectorAll('.tab-bar').forEach(bar => {
+    bar.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const group = bar.dataset.tabs;
+            bar.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const parent = bar.parentElement;
+            parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            parent.querySelector(`[data-tab-content="${btn.dataset.tab}"]`).classList.add('active');
+        });
+    });
+});
 
-    <div class="grid">
-        <div class="card accent-purple">
-            <h3>Fedora 43 Kiosk (x86_64)</h3>
-            <p>Minimal Fedora install with GNOME Kiosk, auto-login, and xibo-kiosk pre-installed.</p>
-            <div class="arch">
-                <span style="color:#999; font-size:0.85em;">Coming soon</span>
-            </div>
-        </div>
-        <div class="card accent-purple">
-            <h3>Fedora 43 Kiosk (aarch64)</h3>
-            <p>ARM64 variant for Raspberry Pi 5 and similar SBCs.</p>
-            <div class="arch">
-                <span style="color:#999; font-size:0.85em;">Coming soon</span>
-            </div>
-        </div>
-    </div>
+// Copy to clipboard
+function copyCode(btn) {
+    const pre = btn.closest('.setup-block').querySelector('pre');
+    const text = pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+}
 
-    <footer>
-        <p><a href="https://github.com/xibo-players">github.com/xibo-players</a></p>
-    </footer>
+// Sticky nav highlight
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+});
+
+// Fetch and display DEB packages
+async function loadDebPackages() {
+    const el = document.getElementById('deb-list');
+    try {
+        const urls = [
+            '/deb/ubuntu/24.04/all/Packages',
+            '/deb/ubuntu/24.04/amd64/Packages'
+        ];
+        const pkgs = new Map();
+        for (const url of urls) {
+            const resp = await fetch(url);
+            if (!resp.ok) continue;
+            const text = await resp.text();
+            if (!text.trim()) continue;
+            const blocks = text.trim().split('\n\n');
+            for (const block of blocks) {
+                const fields = {};
+                let lastKey = '';
+                for (const line of block.split('\n')) {
+                    if (line.startsWith(' ')) {
+                        if (lastKey) fields[lastKey] += '\n' + line;
+                    } else {
+                        const idx = line.indexOf(': ');
+                        if (idx > 0) {
+                            lastKey = line.substring(0, idx);
+                            fields[lastKey] = line.substring(idx + 2);
+                        }
+                    }
+                }
+                const key = `${fields.Package}-${fields.Version}-${fields.Architecture}`;
+                if (!pkgs.has(key)) pkgs.set(key, fields);
+            }
+        }
+        if (pkgs.size === 0) {
+            el.innerHTML = '<p style="color:var(--gray-500)">No DEB packages found.</p>';
+            return;
+        }
+        let html = '<table class="browse-table"><thead><tr><th>Package</th><th>Version</th><th>Arch</th><th>Size</th><th>Description</th></tr></thead><tbody>';
+        for (const [, p] of pkgs) {
+            const size = p.Size ? (parseInt(p.Size) / 1024).toFixed(1) + ' KB' : '—';
+            const homepage = p.Homepage || '#';
+            const desc = (p.Description || '').split('\n')[0];
+            html += `<tr>
+                <td><a href="${homepage}">${p.Package || '?'}</a></td>
+                <td>${p.Version || '?'}</td>
+                <td><span class="badge arch">${p.Architecture || '?'}</span></td>
+                <td>${size}</td>
+                <td>${desc}</td>
+            </tr>`;
+        }
+        html += '</tbody></table>';
+        el.innerHTML = html;
+    } catch (e) {
+        el.innerHTML = '<p style="color:var(--gray-500)">Could not load DEB packages. <a href="/deb/ubuntu/24.04/all/Packages">View raw Packages file</a>.</p>';
+    }
+}
+
+// Fetch RPM packages from GitHub Releases API
+async function loadRpmPackages() {
+    const el = document.getElementById('rpm-list');
+    const repos = [
+        { name: 'xibo-kiosk', repo: 'xibo-players/xibo-kiosk' },
+        { name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' },
+        { name: 'xiboplayer-chromium', repo: 'xibo-players/xiboplayer-chromium' },
+        { name: 'arexibo', repo: 'xibo-players/arexibo' },
+    ];
+
+    let html = '<table class="browse-table"><thead><tr><th>Package</th><th>File</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
+    let hasAny = false;
+
+    for (const { name, repo } of repos) {
+        try {
+            const resp = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
+            if (!resp.ok) continue;
+            const release = await resp.json();
+            const rpms = (release.assets || []).filter(a => a.name.endsWith('.rpm'));
+            for (const rpm of rpms) {
+                hasAny = true;
+                const size = (rpm.size / 1024).toFixed(0) + ' KB';
+                const arch = rpm.name.includes('.x86_64.') ? 'x86_64'
+                    : rpm.name.includes('.aarch64.') ? 'aarch64'
+                    : rpm.name.includes('.noarch.') ? 'noarch' : '?';
+                html += `<tr>
+                    <td><a href="https://github.com/${repo}">${name}</a></td>
+                    <td><a href="${rpm.browser_download_url}">${rpm.name}</a></td>
+                    <td>${size}</td>
+                    <td><span class="badge arch">${arch}</span></td>
+                    <td><a href="${release.html_url}">${release.tag_name}</a></td>
+                </tr>`;
+            }
+        } catch (e) { /* skip */ }
+    }
+
+    if (!hasAny) {
+        el.innerHTML = '<p style="color:var(--gray-500)">No RPM releases found yet. Packages will appear here after the first tagged release.</p>';
+        return;
+    }
+    html += '</tbody></table>';
+    el.innerHTML = html;
+}
+
+// Load package lists
+loadDebPackages();
+loadRpmPackages();
+</script>
+
 </body>
 </html>
