@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xibo Players - Package Repository</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1 { color: #0066cc; border-bottom: 3px solid #0066cc; padding-bottom: 10px; }
+        h2 { color: #444; margin-top: 30px; }
+        .card {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        a { color: #0066cc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        code { background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Xibo Players - Package Repository</h1>
+    <p>RPM and DEB packages for Xibo digital signage players.</p>
+
+    <h2>Quick Setup (Fedora)</h2>
+    <pre>sudo dnf config-manager addrepo \
+  --set=baseurl=https://dnf.xiboplayer.org/xibo-kiosk/rpm/fedora/43/\$basearch/ \
+  --set=gpgcheck=0 \
+  --id=xibo-players
+
+sudo dnf install xibo-kiosk xiboplayer-electron</pre>
+
+    <h2>Available Packages</h2>
+    <div class="card">
+        <h3>xibo-kiosk</h3>
+        <p>Kiosk session scripts for GNOME Kiosk, systemd user unit, keyd config.</p>
+        <p><a href="/xibo-kiosk/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repo</a> |
+           <a href="/xibo-kiosk/rpm/fedora/43/noarch/repodata/repomd.xml">noarch repo</a></p>
+    </div>
+    <div class="card">
+        <h3>xiboplayer-electron</h3>
+        <p>Electron-based Xibo player.</p>
+        <p><a href="/xiboplayer-electron/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repo</a></p>
+    </div>
+    <div class="card">
+        <h3>xiboplayer-chromium</h3>
+        <p>Chromium kiosk wrapper for Xibo.</p>
+        <p><a href="/xiboplayer-chromium/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repo</a></p>
+    </div>
+    <div class="card">
+        <h3>arexibo</h3>
+        <p>Native Rust-based Xibo player (Qt6 WebEngine).</p>
+        <p><a href="/arexibo/rpm/fedora/43/x86_64/repodata/repomd.xml">x86_64 repo</a> |
+           <a href="/arexibo/rpm/fedora/43/aarch64/repodata/repomd.xml">aarch64 repo</a></p>
+    </div>
+
+    <h2>DEB Packages (Ubuntu 24.04)</h2>
+    <div class="card">
+        <h3>xibo-kiosk</h3>
+        <p><a href="/xibo-kiosk/deb/ubuntu/24.04/Release">APT Release</a></p>
+    </div>
+
+    <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #888;">
+        <p><a href="https://github.com/xibo-players">github.com/xibo-players</a></p>
+    </footer>
+</body>
+</html>
