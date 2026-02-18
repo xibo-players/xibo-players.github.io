@@ -23,10 +23,10 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Depends: gnome-kiosk, dunst, unclutter, zenity
 Recommends: keyd
 Filename: ./xibo-kiosk_0.2.0_all.deb
-Size: 5666
-MD5sum: ff2d25ecb44990d03176622eaf5485bf
-SHA1: f12619532175b434af642ebc850583be960ac981
-SHA256: b0b367ecdd6c18516afabaa62aaa553401fd0751152093a5ca1c63447123f9a9
+Size: 5668
+MD5sum: d7529aa822b01a931622e3b4e9131eef
+SHA1: e800f1f557b17f07ca3f329ae9666f5184f81dba
+SHA256: 06382ffb6607372a0dbcdeb400be06c356258847c886acd068537e64e3bf9b25
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xibo-kiosk
