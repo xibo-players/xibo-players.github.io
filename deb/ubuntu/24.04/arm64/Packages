@@ -24,9 +24,9 @@ Depends: gnome-kiosk, dunst, unclutter, zenity
 Recommends: keyd
 Filename: ./xibo-kiosk_0.2.0_all.deb
 Size: 5666
-MD5sum: 66394c21bdbbc7d68486191a1ab0895f
-SHA1: 112788990505437db08d62504a8d510a2eb8fda3
-SHA256: e96758bf2cd3066f05135398ff855368f088a0e9fa64b8b7a22a9973db4d4947
+MD5sum: 210367bc59417c1c12c851d5a168f7be
+SHA1: 126fd350a120cb79b86f7e749dca3e3b649f4356
+SHA256: bea4f20ea1007688463f1d1d6ae943cbc3abae130903674db80a52934354156e
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xibo-kiosk
@@ -35,4 +35,24 @@ Description: Kiosk session scripts for Xibo digital signage players
  displays under GNOME Kiosk. Includes a first-boot registration wizard,
  session holder with health monitoring, dunst notification config, and
  a systemd user unit for the player process.
+
+Package: xiboplayer-chromium
+Version: 0.2.0-1
+Architecture: all
+Maintainer: Pau Aliagas <pau@linuxnow.com>
+Depends: chromium | google-chrome-stable, jq, xdg-utils, systemd
+Recommends: x11-xserver-utils, xdotool
+Conflicts: xiboplayer-electron
+Filename: ./xiboplayer-chromium_0.2.0-1_all.deb
+Size: 4120
+MD5sum: 49173c70aaf3c0b8286a4e1936fdaf43
+SHA1: 1c2386f1e801b7e3931282f46d15fbc4f2bb4319
+SHA256: 89400300ad632ffd87cc5c255569fb15a88ce975168013bffd410b0f460ab869
+Section: misc
+Priority: optional
+Homepage: https://github.com/xibo-players/xiboplayer-chromium
+Description: Xibo digital signage player (Chromium kiosk)
+ Xibo digital signage player for kiosk deployments on Ubuntu/Debian.
+ Launches a fullscreen browser pointing at a Xibo CMS PWA player URL,
+ with automatic restart and screen-blanking prevention.
 
