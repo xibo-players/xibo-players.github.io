@@ -712,9 +712,9 @@
                     <h3>1. Add the repository</h3>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre id="dnf-add"><span class="c"># Add the xibo-players DNF repository</span>
-sudo dnf config-manager addrepo \
-  --from-repofile=https://dnf.xiboplayer.org/rpm/xibo-players.repo</pre>
+                <pre id="dnf-add"><span class="c"># Install the xiboplayer repository and GPG key</span>
+sudo dnf install \
+  https://dnf.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-1.fc43.noarch.rpm</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
@@ -744,16 +744,12 @@ sudo systemctl set-default graphical.target
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>1. Add the GPG key and repository</h3>
+                    <h3>1. Add the repository</h3>
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre><span class="c"># Import the signing key</span>
-curl -fsSL https://dnf.xiboplayer.org/deb/GPG-KEY.asc \
-  | sudo gpg --dearmor -o /usr/share/keyrings/xibo-players.gpg
-
-<span class="c"># Add the repository</span>
-sudo curl -fsSL https://dnf.xiboplayer.org/deb/xibo-players.sources \
-  -o /etc/apt/sources.list.d/xibo-players.sources</pre>
+                <pre><span class="c"># Download and install the xiboplayer repository and GPG key</span>
+curl -fsSLO https://dnf.xiboplayer.org/deb/ubuntu/24.04/all/xiboplayer-release_1.0.0_all.deb
+sudo apt install ./xiboplayer-release_1.0.0_all.deb</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
