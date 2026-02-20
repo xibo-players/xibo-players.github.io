@@ -4,10 +4,14 @@
 **Our Version:** v0.3.x (SDK v0.3.0, PWA v0.3.2, Electron v0.3.1)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
-- xibo-layout-renderer v1.0.22 (npm, 2026-01-21) - used in Electron/ChromeOS players
-- xibo-communication-framework v0.0.6 (npm, 2025-12-11) - XMR WebSocket client
-- Xibo for Windows v4 R406 (.NET, 2025-12-10)
-- Arexibo (Rust + Qt, last commit 2025-05-18 — dormant 9+ months)
+- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
+- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.6 (npm, 2025-12-11) — XMR WebSocket client
+- [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R406 (C#/.NET + CEF, 2025-12-10) — the only actively maintained upstream player
+- [Arexibo](https://github.com/birkenfeld/arexibo) (Rust + Qt, last commit 2025-05-18 — dormant 9+ months)
+
+**Other upstream players (abandoned):**
+- [xibo-linux](https://github.com/xibosignage/xibo-linux) — C++ Snap player, last release 2021, last commit 2022
+- [xibo-pyclient](https://github.com/xibosignage/xibo-pyclient) — Python player, last activity 2025, no recent releases
 
 ---
 
