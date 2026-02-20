@@ -14,7 +14,7 @@
 ## Table of Contents
 
 - [Executive Summary](#executive-summary)
-- [Repository Structure](#repository-structure-split-from-monorepo--2026-02-17)
+- [Repository Structure](#repository-structure)
 - [1. Schedule Management](#1-schedule-management)
 - [2. XMDS Communication](#2-xmds-communication)
 - [3. File/Cache Management](#3-filecache-management)
@@ -55,9 +55,9 @@
 
 ---
 
-## Repository Structure (Split from Monorepo — 2026-02-17)
+## Repository Structure
 
-The codebase was split from a monorepo into independent repositories for independent versioning and publishing:
+Independent repositories under the `xibo-players/` GitHub org:
 
 | Repo | Purpose | Delivery |
 |------|---------|----------|
@@ -69,7 +69,7 @@ The codebase was split from a monorepo into independent repositories for indepen
 | `xiboplayer-android` | Android TWA | Future |
 | `xiboplayer-webos` | webOS/LG app | Future |
 
-### SDK Package Map (16 packages)
+### SDK Packages
 
 ```
 @xiboplayer/core       - PlayerCore orchestration (platform-independent)
@@ -80,14 +80,11 @@ The codebase was split from a monorepo into independent repositories for indepen
 @xiboplayer/xmr        - XmrWrapper (wraps @xibosignage/xibo-communication-framework)
 @xiboplayer/stats      - StatsCollector + LogReporter (IndexedDB)
 @xiboplayer/settings   - DisplaySettings (EventEmitter)
-@xiboplayer/sw         - Service Worker helpers (extracted from PWA in v0.3.0)
+@xiboplayer/sw         - Service Worker helpers
 @xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry
-@xiboplayer/proxy      - CORS proxy for local development (new)
-@xiboplayer/sync       - Multi-display synchronization (new, WIP)
-@xiboplayer/ai         - AI Campaign Creator (private)
-@xiboplayer/docs       - MCP documentation server (new)
-@xiboplayer/cms-testing - CMS test harness (private)
-@xiboplayer/player     - Meta-package (private)
+@xiboplayer/proxy      - CORS proxy for local development
+@xiboplayer/sync       - Multi-display synchronization (WIP)
+@xiboplayer/docs       - MCP documentation server
 ```
 
 ---
