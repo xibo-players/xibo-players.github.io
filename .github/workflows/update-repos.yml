@@ -22,6 +22,12 @@ name: Update Package Repositories
 on:
   repository_dispatch:
     types: [update-repos]
+  push:
+    branches: [main]
+    paths:
+      - 'rpm/**/*.rpm'
+      - 'deb/**/*.deb'
+      - '_repos/**'
   workflow_dispatch:
 
 concurrency:
