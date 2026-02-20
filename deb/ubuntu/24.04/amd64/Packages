@@ -37,16 +37,16 @@ Description: Kiosk session scripts for Xibo digital signage players
  a systemd user unit for the player process.
 
 Package: xiboplayer-chromium
-Version: 0.3.0-1
+Version: 0.3.4-1
 Architecture: all
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.3.0-1_all.deb
-Size: 7529214
-MD5sum: 45798881f57c255e03caba16b95755c0
-SHA1: ce4fed43c7c6c44a48e7a0076da5dc874a1e50b8
-SHA256: 696d117936c153d414000d87c50c5ba993257f9b24f0eea3b4660fd94cf712ae
+Filename: ./xiboplayer-chromium_0.3.4-1_all.deb
+Size: 7529004
+MD5sum: 8b16cf9f67d84ff0776e2bd82037e74e
+SHA1: 74dc9da8b557ef698362c086e9de956ccb27f0c4
+SHA256: ddbdc6cdf6c302ca4dd1ed9056ba00d5d989051283845e38f7ad4b03af41a0f2
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xiboplayer-chromium
