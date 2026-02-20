@@ -113,7 +113,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 | DataConnector events | Parsed | Yes (DataConnectorManager with polling) | **Match** |
 | Command events | Parsed | Yes (executeCommand, HTTP only) | **Match** |
 | Dependants tracking | Yes | Yes | **Match** |
-| Geo-fencing criteria | TODO | Parsed (not enforced) | Both incomplete |
+| Geo-fencing criteria | TODO | Yes (haversine filtering + browser geolocation) | **Ours BETTER** |
 
 ---
 
@@ -311,7 +311,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | triggerWebhook | Yes | Yes -> PlayerCore.triggerWebhook() | **Match** |
 | dataUpdate | Yes | Yes -> PlayerCore.refreshDataConnectors() | **Match** |
 | criteriaUpdate | Yes | Yes (re-collect) | **Match** |
-| currentGeoLocation | Yes | Stub (no Geolocation API call) | Partial |
+| currentGeoLocation | Yes | Yes (dual-path: CMS push + browser Geolocation API) | **Match** |
 | rekey | Yes | Yes -> RSA key rotation (Web Crypto) | **Match** |
 | JSON message parsing | Yes | Yes | **Match** |
 | TTL/expiry checking | Yes | Yes | **Match** |
@@ -497,10 +497,8 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 ### Low Impact (Rarely Used Features)
 
 1. **Drawer regions** - XLR-specific collapsible UI regions
-2. **Geo-fencing enforcement** - Parsed but not filtered
-4. **Criteria enforcement** - Framework exists, enforcement TODO
-5. **Sync events** - Multi-display synchronization (@xiboplayer/sync package started)
-6. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
+2. **Sync events** - Multi-display synchronization (@xiboplayer/sync package started)
+3. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
 
 ### Not Applicable (Browser Sandbox)
 
@@ -626,7 +624,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 | **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
 | **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
 | **Webcam/Mic** | Yes (new in R406) | No (browser permissions) | Windows better |
-| **Weather criteria** | Fixed in R406 | Parsed (not enforced) | Both partial |
+| **Weather criteria** | Fixed in R406 | Yes (criteria evaluation with custom properties) | **Match** |
 | **Platform** | Windows 10+ only | Any browser | **Ours BETTER** — runs on Linux, macOS, ChromeOS, Android, smart TVs, any device with a browser |
 | **Kiosk** | Native Windows kiosk | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **Ours BETTER** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
 | **Installation** | MSI installer | Zero (open URL) or RPM/DEB | **Ours BETTER** — PWA needs no install at all; RPM/DEB auto-update from repo |
