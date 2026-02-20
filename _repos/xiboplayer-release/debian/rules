@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/xiboplayer-release/etc/apt/sources.list.d
+	install -d $(CURDIR)/debian/xiboplayer-release/usr/share/keyrings
+	install -pm 0644 xiboplayer.sources $(CURDIR)/debian/xiboplayer-release/etc/apt/sources.list.d/xiboplayer.sources
+	install -pm 0644 xiboplayer.gpg $(CURDIR)/debian/xiboplayer-release/usr/share/keyrings/xiboplayer.gpg

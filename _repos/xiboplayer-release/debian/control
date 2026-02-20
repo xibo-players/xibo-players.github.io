@@ -1,0 +1,14 @@
+Source: xiboplayer-release
+Section: misc
+Priority: optional
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://dnf.xiboplayer.org
+
+Package: xiboplayer-release
+Architecture: all
+Depends: ${misc:Depends}
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.

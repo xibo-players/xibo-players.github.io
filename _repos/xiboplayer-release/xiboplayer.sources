@@ -1,0 +1,4 @@
+Types: deb
+URIs: https://dnf.xiboplayer.org/deb/ubuntu/24.04
+Suites: ./
+Signed-By: /usr/share/keyrings/xiboplayer.gpg
