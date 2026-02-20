@@ -1,34 +1,14 @@
-Package: xibo-kiosk
-Version: 0.2.0
-Architecture: all
-Maintainer: Pau Aliagas <linuxnow@gmail.com>
-Depends: gnome-kiosk, dunst, unclutter, zenity
-Recommends: keyd
-Filename: ./xibo-kiosk_0.2.0_all.deb
-Size: 5666
-MD5sum: 210367bc59417c1c12c851d5a168f7be
-SHA1: 126fd350a120cb79b86f7e749dca3e3b649f4356
-SHA256: bea4f20ea1007688463f1d1d6ae943cbc3abae130903674db80a52934354156e
-Section: misc
-Priority: optional
-Homepage: https://github.com/xibo-players/xibo-kiosk
-Description: Kiosk session scripts for Xibo digital signage players
- Kiosk session scripts for running Xibo digital signage players as full-screen
- displays under GNOME Kiosk. Includes a first-boot registration wizard,
- session holder with health monitoring, dunst notification config, and
- a systemd user unit for the player process.
-
 Package: xiboplayer-chromium
-Version: 0.2.0-1
+Version: 0.3.0-1
 Architecture: all
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.2.0-1_all.deb
-Size: 7527402
-MD5sum: a09320eb341ccb9a8fce7d4a7421c986
-SHA1: 2d5618ebe28428b4b5b863933e7797d73ad93b0b
-SHA256: fd94a56f11c9ecabb2f93044a6ef3301f2a93cc811f0f5dd8228c2f713e733dd
+Filename: ./xiboplayer-chromium_0.3.0-1_all.deb
+Size: 7527456
+MD5sum: abd04fd3f20d603ccf572329a78edc0b
+SHA1: 12d5d78c6da0d6e48adbf4fe70389ca011483944
+SHA256: 88a57043c7349a6ab13ced5a5e116663beb78316df6c6f64728f96c99dceaa95
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xiboplayer-chromium
