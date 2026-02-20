@@ -11,6 +11,30 @@
 
 ---
 
+## Table of Contents
+
+- [Executive Summary](#executive-summary)
+- [Repository Structure](#repository-structure-split-from-monorepo--2026-02-17)
+- [1. Schedule Management](#1-schedule-management)
+- [2. XMDS Communication](#2-xmds-communication)
+- [3. File/Cache Management](#3-filecache-management)
+- [4. Layout Renderer](#4-layout-renderer-xlr-v1022-vs-rendererlite)
+- [5. XMR Push Messaging](#5-xmr-push-messaging)
+- [6. Interactive Control](#6-interactive-control)
+- [7. Stats and Logging](#7-stats-and-logging)
+- [8. Config and Settings](#8-config-and-settings)
+- [9. Screenshot Capture](#9-screenshot-capture)
+- [10. Performance](#10-performance-comparison)
+- [11. Packaging and Distribution](#11-packaging-and-distribution)
+- [12. Kiosk Environment](#12-kiosk-environment-xibo-kiosk)
+- [13. Remaining Gaps](#13-remaining-gaps)
+- [14. Where XiboPlayer is Better](#14-where-xiboplayer-is-better-than-all-upstream-players)
+- [15. Arexibo Detailed Comparison](#15-arexibo-detailed-comparison)
+- [16. Windows Player Detailed Comparison](#16-windows-player-detailed-comparison)
+- [Version Reference](#version-reference)
+
+---
+
 ## Executive Summary
 
 | Area | Parity | Notes |
