@@ -23,10 +23,10 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Depends: gnome-kiosk, dunst, unclutter, zenity
 Recommends: keyd
 Filename: ./xibo-kiosk_0.3.0_all.deb
-Size: 5660
-MD5sum: f708208fb50469791431dcb349d747af
-SHA1: 4b39f2cafa22efd9d535fdbf0830dce07254547e
-SHA256: f3c3e5da463a792fbfc9f030f39efce518673d3fa4d084ce0c7146d41f3dddd8
+Size: 5664
+MD5sum: 01e7b4cdd51ac32f5626c006b0d83006
+SHA1: 9d3f4cb9cca9771c9de900a2845771138ace288f
+SHA256: fcd5e95ca0d28f6b0b5685736055a07942024618abc646dfa671219e85f96d7a
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xibo-kiosk
@@ -43,10 +43,10 @@ Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
 Filename: ./xiboplayer-chromium_0.3.0-1_all.deb
-Size: 7527456
-MD5sum: abd04fd3f20d603ccf572329a78edc0b
-SHA1: 12d5d78c6da0d6e48adbf4fe70389ca011483944
-SHA256: 88a57043c7349a6ab13ced5a5e116663beb78316df6c6f64728f96c99dceaa95
+Size: 7525536
+MD5sum: 4824932deb98885260537d86721f7f1c
+SHA1: d33e09e61c3d0b5a40e0008ce0aab209ca987933
+SHA256: f4f6af75d64e65993b4098343de59dd85cd215ab3f502b6eb8a548aaf4ff7567
 Section: misc
 Priority: optional
 Homepage: https://github.com/xibo-players/xiboplayer-chromium
