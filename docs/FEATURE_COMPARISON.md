@@ -1,7 +1,7 @@
 # Feature Comparison: XiboPlayer v0.3.x vs Upstream Players
 
 **Last Updated:** 2026-02-20
-**Our Version:** v0.3.x (SDK v0.3.0, PWA v0.3.2, Electron v0.3.1)
+**Our Version:** v0.3.x (SDK v0.3.3, PWA v0.3.3, Electron v0.3.1, Chromium v0.3.1-4)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
 - [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
@@ -85,7 +85,8 @@ Independent repositories under the `xibo-players/` GitHub org:
 @xiboplayer/stats      - StatsCollector + LogReporter (IndexedDB)
 @xiboplayer/settings   - DisplaySettings (EventEmitter)
 @xiboplayer/sw         - Service Worker helpers
-@xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry
+@xiboplayer/crypto     - RSA key pair generation (Web Crypto API)
+@xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry, Config
 @xiboplayer/proxy      - CORS proxy for local development
 @xiboplayer/sync       - Multi-display synchronization (WIP)
 @xiboplayer/docs       - MCP documentation server
@@ -311,7 +312,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | dataUpdate | Yes | Yes -> PlayerCore.refreshDataConnectors() | **Match** |
 | criteriaUpdate | Yes | Yes (re-collect) | **Match** |
 | currentGeoLocation | Yes | Stub (no Geolocation API call) | Partial |
-| rekey | Yes | Stub (TODO: RSA key pair) | Partial |
+| rekey | Yes | Yes -> RSA key rotation (Web Crypto) | **Match** |
 | JSON message parsing | Yes | Yes | **Match** |
 | TTL/expiry checking | Yes | Yes | **Match** |
 | Channel subscription | Yes | Yes (init message on connect) | **Match** |
@@ -496,8 +497,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 ### Low Impact (Rarely Used Features)
 
 1. **Drawer regions** - XLR-specific collapsible UI regions
-2. **RSA key pair for XMR** - Plain WebSocket works; encryption is optional
-3. **Geo-fencing enforcement** - Parsed but not filtered
+2. **Geo-fencing enforcement** - Parsed but not filtered
 4. **Criteria enforcement** - Framework exists, enforcement TODO
 5. **Sync events** - Multi-display synchronization (@xiboplayer/sync package started)
 6. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
@@ -564,7 +564,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | Category | Arexibo | XiboPlayer | Winner |
 |----------|---------|------------|--------|
 | **XMDS** | All v5 methods, proxy, cert override | All v5 + REST + BlackList + CRC32 + ETag | **XiboPlayer** |
-| **XMR** | ZeroMQ + RSA key encryption | WebSocket wrapper (13 handlers) | Arexibo (encryption) |
+| **XMR** | ZeroMQ + RSA key encryption | WebSocket + RSA key registration (13 handlers) | Tie (different transport) |
 | **Schedule** | Full dayparts, campaigns | Full dayparts, campaigns, interrupts, actions | **XiboPlayer** |
 | **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS) | **XiboPlayer** |
 | **Cache** | Disk + MD5, sequential | Cache API + parallel 4x chunks + streaming | **XiboPlayer** (4x faster) |
@@ -654,6 +654,7 @@ The Windows player is a mature, commercial product with full native OS integrati
 | xibo-communication-framework | 0.0.6 | 2025-12-11 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) |
 | Xibo for Windows | v4 R406 | 2025-12-10 | [GitHub](https://github.com/xibosignage/xibo-dotnetclient/releases) |
 | Arexibo | latest | 2025-05-18 | [GitHub](https://github.com/birkenfeld/arexibo) |
-| XiboPlayer SDK | v0.3.0 | 2026-02-17 | [npm](https://www.npmjs.com/org/xiboplayer) |
-| XiboPlayer PWA | v0.3.2 | 2026-02-20 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
+| XiboPlayer SDK | v0.3.3 | 2026-02-20 | [npm](https://www.npmjs.com/org/xiboplayer) |
+| XiboPlayer PWA | v0.3.3 | 2026-02-20 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
 | XiboPlayer Electron | v0.3.1 | 2026-02-20 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
+| XiboPlayer Chromium | v0.3.1-4 | 2026-02-20 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
