@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xibo Players - Package Repository</title>
+    <title>Xibo Players — Open-source digital signage players</title>
+    <meta name="description" content="Open-source digital signage players for Xibo CMS. PWA, Electron, Chromium kiosk, and pre-built bootable images for PCs and Raspberry Pi.">
     <style>
         :root {
             --blue: #0969da;
@@ -101,11 +102,23 @@
             transition: background 0.15s;
         }
         .hero-links a:hover { background: rgba(255,255,255,0.15); }
+        .disclaimer {
+            max-width: 540px;
+            margin: 20px auto 0;
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            font-size: 0.8em;
+            opacity: 0.75;
+            line-height: 1.5;
+        }
 
         /* Nav tabs */
         .nav {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 0;
             background: var(--card-bg);
             border-bottom: 1px solid var(--gray-200);
@@ -114,13 +127,14 @@
             z-index: 10;
         }
         .nav a {
-            padding: 14px 24px;
+            padding: 14px 18px;
             text-decoration: none;
             color: var(--gray-500);
             font-weight: 500;
-            font-size: 0.95em;
+            font-size: 0.9em;
             border-bottom: 2px solid transparent;
             transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap;
         }
         .nav a:hover, .nav a.active { color: var(--blue); border-bottom-color: var(--blue); }
 
@@ -184,6 +198,141 @@
         .badge.rpm { background: var(--badge-rpm-bg); border-color: var(--badge-rpm-border); color: var(--badge-rpm-color); }
         .badge.deb { background: var(--badge-deb-bg); border-color: var(--badge-deb-border); color: var(--badge-deb-color); }
         .badge.arch { background: var(--badge-arch-bg); border-color: var(--badge-arch-border); color: var(--badge-arch-color); }
+
+        /* Player cards — wider layout for the 5 players */
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .player-card {
+            background: var(--card-bg);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.15s, border-color 0.15s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .player-card:hover { border-color: var(--blue); box-shadow: 0 2px 12px rgba(9,105,218,0.1); }
+        .player-card h3 {
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .player-card h3 .icon { font-size: 1.3em; }
+        .player-card .player-mono {
+            font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+            font-size: 0.8em;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        .player-card .desc { color: var(--gray-500); font-size: 0.9em; flex: 1; }
+        .player-card .meta {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .player-card.featured {
+            border-color: var(--blue);
+            border-width: 2px;
+            position: relative;
+        }
+        .player-card.featured::before {
+            content: 'Engine';
+            position: absolute;
+            top: -9px;
+            right: 16px;
+            background: var(--blue);
+            color: #fff;
+            font-size: 0.7em;
+            font-weight: 600;
+            padding: 1px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.03em;
+        }
+
+        /* Getting started cards */
+        .gs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .gs-card {
+            background: var(--card-bg);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+        .gs-card:hover { border-color: var(--blue); box-shadow: 0 2px 12px rgba(9,105,218,0.1); }
+        .gs-card .gs-icon { font-size: 2em; margin-bottom: 10px; }
+        .gs-card h3 { font-size: 1em; font-weight: 600; margin-bottom: 4px; }
+        .gs-card .gs-format { font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace; font-size: 0.78em; color: var(--blue); margin-bottom: 8px; }
+        .gs-card .desc { color: var(--gray-500); font-size: 0.85em; flex: 1; }
+        .gs-card .gs-action {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--blue);
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        .gs-tip {
+            background: var(--card-bg);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.9em;
+        }
+        .gs-tip h4 { font-size: 0.95em; font-weight: 600; margin-bottom: 6px; }
+        .gs-tip p { color: var(--gray-500); }
+        .gs-tip code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.88em;
+        }
+
+        /* SDK section */
+        .sdk-box {
+            background: var(--card-bg);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .sdk-box .sdk-icon { font-size: 2.2em; flex-shrink: 0; }
+        .sdk-box p { color: var(--gray-500); font-size: 0.95em; }
+        .sdk-box a { color: var(--blue); text-decoration: none; }
+        .sdk-box a:hover { text-decoration: underline; }
+        .sdk-links { margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .sdk-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--blue);
+            font-size: 0.9em;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .sdk-links a:hover { text-decoration: underline; }
 
         /* Setup block */
         .setup-block {
@@ -280,8 +429,6 @@
             color: var(--info-color);
         }
 
-        /* Arch tabs (reuses .tab-bar style) */
-
         /* Loading */
         .loading { color: var(--gray-500); font-style: italic; padding: 20px 0; }
 
@@ -296,6 +443,11 @@
         }
         footer a { color: var(--gray-500); }
         footer a:hover { color: var(--blue); }
+        footer .footer-disclaimer {
+            margin-top: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
 
         /* Theme toggle */
         .theme-toggle {
@@ -316,8 +468,13 @@
         @media (max-width: 640px) {
             .hero { padding: 36px 16px 32px; }
             .hero h1 { font-size: 1.8em; }
-            .nav a { padding: 12px 14px; font-size: 0.85em; }
-            .pkg-grid { grid-template-columns: 1fr; }
+            .nav a { padding: 10px 12px; font-size: 0.82em; }
+            .pkg-grid, .player-grid { grid-template-columns: 1fr; }
+            .gs-grid { grid-template-columns: 1fr 1fr; }
+            .sdk-box { flex-direction: column; gap: 12px; }
+        }
+        @media (max-width: 480px) {
+            .gs-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -325,15 +482,24 @@
 
 <div class="hero">
     <h1>Xibo Players</h1>
-    <p>Open-source digital signage players for Xibo CMS. Install via DNF or APT from a single unified repository.</p>
+    <p>Open-source digital signage players for Xibo CMS. Turn any PC, Raspberry Pi, or browser into a signage display.</p>
     <div class="hero-links">
         <a href="https://github.com/xibo-players">GitHub</a>
-        <a href="#setup">Setup guide</a>
-        <a href="#browse">Browse packages</a>
+        <a href="#players">Players</a>
+        <a href="#getting-started">Getting started</a>
+        <a href="#setup">Install packages</a>
+    </div>
+    <div class="disclaimer">
+        This is an independent community project. Not affiliated with
+        <a href="https://xibosignage.com" style="color:inherit; text-decoration:underline;">Xibo Ltd</a>
+        or the Xibo Digital Signage project. Xibo is a registered trademark of Xibo Ltd.
     </div>
 </div>
 
 <nav class="nav">
+    <a href="#players">Players</a>
+    <a href="#getting-started">Getting started</a>
+    <a href="#sdk">SDK</a>
     <a href="#packages">Packages</a>
     <a href="#setup">Setup</a>
     <a href="#browse">Browse</a>
@@ -342,6 +508,142 @@
 </nav>
 
 <div class="container">
+
+    <!-- Players -->
+    <section id="players">
+        <h2>Choose your player</h2>
+        <p class="section-desc">Five ways to run Xibo on your hardware. The PWA engine powers all players — pick the shell that fits your deployment.</p>
+
+        <div class="player-grid">
+            <a class="player-card featured" href="https://github.com/xibo-players/xiboplayer-pwa">
+                <h3><span class="icon">&#x1F4F1;</span> PWA Player</h3>
+                <div class="player-mono">@xiboplayer/pwa</div>
+                <p class="desc">Lightweight browser-based player and the engine that powers all other players. Offline-first with Service Worker caching. Supports video, images, PDF, text/tickers, web pages, and HLS streaming.</p>
+                <div class="meta">
+                    <span class="badge">Browser</span>
+                    <span class="badge">npm</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-electron">
+                <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
+                <div class="player-mono">xiboplayer-electron</div>
+                <p class="desc">Desktop app wrapping the PWA player. Best for development and testing. Standalone window with DevTools access and automatic CMS registration.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-chromium">
+                <h3><span class="icon">&#x1F310;</span> Chromium Kiosk</h3>
+                <div class="player-mono">xiboplayer-chromium</div>
+                <p class="desc">Locked-down Chromium browser running the PWA. Lightweight alternative when Electron is not needed. Minimal resource usage.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge">noarch</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/xibo-kiosk">
+                <h3><span class="icon">&#x1F5A5;</span> Xibo Kiosk</h3>
+                <div class="player-mono">xibo-kiosk</div>
+                <p class="desc">Complete kiosk operating system. GNOME Kiosk session with auto-login, first-boot registration wizard, health monitoring, and dunst notifications. Pre-built bootable images for PCs and Raspberry Pi.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/arexibo">
+                <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
+                <div class="player-mono">arexibo</div>
+                <p class="desc">Native Rust-based player with Qt6 WebEngine. High performance, dual architecture. Independent from the PWA engine.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Getting Started -->
+    <section id="getting-started">
+        <h2>Getting started</h2>
+        <p class="section-desc">The fastest way to get a signage display running. Pick your hardware, download an image, flash and boot — no Linux experience needed.</p>
+
+        <div class="gs-grid">
+            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
+                <div class="gs-icon">&#x1F5A5;</div>
+                <h3>PC or laptop</h3>
+                <div class="gs-format">Installer ISO</div>
+                <p class="desc">Flash the ISO to a USB stick with <strong>Balena Etcher</strong> or <code>dd</code>. Boot from USB — the installer formats the disk and sets everything up automatically. Remove USB and reboot.</p>
+                <div class="gs-action">Download ISO &#x2192;</div>
+            </a>
+            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
+                <div class="gs-icon">&#x1F353;</div>
+                <h3>Raspberry Pi 4/5</h3>
+                <div class="gs-format">Raw image (aarch64)</div>
+                <p class="desc">Flash the <code>.raw.xz</code> image directly to an SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Insert the card, power on, and the kiosk boots ready to use.</p>
+                <div class="gs-action">Download aarch64 &#x2192;</div>
+            </a>
+            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
+                <div class="gs-icon">&#x1F4BB;</div>
+                <h3>Virtual machine</h3>
+                <div class="gs-format">QCOW2</div>
+                <p class="desc">Ready-to-boot VM image. Open in <strong>GNOME Boxes</strong>, <strong>virt-manager</strong>, <strong>Proxmox</strong>, or run directly with <strong>QEMU</strong>. No installation needed.</p>
+                <div class="gs-action">Download QCOW2 &#x2192;</div>
+            </a>
+            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
+                <div class="gs-icon">&#x1F527;</div>
+                <h3>Intel NUC / embedded</h3>
+                <div class="gs-format">Raw image (x86_64)</div>
+                <p class="desc">Write the <code>.raw.xz</code> image directly to the internal SSD or SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Same as the Pi image but for Intel/AMD hardware.</p>
+                <div class="gs-action">Download x86_64 &#x2192;</div>
+            </a>
+        </div>
+
+        <div class="gs-tip">
+            <h4>After booting</h4>
+            <p>
+                Log in with user <code>xibo</code> / password <code>xibo</code>.
+                Change your password with <code>passwd</code>.
+                Connect to your Xibo CMS from the kiosk setup screen — the display registers automatically and starts playing your scheduled content.
+            </p>
+        </div>
+
+        <div class="gs-tip">
+            <h4>Already have Fedora or Ubuntu?</h4>
+            <p>
+                You don't need a kiosk image — just install the player packages directly.
+                Jump to the <a href="#setup" style="color:var(--blue);">repository setup</a> to add our DNF/APT repo and install with a single command.
+            </p>
+        </div>
+    </section>
+
+    <!-- SDK -->
+    <section id="sdk">
+        <h2>SDK</h2>
+        <p class="section-desc">The building blocks behind every player.</p>
+
+        <div class="sdk-box">
+            <div class="sdk-icon">&#x1F9F1;</div>
+            <div>
+                <p>
+                    All players are built on the <strong>@xiboplayer SDK</strong> — a modular TypeScript library with packages for
+                    caching, rendering, scheduling, XMDS/SOAP communication, XMR real-time commands, statistics reporting, and more.
+                    Each package is published independently to npm.
+                </p>
+                <div class="sdk-links">
+                    <a href="https://github.com/xibo-players/xiboplayer">&#x1F4E6; GitHub</a>
+                    <a href="https://www.npmjs.com/org/xiboplayer">&#x1F4E6; npm packages</a>
+                    <a href="https://github.com/xibo-players/xiboplayer/tree/main/mcp-server">&#x1F916; MCP Server</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Packages -->
     <section id="packages">
@@ -365,6 +667,7 @@
                 <p class="desc">Electron-based Xibo player with offline support, service worker caching, and automatic CMS registration.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
                     <span class="badge arch">x86_64</span>
                 </div>
             </a>
@@ -373,6 +676,7 @@
                 <p class="desc">Chromium kiosk wrapper that runs the Xibo PWA player in a locked-down browser window.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
                     <span class="badge">noarch</span>
                 </div>
             </a>
@@ -488,7 +792,7 @@ sudo apt install xibo-kiosk</pre>
     <!-- Images -->
     <section id="images">
         <h2>Kiosk images</h2>
-        <p class="section-desc">Pre-built bootable images for quick deployment. Flash to USB or SD card, boot, and register with your CMS.</p>
+        <p class="section-desc">Pre-built bootable images — no Linux install needed. Download, flash to USB or SD card, boot and your kiosk is ready. See <a href="#getting-started" style="color:var(--blue);">Getting started</a> for step-by-step instructions.</p>
 
         <div id="images-list" class="loading">Loading kiosk images...</div>
     </section>
@@ -527,6 +831,9 @@ sudo apt install xibo-kiosk</pre>
         <a href="https://github.com/xibo-players">github.com/xibo-players</a>
         &middot; Open-source digital signage
         &middot; Powered by <a href="https://pages.github.com">GitHub Pages</a>
+    </p>
+    <p class="footer-disclaimer">
+        Not affiliated with Xibo Ltd. Xibo is a registered trademark of Xibo Ltd.
     </p>
 </footer>
 
@@ -746,26 +1053,40 @@ async function loadKioskImages() {
                 '<p class="desc">Kiosk images will appear here after the first tagged release.</p></div></div>';
             return;
         }
-        let html = '<table class="browse-table"><thead><tr><th>Image</th><th>Format</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
+        let html = '<table class="browse-table"><thead><tr><th>Image</th><th>Format</th><th>Use case</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
         for (const img of images) {
             const size = img.size > 1073741824 ? (img.size / 1073741824).toFixed(1) + ' GB' : img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
             const arch = img.name.includes('x86_64') ? 'x86_64'
                 : img.name.includes('aarch64') ? 'aarch64' : '—';
-            const fmt = img.name.endsWith('.iso') ? 'ISO installer'
-                : img.name.endsWith('.qcow2') ? 'QCOW2 (VM)'
-                : img.name.endsWith('.raw.xz') ? 'Raw disk (SD/USB)'
+            const isIso = img.name.endsWith('.iso');
+            const isQcow = img.name.endsWith('.qcow2');
+            const isRaw = img.name.endsWith('.raw.xz');
+            const isArm = img.name.includes('aarch64');
+            const fmt = isIso ? 'ISO installer'
+                : isQcow ? 'QCOW2'
+                : isRaw ? 'Raw disk'
                 : img.name.endsWith('.xz') ? 'Compressed' : 'Image';
+            const useCase = isIso ? 'Flash to USB, boot on any PC — fully automated install'
+                : isQcow ? 'Ready-to-boot VM for GNOME Boxes, virt-manager, Proxmox, QEMU'
+                : (isRaw && isArm) ? 'Flash to SD card for Raspberry Pi 4/5 or ARM boards'
+                : isRaw ? 'Write to SSD or SD card for Intel NUCs, embedded PCs'
+                : '';
             html += '<tr>' +
                 '<td><a href="' + img.browser_download_url + '">' + img.name + '</a></td>' +
                 '<td>' + fmt + '</td>' +
+                '<td style="color:var(--gray-500);font-size:0.85em;">' + useCase + '</td>' +
                 '<td>' + size + '</td>' +
                 '<td><span class="badge arch">' + arch + '</span></td>' +
                 '<td><a href="' + release.html_url + '">' + release.tag_name + '</a></td>' +
                 '</tr>';
         }
         html += '</tbody></table>';
-        html += '<p style="margin-top:12px; font-size:0.85em; color:var(--gray-500);">Images include: GNOME Kiosk session, auto-login, xibo-kiosk + xiboplayer-electron pre-installed. ' +
-            '<a href="https://github.com/xibo-players/xibo-kiosk/releases">All releases</a></p>';
+        html += '<div style="margin-top:16px; font-size:0.85em; color:var(--gray-500);">' +
+            '<p>All images include: GNOME Kiosk session, auto-login, xibo-kiosk + xiboplayer-electron pre-installed. ' +
+            'Default login: <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> / <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> — change your password after first boot.</p>' +
+            '<p style="margin-top:6px;">Use <a href="https://etcher.balena.io/" style="color:var(--blue);">Balena Etcher</a> for an easy graphical tool to flash any image. ' +
+            '<a href="https://github.com/xibo-players/xibo-kiosk/releases" style="color:var(--blue);">All releases</a></p>' +
+            '</div>';
         el.innerHTML = html;
     } catch (e) {
         el.innerHTML = '<div class="pkg-grid">' +
