@@ -132,6 +132,10 @@ Independent repositories under the `xibo-players/` GitHub org:
 
 The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. It uses JSON payloads via a custom CMS REST API (`/pwa/*` endpoints), with ETag-based HTTP caching that returns 304 Not Modified for unchanged data, reducing bandwidth further than SOAP CRC32 alone.
 
+### CMS Management API Client (Unique Feature)
+
+`@xiboplayer/utils` includes a comprehensive CMS REST API client with 77 methods covering the full Xibo CMS v4 API: layouts, campaigns, schedules, commands, displays, playlists, widgets, datasets, notifications, folders, tags, templates, and display group actions. No other player includes a CMS management API — this enables programmatic content management directly from the player SDK.
+
 ### SOAP/REST API Coverage
 
 | Method | XLR | Windows | Arexibo | Our SOAP | Our REST | Status |
@@ -591,6 +595,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 42. **HTTP 429 Retry-After** - respects rate-limiting headers (delta-seconds + HTTP-date) instead of spamming CMS
 43. **Fault reporting agent** - independent 60s fault submission cycle for faster CMS alerts than the 300s collection cycle
 44. **Layout blacklisting** - auto-blacklists layouts after 3 consecutive render failures, reports to CMS via BlackList XMDS, resets on CRC change
+45. **CMS Management API client** - 77-method REST client for full CMS v4 API (layouts, campaigns, schedules, datasets, playlists, commands, displays, tags, folders, notifications)
 
 ---
 
