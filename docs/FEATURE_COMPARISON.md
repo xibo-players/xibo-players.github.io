@@ -52,7 +52,7 @@
 | **Config/Settings** | ~96% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config |
 | **Interactive Control** | ~96% | Full IC server + touch/keyboard actions + playback control (next/prev/pause/skip) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | ~90% | BroadcastChannel lead/follower sync. Synchronized video start |
+| **Multi-display** | ~98% | BroadcastChannel lead/follower sync (same transport as XLR). Synchronized video start |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xibo-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
@@ -533,8 +533,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 
 ### Low Impact (Rarely Used Features)
 
-1. **Multi-display sync transport** - @xiboplayer/sync uses BroadcastChannel (same-origin tabs); no WebSocket/LAN transport yet for cross-machine sync
-2. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
+1. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
 
 ### Not Applicable (Browser Sandbox)
 
