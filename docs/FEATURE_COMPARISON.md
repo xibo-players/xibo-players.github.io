@@ -142,7 +142,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Schedule | Yes | Yes | Yes | Yes | Yes (XML) | **Match** |
 | GetResource | No | Yes | Yes | Yes | Yes | **Ours BETTER** — XLR lacks GetResource, requiring server-side rendering for all widgets |
 | MediaInventory | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, and MAC address for remote diagnostics |
+| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, MAC address, deviceName, lastCommandSuccess, geo-location |
 | SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
@@ -159,7 +159,9 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | ETag 304 caching | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
 | licenceResult in RegisterDisplay | Yes | Yes (v7 spec) | **Match** |
 | Retry with backoff | Axios built-in | fetchWithRetry (configurable) | **Match** |
-| Purge list parsing | Yes | Yes | **Match** |
+| HTTP 429 Retry-After | No | No | Yes (respects Retry-After header) | **Ours BETTER** — backs off when CMS rate-limits instead of spamming |
+| Purge list parsing | Yes | Yes (with saveAs + fileType) | **Match** |
+| clientType/clientVersion | Hardcoded | Yes (configurable via config) | **Match** |
 | Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
 | Offline fallback | No | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
 | Geolocation fallback chain | No | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
@@ -213,6 +215,12 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Widget fromDt/toDt expiry | Yes | Yes (filtered at region creation) | **Match** |
 | NUMITEMS/DURATION comments | Yes | Yes (parsed from GetResource HTML) | **Match** — overrides widget duration for DataSet tickers and RSS feeds |
 | render attribute (native/html) | Yes | Yes (parsed for future dispatch) | **Match** |
+| schemaVersion parsing | Yes | Yes | **Match** |
+| backgroundColor (modern) | Yes | Yes (preferred over bgcolor) | **Match** |
+| Region enableStat | Yes | Yes (per-region stat suppression) | **Match** |
+| Region loop option | Yes | Yes (loop=0 keeps widget visible) | **Match** |
+| Layout-level actions | Yes | Yes (parsed from `<action>` under `<layout>`) | **Match** |
+| Widget commands | Yes | Yes (widgetCommand events from `<commands>`) | **Match** |
 
 ### Widget Types
 
@@ -577,6 +585,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 39. **Region exit transitions** - animated transitions when leaving regions
 40. **Drawer regions** - hidden regions revealed via navigateToWidget with auto-hide
 41. **Sub-playlist cycle playback** - round-robin or random widget selection per group per layout cycle
+42. **HTTP 429 Retry-After** - respects rate-limiting headers instead of spamming CMS
 
 ---
 
