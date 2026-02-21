@@ -158,7 +158,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | ETag 304 caching | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
 | licenceResult in RegisterDisplay | Yes | Yes (v7 spec) | **Match** |
 | Retry with backoff | Axios built-in | fetchWithRetry (configurable) | **Match** |
-| HTTP 429 Retry-After | No | Yes (respects Retry-After header) | **Ours BETTER** — backs off when CMS rate-limits instead of spamming |
+| HTTP 429 Retry-After | No | Yes (delta-seconds + HTTP-date, bypasses maxDelayMs) | **Ours BETTER** — backs off when CMS rate-limits, supports both Retry-After formats per RFC 7231 |
 | Purge list parsing | Yes | Yes (with saveAs + fileType) | **Match** |
 | clientType/clientVersion | Hardcoded | Yes (configurable via config) | **Match** |
 | Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
@@ -395,6 +395,8 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Log submission to CMS | Yes | Yes | Yes (XML or JSON) | **Match** |
 | Log batching | Yes | Yes | Yes (capped at 50 per spec) | **Match** |
 | Fault reporting | faultsDB | Yes | Yes (dedup with 5-min cooldown) | **Match** |
+| Fault reporting agent | No | No | Yes (independent 60s cycle) | **Ours BETTER** — faults submitted 5x faster than collection cycle for quicker CMS alerts |
+| Layout blacklisting | No | Yes | Yes (3 failures → BlackList XMDS + skip) | **Match** — auto-blacklists failing layouts and reports to CMS, resets on RF CRC change |
 | Replay-safe tracking | No | No | Yes (auto-end previous on replay) | **Ours BETTER** — auto-ends the previous layout's stats when replaying, preventing double-counting |
 | Quota-exceeded cleanup | No | No | Yes (auto-delete oldest 100) | **Ours BETTER** — auto-prunes old stats when IndexedDB is full instead of silently failing |
 | BroadcastChannel stats | Yes | No | No | **GAP** (low impact) |
@@ -586,7 +588,9 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 39. **Region exit transitions** - animated transitions when leaving regions
 40. **Drawer regions** - hidden regions revealed via navigateToWidget with auto-hide
 41. **Sub-playlist cycle playback** - round-robin or random widget selection per group per layout cycle
-42. **HTTP 429 Retry-After** - respects rate-limiting headers instead of spamming CMS
+42. **HTTP 429 Retry-After** - respects rate-limiting headers (delta-seconds + HTTP-date) instead of spamming CMS
+43. **Fault reporting agent** - independent 60s fault submission cycle for faster CMS alerts than the 300s collection cycle
+44. **Layout blacklisting** - auto-blacklists layouts after 3 consecutive render failures, reports to CMS via BlackList XMDS, resets on CRC change
 
 ---
 
