@@ -215,7 +215,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Widget fromDt/toDt expiry | Yes | Yes (filtered at region creation) | **Match** |
 | NUMITEMS/DURATION comments | Yes | Yes (parsed from GetResource HTML) | **Match** — overrides widget duration for DataSet tickers and RSS feeds |
 | render attribute (native/html) | Yes | Yes (parsed for future dispatch) | **Match** |
-| schemaVersion parsing | Yes | Yes | **Match** |
+| schemaVersion parsing | Yes | Yes (logged for diagnostics) | **Match** |
 | backgroundColor (modern) | Yes | Yes (preferred over bgcolor) | **Match** |
 | Region enableStat | Yes | Yes (per-region stat suppression) | **Match** |
 | Region loop option | Yes | Yes (loop=0 keeps widget visible) | **Match** |
@@ -238,6 +238,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | ticker | Duration-per-item | iframe + DURATION/NUMITEMS comment parsing | **Match** |
 | dataset | Yes | Via getWidgetHtml | **Match** (server-rendered) |
 | HLS streaming | Yes | Yes (native + hls.js dynamic import) | **Match** |
+| powerpoint/flash | Placeholder | Styled placeholder + log warning | **Match** |
 | shellcommand | Yes | No | N/A (browser sandbox) |
 
 ### Transitions
@@ -248,6 +249,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Fly In/Out | Yes | Yes | **Match** |
 | Compass directions (8) | Yes | Yes (N/NE/E/SE/S/SW/W/NW) | **Match** |
 | Region exit transitions | Yes | Yes (CSS animation on region removal) | **Match** |
+| Region transition defaults | Yes | Yes (transitionType/Duration/Direction from region options) | **Match** |
 | Configurable duration | Yes | Yes | **Match** |
 | Web Animations API | Yes | Yes | **Match** |
 
