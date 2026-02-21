@@ -48,7 +48,7 @@
 | **File Management** | ~95% | Parallel 4-chunk downloads BETTER. Service Worker progressive streaming |
 | **Renderer** | ~96% | Performance BETTER. Audio overlay, image scale/align, exit transitions, drawers, sub-playlists, isPaused |
 | **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
-| **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup |
+| **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching capped at 50 per spec + fault dedup |
 | **Config/Settings** | ~96% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config |
 | **Interactive Control** | ~96% | Full IC server + touch/keyboard actions + playback control (next/prev/pause/skip) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
@@ -105,7 +105,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 | Date/time filtering | Yes | Yes | **Match** |
 | Default layout fallback | Yes | Yes | **Match** |
 | maxPlaysPerHour | Yes | Yes + even distribution | **Ours BETTER** — spreads plays evenly across the hour instead of front-loading them |
-| Campaign scheduling | Yes | Yes (explicit campaign objects) | **Ours BETTER** — first-class campaign objects enable campaign-level stats and priority management |
+| Campaign scheduling | Yes | Yes (explicit campaign objects with duration, cyclePlayback, groupKey, playCount) | **Ours BETTER** — first-class campaign objects enable campaign-level stats and priority management |
 | Interrupt/shareOfVoice | Yes | Yes (full port of XLR algorithm) | **Match** |
 | Dayparting (weekly recurrence) | TODO | Full | **Ours BETTER** — supports ISO day-of-week and schedules that cross midnight (e.g. 22:00–02:00) |
 | Action events | Parsed | Yes (handleTrigger + action dispatch) | **Match** |
@@ -142,7 +142,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Schedule | Yes | Yes | Yes | Yes | Yes (XML) | **Match** |
 | GetResource | No | Yes | Yes | Yes | Yes | **Ours BETTER** — XLR lacks GetResource, requiring server-side rendering for all widgets |
 | MediaInventory | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, MAC address, deviceName, lastCommandSuccess, geo-location |
+| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, MAC address, deviceName, lastCommandSuccess, geo-location, statusDialog |
 | SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
@@ -220,6 +220,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Region enableStat | Yes | Yes (per-region stat suppression) | **Match** |
 | Region loop option | Yes | Yes (loop=0 keeps widget visible) | **Match** |
 | Layout-level actions | Yes | Yes (parsed from `<action>` under `<layout>`) | **Match** |
+| Action element attributes | Yes | Yes (id, source, sourceId, target, widgetId) | **Match** |
 | Widget commands | Yes | Yes (widgetCommand events from `<commands>`) | **Match** |
 
 ### Widget Types
@@ -233,7 +234,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | clock | getResource | getWidgetHtml | **Match** |
 | global/embedded | Full | iframe | **Match** |
 | pdf | No | PDF.js (lazy-loaded) | **Ours BETTER** — renders PDF natively in-browser; XLR and Windows have no PDF support |
-| webpage | iframe | iframe | **Match** |
+| webpage | iframe | iframe (modeId=0 routed through GetResource) | **Match** |
 | ticker | Duration-per-item | iframe + DURATION/NUMITEMS comment parsing | **Match** |
 | dataset | Yes | Via getWidgetHtml | **Match** (server-rendered) |
 | HLS streaming | Yes | Yes (native + hls.js dynamic import) | **Match** |
@@ -331,11 +332,11 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | collectNow | Yes | Yes -> PlayerCore.collectNow() | **Match** |
 | screenShot / screenshot | Yes | Yes -> PlayerCore.captureScreenshot() | **Match** |
 | licenceCheck | Yes | Yes (no-op for Linux/PWA) | **Match** |
-| changeLayout | Yes | Yes -> PlayerCore.changeLayout() | **Match** |
-| overlayLayout | Yes | Yes -> PlayerCore.overlayLayout() | **Match** |
+| changeLayout | Yes | Yes -> PlayerCore.changeLayout() with duration/auto-revert | **Match** |
+| overlayLayout | Yes | Yes -> PlayerCore.overlayLayout() with duration/auto-revert | **Match** |
 | revertToSchedule | Yes | Yes -> PlayerCore.revertToSchedule() | **Match** |
 | purgeAll | Yes | Yes -> PlayerCore.purgeAll() | **Match** |
-| commandAction | Yes | Yes (HTTP only in browser) | **Match** |
+| commandAction | Yes | Yes (resolves from local display commands, HTTP only in browser) | **Match** |
 | triggerWebhook | Yes | Yes -> PlayerCore.triggerWebhook() | **Match** |
 | dataUpdate | Yes | Yes -> PlayerCore.refreshDataConnectors() | **Match** |
 | criteriaUpdate | Yes | Yes (re-collect) | **Match** |
