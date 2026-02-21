@@ -106,7 +106,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 | maxPlaysPerHour | Yes | Yes + even distribution | **Ours BETTER** — spreads plays evenly across the hour instead of front-loading them |
 | Campaign scheduling | Yes | Yes (explicit campaign objects with duration, cyclePlayback, groupKey, playCount) | **Ours BETTER** — first-class campaign objects enable campaign-level stats and priority management |
 | Interrupt/shareOfVoice | Yes | Yes (full port of XLR algorithm) | **Match** |
-| Dayparting (weekly recurrence) | TODO | Full | **Ours BETTER** — supports ISO day-of-week and schedules that cross midnight (e.g. 22:00–02:00) |
+| Dayparting (daily/weekly/monthly) | TODO | Full (Day, Week, Month + recurrenceDetail intervals) | **Ours BETTER** — supports all three recurrence types with ISO day-of-week, every-N-days/months, and midnight crossing |
 | Action events | Parsed | Yes (handleTrigger + action dispatch) | **Match** |
 | DataConnector events | Parsed | Yes (DataConnectorManager with polling) | **Match** |
 | Command events | Parsed | Yes (executeCommand + scheduled commands) | **Match** |
@@ -409,7 +409,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 |---------|-----|---------|------------|--------|
 | Hardware key | machine-id | machine-id | FNV-1a hash + "pwa-" prefix | **Ours BETTER** — prefix makes it immediately identifiable as a PWA player in CMS display list |
 | CMS settings parsing | Full set | Full set | Full set (DisplaySettings class) | **Match** |
-| Download windows | No | Yes | Yes | **Ours BETTER** vs XLR — respects CMS-configured download time windows to avoid bandwidth during peak hours |
+| Download windows | No | Yes | Yes (enforced in collect cycle) | **Ours BETTER** vs XLR — blocks downloads outside configured window, respects CMS settings |
 | Screenshot interval | No | Yes | Yes (periodic + on-demand) | **Ours BETTER** vs XLR — supports both timed periodic captures and on-demand XMR triggers |
 | DisplaySettings class | Inline | Built-in | Dedicated + EventEmitter | **Ours BETTER** — settings changes emit events so all components react instantly without polling |
 | Centralized state | State class | Built-in | PlayerState (EventEmitter) | **Match** |
@@ -554,7 +554,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 5. **Instant layout replay** - Element reuse with isSameLayout detection (<0.5s)
 6. **Better memory management** - Per-layout blob URL lifecycle tracking, no leaks
 7. **Better cache integrity** - Auto-detection and cleanup of corrupted entries
-8. **Better dayparting** - Full weekly recurrence with ISO day-of-week and midnight crossing
+8. **Better dayparting** - Full daily/weekly/monthly recurrence with ISO day-of-week, every-N intervals, and midnight crossing
 9. **Better overlay system** - Priority-based z-index (1000 + priority)
 10. **PDF support** - PDF.js lazy-loaded (XLR and Windows lack this)
 11. **Audio visualization** - Gradient background + icon display for audio widgets
