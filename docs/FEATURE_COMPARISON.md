@@ -137,7 +137,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 
 | Method | XLR | Windows | Arexibo | Our SOAP | Our REST | Status |
 |--------|-----|---------|---------|----------|----------|--------|
-| RegisterDisplay | Yes | Yes | Yes | Yes | Yes | **Match** |
+| RegisterDisplay | Yes | Yes | Yes | Yes | Yes | **Match** — parses commands, display attrs (timezone, version_instructions) |
 | RequiredFiles | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | Schedule | Yes | Yes | Yes | Yes | Yes (XML) | **Match** |
 | GetResource | No | Yes | Yes | Yes | Yes | **Ours BETTER** — XLR lacks GetResource, requiring server-side rendering for all widgets |
