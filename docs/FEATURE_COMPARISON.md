@@ -512,7 +512,6 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 1. **Drawer regions** - XLR-specific collapsible UI regions (rarely used in practice)
 2. **Multi-display sync transport** - @xiboplayer/sync infrastructure exists but no WebSocket/LAN transport yet
 3. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
-4. **Schedule conflict detection** - No visual warning when schedules overlap
 
 ### Not Applicable (Browser Sandbox)
 
@@ -581,7 +580,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | Category | Arexibo | XiboPlayer | Winner |
 |----------|---------|------------|--------|
 | **XMDS** | All v5 methods, proxy, cert override | All v5 + REST + BlackList + CRC32 + ETag | **XiboPlayer** |
-| **XMR** | ZeroMQ + RSA key encryption | WebSocket + RSA key registration (13 handlers) | Tie (different transport) |
+| **XMR** | ZeroMQ + RSA encryption | WebSocket + RSA encryption (13 handlers) | Tie (different transport, both encrypted) |
 | **Schedule** | Full dayparts, campaigns | Full dayparts, campaigns, interrupts, actions, weather, interleaving | **XiboPlayer** |
 | **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS, audio overlay) | **XiboPlayer** |
 | **Cache** | Disk + MD5, sequential | Cache API + parallel 4x chunks + streaming | **XiboPlayer** (4x faster) |
@@ -597,8 +596,8 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 
 1. **RS232 Serial Port** - Full serial config (baud, parity, handshake), hex encoding, response reading
 2. **Shell Commands** - `/bin/sh -c` execution with regex output validation
-3. **ZeroMQ + RSA** - Encrypted XMR with proper key exchange (vs plain WebSocket)
-4. **XLF Translation Cache** - Pre-generates HTML at download time, version-tracked invalidation
+3. **ZeroMQ transport** - Direct ZeroMQ for XMR (vs WebSocket relay); both use RSA encryption
+4. **XLF Translation Cache** - Pre-generates HTML at download time, version-tracked invalidation. Note: this is an architectural necessity for Arexibo (Rust/Qt cannot render XLF natively), not a performance advantage — XiboPlayer's runtime rendering is faster because it parses XLF directly into DOM elements (<10ms), supports dynamic adaptation (ResizeObserver, orientation changes), and avoids stale cache risks
 
 Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kiosk, which provides the same functionality plus health monitoring, first-boot wizard, keyboard shortcuts, bootable images, and player-agnostic alternatives system. Arexibo can run inside xibo-kiosk.
 
@@ -615,7 +614,8 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 9. **Wake Lock API** - Native browser sleep prevention
 10. **Screenshot capture** - getDisplayMedia + html2canvas (Arexibo has none)
 11. **RPM/DEB packages** - Native package management (Arexibo requires manual build)
-12. **Active development** - Arexibo dormant since May 2025
+12. **Runtime XLF rendering** - Direct XLF-to-DOM parsing (<10ms) vs Arexibo's pre-generated HTML cache — supports dynamic resize, no stale cache, no translation step
+13. **Active development** - Arexibo dormant since May 2025
 
 ### Performance Comparison
 
