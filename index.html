@@ -509,6 +509,38 @@
 
 <div class="container">
 
+    <!-- What's New -->
+    <section id="whats-new">
+        <h2>What's new in v0.4.0</h2>
+        <p class="section-desc">Major feature release with 15+ new capabilities across the SDK and PWA player.</p>
+        <div class="pkg-grid">
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F4FA;</span> Multi-display sync</h3>
+                <p class="desc">BroadcastChannel-based lead/follower synchronization for video walls. Synchronized video start across displays.</p>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x26C5;</span> Weather &amp; geolocation</h3>
+                <p class="desc">Weather-based schedule criteria for conditional content. Geolocation fallback chain: browser → Google API → IP lookup.</p>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F3B5;</span> Audio &amp; rendering</h3>
+                <p class="desc">Audio widget with overlay visualization, image scaleType/align/valign, region exit transitions, and renderer pause/resume control.</p>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x23ED;</span> Playback control</h3>
+                <p class="desc">Keyboard shortcuts and timeline click-to-skip for layout navigation. Pause/resume, next/previous, revert to schedule.</p>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F4CA;</span> Schedule &amp; stats</h3>
+                <p class="desc">Conflict detection, interleaved default layouts, scheduled commands, event-based proof of play, and log batching.</p>
+            </div>
+            <div class="pkg-card" style="cursor:default;">
+                <h3><span class="icon">&#x1F3F7;</span> CMS integration</h3>
+                <p class="desc">Display tag config parsing, licence result handling, and REST weather endpoint support.</p>
+            </div>
+        </div>
+    </section>
+
     <!-- Players -->
     <section id="players">
         <h2>Choose your player</h2>
@@ -518,7 +550,7 @@
             <a class="player-card featured" href="https://github.com/xibo-players/xiboplayer-pwa">
                 <h3><span class="icon">&#x1F4F1;</span> PWA Player</h3>
                 <div class="player-mono">@xiboplayer/pwa</div>
-                <p class="desc">Lightweight browser-based player and the engine that powers all other players. Offline-first with Service Worker caching. Supports video, images, PDF, text/tickers, web pages, and HLS streaming.</p>
+                <p class="desc">Lightweight browser-based player and the engine that powers all other players. Offline-first with Service Worker caching. Supports video, images, audio, PDF, text/tickers, web pages, HLS streaming, multi-display sync, and playback control.</p>
                 <div class="meta">
                     <span class="badge">Browser</span>
                     <span class="badge">npm</span>
@@ -632,9 +664,9 @@
             <div class="sdk-icon">&#x1F9F1;</div>
             <div>
                 <p>
-                    All players are built on the <strong>@xiboplayer SDK</strong> — a modular TypeScript library with packages for
-                    caching, rendering, scheduling, XMDS/SOAP communication, XMR real-time commands, statistics reporting, and more.
-                    Each package is published independently to npm.
+                    All players are built on the <strong>@xiboplayer SDK</strong> — 13 modular TypeScript packages for
+                    caching, rendering, scheduling, multi-display sync, XMDS/SOAP + REST communication, XMR real-time commands,
+                    statistics, and more. 1089 tests across 30 suites. Each package is published independently to npm.
                 </p>
                 <div class="sdk-links">
                     <a href="https://github.com/xibo-players/xiboplayer">&#x1F4E6; GitHub</a>
