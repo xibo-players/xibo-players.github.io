@@ -88,7 +88,6 @@ Independent repositories under the `xibo-players/` GitHub org:
 @xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry, Config
 @xiboplayer/proxy      - CORS proxy for local development
 @xiboplayer/sync       - Multi-display synchronization (lead/follower)
-@xiboplayer/docs       - Documentation and API reference
 ```
 
 ---
@@ -159,14 +158,14 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | ETag 304 caching | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
 | licenceResult in RegisterDisplay | Yes | Yes (v7 spec) | **Match** |
 | Retry with backoff | Axios built-in | fetchWithRetry (configurable) | **Match** |
-| HTTP 429 Retry-After | No | No | Yes (respects Retry-After header) | **Ours BETTER** — backs off when CMS rate-limits instead of spamming |
+| HTTP 429 Retry-After | No | Yes (respects Retry-After header) | **Ours BETTER** — backs off when CMS rate-limits instead of spamming |
 | Purge list parsing | Yes | Yes (with saveAs + fileType) | **Match** |
 | clientType/clientVersion | Hardcoded | Yes (configurable via config) | **Match** |
 | Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
 | Offline fallback | No | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
-| Geolocation fallback chain | No | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
-| CMS tag config parsing | No | No | Yes (geoApiKey\|value from RegisterDisplay) | **Ours BETTER** — parses display tag configuration for per-display settings |
-| Licence result handling | No | No | Yes | **Ours BETTER** — properly handles CMS licence status in RegisterDisplay response |
+| Geolocation fallback chain | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
+| CMS tag config parsing | No | Yes (geoApiKey\|value from RegisterDisplay) | **Ours BETTER** — parses display tag configuration for per-display settings |
+| Licence result handling | No | Yes | **Ours BETTER** — properly handles CMS licence status in RegisterDisplay response |
 | Storage estimate in status | No | Yes (navigator.storage.estimate) | **Ours BETTER** — CMS admins can see remaining disk space remotely |
 | Timezone in status | No | Yes (Intl.DateTimeFormat) | **Ours BETTER** — CMS can display and account for the player's local timezone |
 | MAC address reporting | No | Yes (Wake-on-LAN support) | **Ours BETTER** — enables remote Wake-on-LAN from CMS |
@@ -394,7 +393,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | enableStat per layout/widget | Yes | Yes | Yes (respects enableStat attribute) | **Match** |
 | Log database | Yes | Yes | IndexedDB (persistent) | **Match** |
 | Log submission to CMS | Yes | Yes | Yes (XML or JSON) | **Match** |
-| Log batching (50/300) | Yes | Yes | Yes (auto-detect: 50 normal, 300 backlog) | **Match** |
+| Log batching | Yes | Yes | Yes (capped at 50 per spec) | **Match** |
 | Fault reporting | faultsDB | Yes | Yes (dedup with 5-min cooldown) | **Match** |
 | Replay-safe tracking | No | No | Yes (auto-end previous on replay) | **Ours BETTER** — auto-ends the previous layout's stats when replaying, preventing double-counting |
 | Quota-exceeded cleanup | No | No | Yes (auto-delete oldest 100) | **Ours BETTER** — auto-prunes old stats when IndexedDB is full instead of silently failing |
