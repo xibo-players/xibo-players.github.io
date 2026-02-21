@@ -141,13 +141,13 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Schedule | Yes | Yes | Yes | Yes | Yes (XML) | **Match** |
 | GetResource | No | Yes | Yes | Yes | Yes | **Ours BETTER** — XLR lacks GetResource, requiring server-side rendering for all widgets |
 | MediaInventory | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, MAC address, deviceName, lastCommandSuccess, geo-location, statusDialog |
+| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, MAC address, deviceName, lastCommandSuccess, geo-location, statusDialog, code, lastLayoutChangeTime |
 | SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
 | GetWeather | No | Yes | No | Yes | Yes (JSON) | **Match** — fetches weather data for schedule criteria evaluation |
 | ReportFaults | No | Yes | No | Yes | Yes (JSON) | **Match** — submits fault data with dedup cooldown |
-| BlackList | Yes | Yes | No | Yes | No (REST N/A) | **Match** via SOAP |
+| BlackList | Yes | Yes | No | Yes | Yes (POST /blacklist) | **Ours BETTER** — available via both SOAP and REST transport |
 
 ### Communication Features
 
