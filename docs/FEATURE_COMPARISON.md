@@ -1,7 +1,7 @@
 # Feature Comparison: XiboPlayer v0.3.x vs Upstream Players
 
-**Last Updated:** 2026-02-20
-**Our Version:** v0.3.x (SDK v0.3.3, PWA v0.3.3, Electron v0.3.1, Chromium v0.3.1-4)
+**Last Updated:** 2026-02-21
+**Our Version:** v0.3.x (SDK v0.3.4, PWA v0.3.4, Electron v0.3.5, Chromium v0.3.7)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
 - [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
@@ -43,19 +43,19 @@
 
 | Area | Parity | Notes |
 |------|--------|-------|
-| **Schedule Management** | ~95% | Dayparting BETTER than XLR. Interrupts, actions, data connectors, commands all implemented |
-| **XMDS Communication** | ~97% | SOAP + REST dual transport. CRC32 + ETag caching. All 10 methods implemented |
+| **Schedule Management** | ~97% | Dayparting BETTER. Interrupts, actions, data connectors, commands, weather criteria, layout interleaving |
+| **XMDS Communication** | ~97% | SOAP + REST dual transport. CRC32 + ETag caching. All 10 methods + GetWeather |
 | **File Management** | ~95% | Parallel 4-chunk downloads BETTER. Service Worker progressive streaming |
-| **Renderer** | ~92% | Performance BETTER. HLS via hls.js. Touch/keyboard actions. Previous/next widget |
+| **Renderer** | ~95% | Performance BETTER. HLS via hls.js. Image alignment. Audio overlays. Region exit transitions |
 | **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
-| **Stats/Logging** | ~95% | Proof-of-play + log submission + fault reporting with dedup |
+| **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 |
 | **Config/Settings** | ~95% | Centralized state + DisplaySettings class + Wake Lock + offline fallback |
 | **Interactive Control** | ~95% | Full IC server + touch/keyboard actions + navigate-to-widget + prev/next |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xibo-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
-**Overall: ~95% feature parity, with significantly better performance and unique capabilities (REST transport, progressive streaming, cross-platform, RPM/DEB packaging, complete kiosk OS)**
+**Overall: ~96% feature parity, with significantly better performance and unique capabilities (REST transport, progressive streaming, cross-platform, RPM/DEB packaging, complete kiosk OS, playback control)**
 
 ---
 
@@ -70,8 +70,6 @@ Independent repositories under the `xibo-players/` GitHub org:
 | `xiboplayer-electron` | Electron wrapper (serves PWA via Express) | RPM/DEB via gh-pages |
 | `xiboplayer-chromium` | Chromium kiosk launcher | RPM via gh-pages |
 | `xiboplayer-chrome` | Chrome extension | Future |
-| `xiboplayer-android` | Android TWA | Future |
-| `xiboplayer-webos` | webOS/LG app | Future |
 
 ### SDK Packages
 
@@ -89,7 +87,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 @xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry, Config
 @xiboplayer/proxy      - CORS proxy for local development
 @xiboplayer/sync       - Multi-display synchronization (WIP)
-@xiboplayer/docs       - MCP documentation server
+@xiboplayer/docs       - Documentation and API reference
 ```
 
 ---
@@ -112,8 +110,11 @@ Independent repositories under the `xibo-players/` GitHub org:
 | Action events | Parsed | Yes (handleTrigger + action dispatch) | **Match** |
 | DataConnector events | Parsed | Yes (DataConnectorManager with polling) | **Match** |
 | Command events | Parsed | Yes (executeCommand, HTTP only) | **Match** |
+| Scheduled command auto-execution | No | Yes (auto-execute at scheduled time) | **Ours BETTER** — commands fire at their scheduled time without CMS push |
 | Dependants tracking | Yes | Yes | **Match** |
 | Geo-fencing criteria | TODO | Yes (haversine filtering + browser geolocation) | **Ours BETTER** |
+| Weather criteria | TODO | Yes (GetWeather + criteria evaluation) | **Ours BETTER** — fetches weather data from CMS and evaluates schedule criteria based on conditions |
+| Default layout interleaving | No | Yes (getInterleavedLayouts) | **Ours BETTER** — inserts default layout between scheduled layouts for smoother cycling |
 
 ---
 
@@ -143,6 +144,8 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
+| GetWeather | No | Yes | No | Yes | Yes (JSON) | **Match** — fetches weather data for schedule criteria evaluation |
+| ReportFaults | No | Yes | No | Yes | Yes (JSON) | **Match** — submits fault data with dedup cooldown |
 | BlackList | Yes | Yes | No | Yes | No (REST N/A) | **Match** via SOAP |
 
 ### Communication Features
@@ -152,6 +155,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | SOAP Fault parsing | Typed classes | Namespace-aware querySelector | XLR slightly richer |
 | CRC32 skip optimization | Yes (checkRf/checkSchedule) | Yes | **Match** |
 | ETag 304 caching | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
+| licenceResult in RegisterDisplay | Yes | Yes (v7 spec) | **Match** |
 | Retry with backoff | Axios built-in | fetchWithRetry (configurable) | **Match** |
 | Purge list parsing | Yes | Yes | **Match** |
 | Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
@@ -206,7 +210,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 
 | Type | XLR v1.0.22 | RendererLite | Status |
 |------|-------------|--------------|--------|
-| image | Full (scaling, alignment) | object-fit: contain | Partial (no alignment options) |
+| image | Full (scaling, alignment) | Full (scaleType + align + valign) | **Match** |
 | video | video.js | Native HTML5 + HLS detection | **Match** |
 | audio | Full | Native audio + gradient visualization | **Ours BETTER** — shows visual gradient + icon instead of blank screen during audio playback |
 | text | iframe | iframe (blob or SW cache URL) | **Match** |
@@ -227,6 +231,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Fly In/Out | Yes | Yes | **Match** |
 | Compass directions (8) | Yes | Yes (N/NE/E/SE/S/SW/W/NW) | **Match** |
 | Configurable duration | Yes | Yes | **Match** |
+| Region exit transitions | Yes | Yes (CSS animation on region removal) | **Match** |
 | Web Animations API | Yes | Yes | **Match** |
 
 ### Interactivity
@@ -242,6 +247,10 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Navigate to layout | Yes | Yes (via IC trigger -> handleTrigger -> changeLayout) | **Match** |
 | Navigate to widget | Yes | Yes (navigateToWidget method) | **Match** |
 | Previous/next widget | Yes | Yes (nextWidget/previousWidget) | **Match** |
+| Widget duration webhooks | Yes | Yes (widgetAction event → HTTP POST) | **Match** |
+| Audio overlay on parent media | Yes | Yes (attached `<audio>` element lifecycle) | **Match** |
+| Playback control (keyboard) | No | Yes (←/→/Space/PgUp/PgDn/R) | **Ours BETTER** — keyboard shortcuts for next/prev layout, pause/resume, and revert to schedule |
+| Timeline click-to-skip | No | Yes (click layout in timeline overlay) | **Ours BETTER** — click any layout in the debug timeline to jump to it instantly |
 | Drawer regions | Yes | No | **GAP** |
 
 ### Element Reuse and Performance
@@ -354,10 +363,14 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 |---------|-----|---------|------------|--------|
 | Layout proof-of-play | Yes | Yes | Yes (StatsCollector) | **Match** |
 | Widget proof-of-play | Via media events | Yes | Explicit start/end tracking | **Ours BETTER** — tracks exact widget display duration, not just media play events |
+| Event stats (touch, webhook) | No | Yes | Yes (recordEvent with tags) | **Ours BETTER** — tracks user interactions and webhook events for engagement analytics |
 | Stats submission (XMDS) | Yes | Yes | Yes (XML or JSON) | **Match** |
 | Stats aggregation | Yes | Yes | Yes (hourly grouping) | **Match** |
+| Hour-boundary splitting | No | Yes | Yes (_splitAtHourBoundaries) | **Match** — splits stats spanning multiple hours into per-hour records for correct CMS aggregation |
+| enableStat per layout/widget | Yes | Yes | Yes (respects enableStat attribute) | **Match** |
 | Log database | Yes | Yes | IndexedDB (persistent) | **Match** |
 | Log submission to CMS | Yes | Yes | Yes (XML or JSON) | **Match** |
+| Log batching (50/300) | Yes | Yes | Yes (auto-detect: 50 normal, 300 backlog) | **Match** |
 | Fault reporting | faultsDB | Yes | Yes (dedup with 5-min cooldown) | **Match** |
 | Replay-safe tracking | No | No | Yes (auto-end previous on replay) | **Ours BETTER** — auto-ends the previous layout's stats when replaying, preventing double-counting |
 | Quota-exceeded cleanup | No | No | Yes (auto-delete oldest 100) | **Ours BETTER** — auto-prunes old stats when IndexedDB is full instead of silently failing |
@@ -380,7 +393,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Offline fallback | No | File system | IndexedDB auto-cache | **Ours BETTER** — automatically caches schedule and settings so player boots even without CMS |
 | Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
 | Log level from CMS | No | Yes | Yes (applyCmsLogLevel) | **Match** |
-| Timeline debug overlay | No | No | Yes (D-key toggle) | **Ours BETTER** — press D to see upcoming schedule, current layout, and timing info as an overlay |
+| Timeline debug overlay | No | No | Yes (T-key toggle, clickable) | **Ours BETTER** — press T to see upcoming schedule with clickable layouts; D toggles download overlay |
 
 ---
 
@@ -496,9 +509,10 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 
 ### Low Impact (Rarely Used Features)
 
-1. **Drawer regions** - XLR-specific collapsible UI regions
-2. **Sync events** - Multi-display synchronization (@xiboplayer/sync package started)
+1. **Drawer regions** - XLR-specific collapsible UI regions (rarely used in practice)
+2. **Multi-display sync transport** - @xiboplayer/sync infrastructure exists but no WebSocket/LAN transport yet
 3. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
+4. **Schedule conflict detection** - No visual warning when schedules overlap
 
 ### Not Applicable (Browser Sandbox)
 
@@ -532,12 +546,17 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 21. **RPM/DEB packaging** - Native Linux package management with auto-update repos
 22. **npm provenance** - SLSA attestation for supply chain security
 23. **MAC address reporting** - Wake-on-LAN support in status messages
-24. **Timeline debug overlay** - D-key toggleable schedule visualization
-25. **MCP documentation server** - AI-assisted development workflow
+24. **Timeline debug overlay** - T-key toggleable schedule visualization with click-to-skip
+25. **Documentation server** - Searchable API reference and SDK docs
 26. **Complete kiosk OS** - xibo-kiosk with GNOME Kiosk, health monitoring, first-boot wizard, keyboard shortcuts
 27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
 28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
 29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
+30. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation
+31. **Event stats** - Tracks touch interactions and webhook events with tags for engagement analytics
+32. **Layout interleaving** - Inserts default layout between scheduled layouts for smoother content cycling
+33. **Weather criteria** - Evaluates weather-based schedule criteria from CMS GetWeather data
+34. **Hour-boundary stat splitting** - Splits proof-of-play stats at hour marks for correct CMS aggregation
 
 ---
 
@@ -563,8 +582,8 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 |----------|---------|------------|--------|
 | **XMDS** | All v5 methods, proxy, cert override | All v5 + REST + BlackList + CRC32 + ETag | **XiboPlayer** |
 | **XMR** | ZeroMQ + RSA key encryption | WebSocket + RSA key registration (13 handlers) | Tie (different transport) |
-| **Schedule** | Full dayparts, campaigns | Full dayparts, campaigns, interrupts, actions | **XiboPlayer** |
-| **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS) | **XiboPlayer** |
+| **Schedule** | Full dayparts, campaigns | Full dayparts, campaigns, interrupts, actions, weather, interleaving | **XiboPlayer** |
+| **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS, audio overlay) | **XiboPlayer** |
 | **Cache** | Disk + MD5, sequential | Cache API + parallel 4x chunks + streaming | **XiboPlayer** (4x faster) |
 | **Commands** | Shell, HTTP, RS232 serial | HTTP only (browser sandbox) | Arexibo |
 | **Kiosk** | systemd + GNOME Kiosk + health monitor | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** (with xibo-kiosk) |
@@ -624,8 +643,8 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 | **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
 | **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
 | **Webcam/Mic** | Yes (new in R406) | No (browser permissions) | Windows better |
-| **Weather criteria** | Fixed in R406 | Yes (criteria evaluation with custom properties) | **Match** |
-| **Platform** | Windows 10+ only | Any browser | **Ours BETTER** — runs on Linux, macOS, ChromeOS, Android, smart TVs, any device with a browser |
+| **Weather criteria** | Fixed in R406 | Yes (GetWeather + criteria evaluation) | **Match** |
+| **Platform** | Windows 10+ only | Any browser | **Ours BETTER** — runs on Linux, macOS, ChromeOS, any device with a modern browser |
 | **Kiosk** | Native Windows kiosk | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **Ours BETTER** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
 | **Installation** | MSI installer | Zero (open URL) or RPM/DEB | **Ours BETTER** — PWA needs no install at all; RPM/DEB auto-update from repo |
 | **CEF update** | Chromium 141 | Browser's own engine | Tie |
@@ -652,7 +671,7 @@ The Windows player is a mature, commercial product with full native OS integrati
 | xibo-communication-framework | 0.0.6 | 2025-12-11 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) |
 | Xibo for Windows | v4 R406 | 2025-12-10 | [GitHub](https://github.com/xibosignage/xibo-dotnetclient/releases) |
 | Arexibo | latest | 2025-05-18 | [GitHub](https://github.com/birkenfeld/arexibo) |
-| XiboPlayer SDK | v0.3.3 | 2026-02-20 | [npm](https://www.npmjs.com/org/xiboplayer) |
-| XiboPlayer PWA | v0.3.3 | 2026-02-20 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
-| XiboPlayer Electron | v0.3.1 | 2026-02-20 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
-| XiboPlayer Chromium | v0.3.1-4 | 2026-02-20 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
+| XiboPlayer SDK | v0.3.4 | 2026-02-21 | [npm](https://www.npmjs.com/org/xiboplayer) |
+| XiboPlayer PWA | v0.3.4 | 2026-02-21 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
+| XiboPlayer Electron | v0.3.5 | 2026-02-21 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
+| XiboPlayer Chromium | v0.3.7 | 2026-02-21 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
