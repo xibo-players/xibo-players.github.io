@@ -210,6 +210,9 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Region scaling | Yes | Yes | **Match** |
 | ResizeObserver rescale | No | Yes | **Ours BETTER** — layout automatically re-scales when window is resized (e.g. rotation, multi-monitor) |
 | Layout duration from XLF | Yes | Yes (with auto-calc fallback) | **Match** |
+| Widget fromDt/toDt expiry | Yes | Yes (filtered at region creation) | **Match** |
+| NUMITEMS/DURATION comments | Yes | Yes (parsed from GetResource HTML) | **Match** — overrides widget duration for DataSet tickers and RSS feeds |
+| render attribute (native/html) | Yes | Yes (parsed for future dispatch) | **Match** |
 
 ### Widget Types
 
@@ -223,7 +226,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | global/embedded | Full | iframe | **Match** |
 | pdf | No | PDF.js (lazy-loaded) | **Ours BETTER** — renders PDF natively in-browser; XLR and Windows have no PDF support |
 | webpage | iframe | iframe | **Match** |
-| ticker | Duration-per-item | iframe | Partial |
+| ticker | Duration-per-item | iframe + DURATION/NUMITEMS comment parsing | **Match** |
 | dataset | Yes | Via getWidgetHtml | **Match** (server-rendered) |
 | HLS streaming | Yes | Yes (native + hls.js dynamic import) | **Match** |
 | shellcommand | Yes | No | N/A (browser sandbox) |
@@ -362,6 +365,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Touch/click triggers | Yes | Yes (attachTouchAction) | **Match** |
 | Keyboard triggers | Yes | Yes (setupKeyboardListener) | **Match** |
 | Data connector support | Yes | Yes (DataConnectorManager) | **Match** |
+| /criteria endpoint | Yes | Yes (display properties: dimensions, geo, hwkey, type) | **Match** |
 | Playback control (next/prev/pause) | No | Yes (keyboard + timeline click-to-skip) | **Ours BETTER** — operators can navigate layouts and pause playback |
 
 ---
