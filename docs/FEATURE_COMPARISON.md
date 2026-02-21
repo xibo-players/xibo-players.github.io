@@ -613,7 +613,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **XMR** | ZeroMQ + RSA encryption | WebSocket (xibo-communication-framework) |
 | **Platform** | Linux only (Qt/Rust deps, RPi5 supported) | Any browser (cross-platform) |
 | **Last update** | 2025-05-18 (dormant 9+ months) | Active development |
-| **Packaging** | Manual build | RPM/DEB auto-built via CI |
+| **Packaging** | RPM (xibo-kiosk CI) | RPM/DEB auto-built via CI |
 
 ### Feature Parity: ~95% protocol, different capabilities
 
@@ -630,7 +630,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **Transitions** | CSS (4 types, 8 directions) | Web Animations API (same) | Tie |
 | **Logging** | CMS submission, memory-limited queue | CMS submission + IndexedDB + fault dedup | **XiboPlayer** |
 | **Offline** | `--allow-offline` flag | IndexedDB auto-fallback | **XiboPlayer** |
-| **Packaging** | Manual build from source | RPM/DEB + PWA + npm | **XiboPlayer** |
+| **Packaging** | RPM (via xibo-kiosk CI) | RPM/DEB + PWA + npm | **XiboPlayer** |
 
 ### Arexibo-Only Features (XiboPlayer Cannot Replicate)
 
@@ -653,7 +653,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 8. **Auto offline fallback** - IndexedDB cache without explicit flag
 9. **Wake Lock API** - Native browser sleep prevention
 10. **Screenshot capture** - getDisplayMedia + html2canvas (Arexibo has none)
-11. **RPM/DEB packages** - Native package management (Arexibo requires manual build)
+11. **RPM/DEB packages** - Native package management with auto-update repos (Arexibo also packaged as RPM via xibo-kiosk CI)
 12. **Runtime XLF rendering** - Direct XLF-to-DOM parsing (<10ms) vs Arexibo's pre-generated HTML cache — supports dynamic resize, no stale cache, no translation step
 13. **Active development** - Arexibo dormant since May 2025
 
@@ -682,7 +682,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 |---------|----------------|-------------------|--------|
 | **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
 | **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
-| **Webcam/Mic** | Yes (new in R406) | No (browser permissions) | Windows better |
+| **Webcam/Mic** | Yes (new in R406) | Yes (Electron auto-grants media permission) | **Match** |
 | **Weather criteria** | Fixed in R406 | Yes (GetWeather + criteria evaluation) | **Match** |
 | **Platform** | Windows 10+ only | Any browser | **Ours BETTER** — runs on Linux, macOS, ChromeOS, any device with a modern browser |
 | **Kiosk** | Native Windows kiosk | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **Ours BETTER** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
@@ -699,7 +699,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 
 ### Key Differences
 
-The Windows player is a mature, commercial product with full native OS integration (shell commands, serial ports, kiosk mode, webcam). XiboPlayer trades these native capabilities for cross-platform reach, zero installation, REST API support, RPM/DEB packaging, and significantly faster media downloads.
+The Windows player is a mature, commercial product with full native OS integration (shell commands, serial ports, kiosk mode). XiboPlayer matches webcam/mic support (via Electron permission grants) and adds cross-platform reach, zero installation, REST API support, RPM/DEB packaging, and significantly faster media downloads.
 
 ---
 
