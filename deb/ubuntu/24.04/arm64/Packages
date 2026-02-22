@@ -36,3 +36,21 @@ Description: Kiosk session scripts for Xibo digital signage players
  session holder with health monitoring, dunst notification config, and
  a systemd user unit for the player process.
 
+Package: xiboplayer-chromium
+Version: 0.4.1-2
+Architecture: all
+Maintainer: Pau Aliagas <pau@linuxnow.com>
+Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./xiboplayer-chromium_0.4.1-2_all.deb
+Size: 8622290
+MD5sum: a5a6b04ef9f60794ff2920de93b10a85
+SHA1: 34ca019781aba9b2539c17e5f349f23a5042d909
+SHA256: d88361f5c3dbc4ea0a9577921db19f93192c9a1db776533006ebdb7a36b05d11
+Section: misc
+Priority: optional
+Homepage: https://github.com/xibo-players/xiboplayer-chromium
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
