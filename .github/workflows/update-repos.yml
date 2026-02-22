@@ -354,4 +354,14 @@ jobs:
           TRIGGER="${{ github.event.client_payload.package || 'manual' }}"
           git commit -m "Update repositories (trigger: ${TRIGGER})"
 
-          git push
+          # Retry with rebase to handle concurrent update-repos runs
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Push succeeded (attempt $attempt)"
+              exit 0
+            fi
+            echo "Push failed (attempt $attempt), rebasing..."
+            git pull --rebase
+          done
+          echo "Push failed after 3 attempts"
+          exit 1
