@@ -1036,7 +1036,9 @@ async function loadRpmPackages() {
             (release.assets || []).filter(function(a) { return a.name.endsWith('.rpm'); }).forEach(function(rpm) {
                 var arch = rpm.name.includes('.x86_64.') ? 'x86_64' : rpm.name.includes('.aarch64.') ? 'aarch64' : rpm.name.includes('.noarch.') ? 'noarch' : '?';
                 var rpmSize = rpm.size > 1048576 ? (rpm.size / 1048576).toFixed(1) + ' MB' : (rpm.size / 1024).toFixed(0) + ' KB';
-                rpmData.push({ name: repos[i].name, repo: repos[i].repo, file: rpm.name, url: rpm.browser_download_url, size: rpmSize, arch: arch, tag: release.tag_name, releaseUrl: release.html_url });
+                // Parse version-release from RPM filename: name-version-release.dist.arch.rpm
+                var verRel = rpm.name.replace(/\.[^.]+\.rpm$/, '').replace(/\.fc\d+$/, '').replace(/^.*?-(\d)/, '$1');
+                rpmData.push({ name: repos[i].name, repo: repos[i].repo, file: rpm.name, url: rpm.browser_download_url, size: rpmSize, arch: arch, tag: verRel, releaseUrl: release.html_url });
             });
         } catch (e) { /* skip */ }
     }
