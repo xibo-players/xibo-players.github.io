@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xibo Player — Open-source digital signage players</title>
+    <title>Xibo Player — Reproductors de signage digital de codi obert</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="192x192" href="/logo-192.png">
     <link rel="apple-touch-icon" href="/logo-192.png">
-    <meta name="description" content="Open-source digital signage players for Xibo CMS. PWA, Electron, Chromium kiosk, and pre-built bootable images for PCs and Raspberry Pi.">
+    <meta name="description" content="Reproductors de signage digital de codi obert per a Xibo. PWA, Electron, quiosc Chromium i imatges d'arrencada per a PCs i Raspberry Pi.">
     <link rel="alternate" hreflang="en" href="https://xiboplayer.org/">
     <link rel="alternate" hreflang="ca" href="https://xiboplayer.org/ca/">
     <link rel="alternate" hreflang="x-default" href="https://xiboplayer.org/">
@@ -226,7 +226,7 @@
         .badge.deb { background: var(--badge-deb-bg); border-color: var(--badge-deb-border); color: var(--badge-deb-color); }
         .badge.arch { background: var(--badge-arch-bg); border-color: var(--badge-arch-border); color: var(--badge-arch-color); }
 
-        /* Player cards — wider layout for the 5 players */
+        /* Player cards */
         .player-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -273,7 +273,7 @@
             position: relative;
         }
         .player-card.featured::before {
-            content: 'Engine';
+            content: 'Motor';
             position: absolute;
             top: -9px;
             right: 16px;
@@ -514,119 +514,119 @@
         <img src="/logo-192.png" alt="XiboPlayer" class="hero-logo">
         <h1>Xibo Player</h1>
     </div>
-    <p>Open-source digital signage players for Xibo CMS.<br>Turn any PC, Raspberry Pi, or browser into a signage display.</p>
+    <p>Reproductors de signage digital de codi obert per a Xibo.<br>Converteix qualsevol PC, Raspberry Pi o navegador en una pantalla de signage.</p>
     <div class="hero-links">
         <a href="https://github.com/xibo-players">GitHub</a>
-        <a href="#getting-started">Getting started</a>
-        <a href="#players">Players</a>
-        <a href="#setup">Install packages</a>
+        <a href="#getting-started">Primers passos</a>
+        <a href="#players">Reproductors</a>
+        <a href="#setup">Instal·lar paquets</a>
     </div>
     <div class="disclaimer">
-        This is an independent community project. Not affiliated with
+        Aquest és un projecte comunitari independent. No està afiliat amb
         <a href="https://xibosignage.com" style="color:inherit; text-decoration:underline;">Xibo Ltd</a>
-        or the Xibo Digital Signage project. Xibo is a registered trademark of Xibo Ltd.
+        ni amb el projecte Xibo Digital Signage. Xibo és una marca registrada de Xibo Ltd.
     </div>
 </div>
 
 <nav class="nav bg-white dark:bg-gray-800">
-    <a href="#getting-started">Getting started</a>
-    <a href="#images">Images</a>
-    <a href="#players">Players</a>
+    <a href="#getting-started">Primers passos</a>
+    <a href="#images">Imatges</a>
+    <a href="#players">Reproductors</a>
     <a href="#sdk">SDK</a>
-    <a href="#setup">Setup</a>
-    <a href="#browse">Browse</a>
-    <a href="/ca/" style="padding:6px 10px; font-size:0.85em; font-weight:600; color:var(--gray-500); text-decoration:none; border:1px solid var(--gray-200); border-radius:6px; margin-left:8px;" title="Canvia a catal&agrave;">CA</a>
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme" aria-label="Toggle theme">&#x1F319;</button>
+    <a href="#setup">Configuració</a>
+    <a href="#browse">Explorar</a>
+    <a href="/" style="padding:6px 10px; font-size:0.85em; font-weight:600; color:var(--gray-500); text-decoration:none; border:1px solid var(--gray-200); border-radius:6px; margin-left:8px;" title="Switch to English">EN</a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Canviar tema clar/fosc" aria-label="Canviar tema">&#x1F319;</button>
 </nav>
 
 <div class="container">
 
-    <!-- Features -->
+    <!-- Característiques -->
     <section id="features">
-        <h2>Built for digital signage</h2>
-        <p class="section-desc">Everything you need to run professional signage on commodity hardware.</p>
+        <h2>Dissenyat per a signage digital</h2>
+        <p class="section-desc">Tot el que necessites per executar signage professional en maquinari estàndard.</p>
         <div class="pkg-grid">
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
-                <h3><span class="icon">&#x1F4E1;</span> Works offline</h3>
-                <p class="desc">Content is stored on the device. Displays keep playing even without a network connection and sync back when connectivity returns.</p>
+                <h3><span class="icon">&#x1F4E1;</span> Funciona sense connexió</h3>
+                <p class="desc">El contingut s'emmagatzema al dispositiu. Les pantalles continuen reproduint fins i tot sense connexió de xarxa i es sincronitzen quan torna la connectivitat.</p>
             </div>
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
-                <h3><span class="icon">&#x1F3AC;</span> Any content type</h3>
-                <p class="desc">Video, images, audio, PDF, live RSS feeds, clocks, web pages, and streaming — play virtually any media format on your screens.</p>
+                <h3><span class="icon">&#x1F3AC;</span> Qualsevol tipus de contingut</h3>
+                <p class="desc">Vídeo, imatges, àudio, PDF, canals RSS en directe, rellotges, pàgines web i streaming — reprodueix pràcticament qualsevol format multimèdia a les teves pantalles.</p>
             </div>
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
-                <h3><span class="icon">&#x1F4C5;</span> Smart scheduling</h3>
-                <p class="desc">Schedule campaigns by time of day, priority, or location. Set up interrupt content, overlay zones, and weather-triggered playlists from your CMS.</p>
+                <h3><span class="icon">&#x1F4C5;</span> Programació intel·ligent</h3>
+                <p class="desc">Programa campanyes per hora del dia, prioritat o ubicació. Configura contingut d'interrupció, zones superposades i llistes de reproducció activades per meteorologia des del teu CMS.</p>
             </div>
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
-                <h3><span class="icon">&#x1F527;</span> Easy deployment</h3>
-                <p class="desc">Flash an image, power on, and connect to your CMS. Displays register themselves and receive updates automatically — no manual setup needed.</p>
+                <h3><span class="icon">&#x1F527;</span> Desplegament fàcil</h3>
+                <p class="desc">Grava una imatge, engega i connecta al teu CMS. Les pantalles es registren soles i reben actualitzacions automàticament — no cal configuració manual.</p>
             </div>
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
-                <h3><span class="icon">&#x1F50D;</span> Monitor everything</h3>
-                <p class="desc">See what's playing on every screen with proof of play, remote screenshots, download progress, and detailed logs — all visible from your CMS.</p>
+                <h3><span class="icon">&#x1F50D;</span> Monitoritza-ho tot</h3>
+                <p class="desc">Veu què s'està reproduint a cada pantalla amb proves de reproducció, captures remotes, progrés de descàrrega i registres detallats — tot visible des del teu CMS.</p>
             </div>
             <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F4FA;</span> Video walls</h3>
-                <p class="desc">Synchronize multiple screens into a single video wall. Coordinated playback, layout transitions, and scheduling across all displays.</p>
+                <p class="desc">Sincronitza múltiples pantalles en un sol video wall. Reproducció coordinada, transicions de dissenys i programació a totes les pantalles.</p>
             </div>
         </div>
     </section>
 
-    <!-- Getting Started — unified deployment section -->
+    <!-- Primers passos -->
     <section id="getting-started">
-        <h2>Getting started</h2>
-        <p class="section-desc">Two ways to set up a signage display.</p>
+        <h2>Primers passos</h2>
+        <p class="section-desc">Dues maneres de configurar una pantalla de signage.</p>
 
-        <!-- Path 1: Pre-built images -->
-        <h3 style="margin-top:1.5rem; margin-bottom:0.75rem;">&#x1F4BF; Flash a ready-made image</h3>
+        <!-- Opció 1: Imatges predefinides -->
+        <h3 style="margin-top:1.5rem; margin-bottom:0.75rem;">&#x1F4BF; Grava una imatge preparada</h3>
         <div id="deploy-images">
-            <p style="margin-bottom:1rem; opacity:0.8;"><strong>Xibo Kiosk</strong> images include everything: the operating system, auto-login, a setup wizard, all players, health monitoring, and automatic updates. You choose which player to run at setup time — and can switch at any time. Pick your hardware:</p>
+            <p style="margin-bottom:1rem; opacity:0.8;">Les imatges <strong>Xibo Kiosk</strong> inclouen tot: el sistema operatiu, inici de sessió automàtic, un assistent de configuració, tots els reproductors, monitorització de salut i actualitzacions automàtiques. Tries quin reproductor executar durant la configuració — i pots canviar en qualsevol moment. Tria el teu maquinari:</p>
             <div class="gs-grid">
                 <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
                     <div class="gs-icon">&#x1F5A5;</div>
-                    <h3>PC or laptop</h3>
-                    <div class="gs-format">Installer ISO</div>
-                    <p class="desc">Flash the ISO to a USB stick with <strong>Balena Etcher</strong> or <code>dd</code>. Boot from USB — the installer formats the disk and sets everything up automatically. Remove USB and reboot.</p>
-                    <div class="gs-action">Download ISO &#x2192;</div>
+                    <h3>PC o portàtil</h3>
+                    <div class="gs-format">ISO instal·lador</div>
+                    <p class="desc">Grava la ISO a un USB amb <strong>Balena Etcher</strong> o <code>dd</code>. Arrenca des d'USB — l'instal·lador formata el disc i ho configura tot automàticament. Treu l'USB i reinicia.</p>
+                    <div class="gs-action">Descarrega ISO &#x2192;</div>
                 </a>
                 <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
                     <div class="gs-icon">&#x1F353;</div>
                     <h3>Raspberry Pi 4/5</h3>
-                    <div class="gs-format">Raw image (aarch64)</div>
-                    <p class="desc">Flash the <code>.raw.xz</code> image directly to an SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Insert the card, power on, and the kiosk boots ready to use.</p>
-                    <div class="gs-action">Download aarch64 &#x2192;</div>
+                    <div class="gs-format">Imatge raw (aarch64)</div>
+                    <p class="desc">Grava la imatge <code>.raw.xz</code> directament a una targeta SD amb <strong>Balena Etcher</strong> o <code>dd</code>. Insereix la targeta, engega, i el quiosc arrenca llest per usar.</p>
+                    <div class="gs-action">Descarrega aarch64 &#x2192;</div>
                 </a>
                 <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
                     <div class="gs-icon">&#x1F4BB;</div>
-                    <h3>Virtual machine</h3>
+                    <h3>Màquina virtual</h3>
                     <div class="gs-format">QCOW2</div>
-                    <p class="desc">Ready-to-boot VM image. Open in <strong>GNOME Boxes</strong>, <strong>virt-manager</strong>, <strong>Proxmox</strong>, or run directly with <strong>QEMU</strong>. No installation needed.</p>
-                    <div class="gs-action">Download QCOW2 &#x2192;</div>
+                    <p class="desc">Imatge de VM llesta per arrencar. Obre-la amb <strong>GNOME Boxes</strong>, <strong>virt-manager</strong>, <strong>Proxmox</strong>, o executa-la directament amb <strong>QEMU</strong>. No cal instal·lació.</p>
+                    <div class="gs-action">Descarrega QCOW2 &#x2192;</div>
                 </a>
                 <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
                     <div class="gs-icon">&#x1F527;</div>
-                    <h3>Intel NUC / embedded</h3>
-                    <div class="gs-format">Raw image (x86_64)</div>
-                    <p class="desc">Write the <code>.raw.xz</code> image directly to the internal SSD or SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Same as the Pi image but for Intel/AMD hardware.</p>
-                    <div class="gs-action">Download x86_64 &#x2192;</div>
+                    <h3>Intel NUC / encastat</h3>
+                    <div class="gs-format">Imatge raw (x86_64)</div>
+                    <p class="desc">Escriu la imatge <code>.raw.xz</code> directament al SSD intern o targeta SD amb <strong>Balena Etcher</strong> o <code>dd</code>. Igual que la imatge de Pi però per a maquinari Intel/AMD.</p>
+                    <div class="gs-action">Descarrega x86_64 &#x2192;</div>
                 </a>
             </div>
 
             <div class="gs-tip">
-                <h4>After booting</h4>
+                <h4>Després d'arrencar</h4>
                 <p>
-                    Log in with user <code>xibo</code> / password <code>xibo</code>.
-                    Change your password with <code>passwd</code>.
-                    Connect to your Xibo CMS from the kiosk setup screen — the display registers automatically and starts playing your scheduled content.
+                    Inicia sessió amb l'usuari <code>xibo</code> / contrasenya <code>xibo</code>.
+                    Canvia la contrasenya amb <code>passwd</code>.
+                    Connecta't al teu Xibo des de la pantalla de configuració del quiosc — la pantalla es registra automàticament i comença a reproduir el contingut programat.
                 </p>
             </div>
         </div>
 
-        <!-- Path 2: Package install on existing system -->
-        <h3 style="margin-top:2.5rem; margin-bottom:0.75rem;">&#x1F4E6; Install on existing Linux</h3>
+        <!-- Opció 2: Instal·lació de paquets en un sistema existent -->
+        <h3 style="margin-top:2.5rem; margin-bottom:0.75rem;">&#x1F4E6; Instal·la en un Linux existent</h3>
         <div id="deploy-package">
-            <p style="margin-bottom:1rem; opacity:0.8;">Install <strong>xiboplayer-kiosk</strong> on your existing Fedora or Ubuntu system. It configures auto-login, a kiosk session, health monitoring, and the Electron player — without reinstalling the OS.</p>
+            <p style="margin-bottom:1rem; opacity:0.8;">Instal·la <strong>xiboplayer-kiosk</strong> al teu sistema Fedora o Ubuntu existent. Configura l'inici de sessió automàtic, una sessió de quiosc, monitorització de salut i el reproductor Electron — sense reinstal·lar el sistema operatiu.</p>
 
             <div style="margin-bottom:1.5rem;">
                 <div class="deploy-os-tabs" style="display:flex; gap:0; margin-bottom:0;">
@@ -634,55 +634,55 @@
                     <button class="deploy-os-tab" data-os="ubuntu" style="padding:0.6rem 1.5rem; border:1px solid var(--border); border-bottom:none; border-radius:8px 8px 0 0; background:transparent; color:var(--text); cursor:pointer; opacity:0.6;">Ubuntu (APT)</button>
                 </div>
                 <div class="deploy-os-content" data-os-content="fedora" style="padding:1.5rem; border:1px solid var(--border); border-radius:0 10px 10px 10px; background:var(--card-bg);">
-                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Add the repository
+                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Afegeix el repositori
 sudo dnf install \
   https://dl.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-2.noarch.rpm
 
-# Install kiosk
+# Instal·la el quiosc
 sudo dnf install xiboplayer-kiosk
 
-# Enable kiosk session
+# Activa la sessió de quiosc
 sudo systemctl set-default graphical.target</code></pre>
                 </div>
                 <div class="deploy-os-content" data-os-content="ubuntu" style="display:none; padding:1.5rem; border:1px solid var(--border); border-radius:0 10px 10px 10px; background:var(--card-bg);">
-                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Add the repository and GPG key
+                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Afegeix el repositori i la clau GPG
 curl -fsSL https://dl.xiboplayer.org/deb/DEB-GPG-KEY-xiboplayer | \
   sudo gpg --dearmor -o /etc/apt/keyrings/xiboplayer.gpg
 echo "deb https://dl.xiboplayer.org/deb/ubuntu/24.04 ./" | \
   sudo tee /etc/apt/sources.list.d/xiboplayer.list
 
-# Install kiosk
+# Instal·la el quiosc
 sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                 </div>
             </div>
 
             <div class="gs-tip">
-                <h4>What gets installed</h4>
+                <h4>Què s'instal·la</h4>
                 <p>
-                    The <code>xiboplayer-kiosk</code> package sets up a dedicated kiosk user with auto-login, configures a fullscreen session, and enables health monitoring and on-screen notifications. Install one or more player packages separately — the kiosk uses the <a href="https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/" style="color:var(--blue)">alternatives system</a> so you can switch players at any time. Reboot to start the kiosk.
+                    El paquet <code>xiboplayer-kiosk</code> configura un usuari de quiosc dedicat amb inici de sessió automàtic, configura una sessió a pantalla completa i activa la monitorització de salut i les notificacions a pantalla. Instal·la un o més paquets de reproductors per separat — el quiosc utilitza el <a href="https://docs.fedoraproject.org/en-US/packaging-guidelines/Alternatives/" style="color:var(--blue)">sistema d'alternatives</a> perquè puguis canviar de reproductor en qualsevol moment. Reinicia per iniciar el quiosc.
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- Images -->
+    <!-- Imatges -->
     <section id="images">
-        <h2>Kiosk images</h2>
-        <p class="section-desc">Pre-built bootable images — no Linux install needed. Download, flash to USB or SD card, boot and your kiosk is ready. See <a href="#getting-started" style="color:var(--blue);">Getting started</a> for step-by-step instructions.</p>
+        <h2>Imatges de quiosc</h2>
+        <p class="section-desc">Imatges d'arrencada predefinides — no cal instal·lar Linux. Descarrega, grava a USB o targeta SD, arrenca i el teu quiosc està llest. Consulta <a href="#getting-started" style="color:var(--blue);">Primers passos</a> per a instruccions pas a pas.</p>
 
-        <div id="images-list" class="loading">Loading kiosk images...</div>
+        <div id="images-list" class="loading">Carregant imatges de quiosc...</div>
     </section>
 
-    <!-- Players -->
+    <!-- Reproductors -->
     <section id="players">
-        <h2>Choose your player</h2>
-        <p class="section-desc">Pick the player that fits your hardware. Electron and Chromium are powered by the same PWA engine — arexibo is an independent native player.</p>
+        <h2>Tria el teu reproductor</h2>
+        <p class="section-desc">Tria el reproductor que s'adapti al teu maquinari. Electron i Chromium utilitzen el mateix motor PWA — arexibo és un reproductor natiu independent.</p>
 
         <div class="player-grid">
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-electron">
-                <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
+                <h3><span class="icon">&#x26A1;</span> Reproductor Electron</h3>
                 <div class="player-mono">xiboplayer-electron</div>
-                <p class="desc">Self-contained desktop app — includes its own browser, nothing else to install. Best choice for a quick setup on any Linux PC. Connects to your CMS automatically.</p>
+                <p class="desc">Aplicació d'escriptori autònoma — inclou el seu propi navegador, no cal instal·lar res més. La millor opció per a una configuració ràpida en qualsevol PC Linux. Es connecta al teu CMS automàticament.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
@@ -690,9 +690,9 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                 </div>
             </a>
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-chromium">
-                <h3><span class="icon">&#x1F310;</span> Chromium Player</h3>
+                <h3><span class="icon">&#x1F310;</span> Reproductor Chromium</h3>
                 <div class="player-mono">xiboplayer-chromium</div>
-                <p class="desc">Lightweight player for systems that already have Chromium or a Chromium-based browser installed. Uses the existing browser instead of bundling its own — ideal for kiosks and embedded devices.</p>
+                <p class="desc">Reproductor lleuger per a sistemes que ja tenen Chromium o un navegador basat en Chromium instal·lat. Utilitza el navegador existent en lloc d'incloure'n un — ideal per a quioscs i dispositius encastats.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
@@ -702,7 +702,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/arexibo">
                 <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
                 <div class="player-mono">arexibo</div>
-                <p class="desc">High-performance native player built in Rust. Standalone — does not use the PWA engine. Runs on both Intel/AMD and ARM hardware.</p>
+                <p class="desc">Reproductor natiu d'alt rendiment construït en Rust. Independent — no utilitza el motor PWA. Funciona tant en maquinari Intel/AMD com ARM.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
@@ -714,25 +714,25 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
 
     </section>
 
-    <!-- SDK & PWA Engine -->
+    <!-- SDK i Motor PWA -->
     <section id="sdk">
-        <h2>For developers &amp; CMS administrators</h2>
-        <p class="section-desc">The engine and building blocks behind every player. Most users don't need these — they're for custom integrations and self-hosted deployments.</p>
+        <h2>Per a desenvolupadors i administradors de CMS</h2>
+        <p class="section-desc">El motor i els components bàsics darrere de cada reproductor. La majoria d'usuaris no els necessiten — són per a integracions personalitzades i desplegaments autoallotjats.</p>
 
         <div class="player-grid">
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-pwa">
-                <h3><span class="icon">&#x1F4F1;</span> PWA Engine</h3>
+                <h3><span class="icon">&#x1F4F1;</span> Motor PWA</h3>
                 <div class="player-mono">@xiboplayer/pwa</div>
-                <p class="desc">The rendering engine that powers all players. Can also run standalone in any browser — deploy it on your own server and point a browser at it. Handles video, images, audio, PDF, tickers, web pages, HLS, and multi-display sync.</p>
+                <p class="desc">El motor de renderització que impulsa tots els reproductors. També pot funcionar de manera autònoma a qualsevol navegador — desplega'l al teu propi servidor i apunta-hi un navegador. Gestiona vídeo, imatges, àudio, PDF, tickers, pàgines web, HLS i sincronització multipantalla.</p>
                 <div class="meta">
                     <span class="badge">npm</span>
-                    <span class="badge">Self-hosted</span>
+                    <span class="badge">Autoallotjat</span>
                 </div>
             </a>
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer">
                 <h3><span class="icon">&#x1F9F1;</span> @xiboplayer SDK</h3>
-                <div class="player-mono">13 npm packages</div>
-                <p class="desc">Modular TypeScript packages for caching, rendering, scheduling, multi-display sync, CMS communication (REST + SOAP), real-time commands, statistics, and more. 1258 tests across 31 suites.</p>
+                <div class="player-mono">13 paquets npm</div>
+                <p class="desc">Paquets TypeScript modulars per a memòria cau, renderització, programació, sincronització multipantalla, comunicació amb el CMS (REST + SOAP), comandes en temps real, estadístiques i més. 1258 tests en 31 suites.</p>
                 <div class="meta">
                     <span class="badge">npm</span>
                     <span class="badge">TypeScript</span>
@@ -741,18 +741,16 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         </div>
         <div class="sdk-links" style="margin-top:1rem; display:flex; gap:1.5rem; flex-wrap:wrap;">
             <a href="https://github.com/xibo-players/xiboplayer">&#x1F4E6; GitHub</a>
-            <a href="https://www.npmjs.com/org/xiboplayer">&#x1F4E6; npm packages</a>
-            <a href="https://github.com/xibo-players/xiboplayer/tree/main/mcp-server">&#x1F916; MCP Server</a>
-            <a href="https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md">&#x1F4CA; Feature comparison</a>
+            <a href="https://www.npmjs.com/org/xiboplayer">&#x1F4E6; Paquets npm</a>
+            <a href="https://github.com/xibo-players/xiboplayer/tree/main/mcp-server">&#x1F916; Servidor MCP</a>
+            <a href="https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md">&#x1F4CA; Comparació de funcionalitats</a>
         </div>
     </section>
 
-    <!-- "Available packages" section removed — redundant with Players and Browse -->
-
-    <!-- Setup -->
+    <!-- Configuració -->
     <section id="setup">
-        <h2>Repository setup</h2>
-        <p class="section-desc">Add the repository once, then install any package with your system package manager.</p>
+        <h2>Configuració del repositori</h2>
+        <p class="section-desc">Afegeix el repositori un cop i instal·la qualsevol paquet amb el gestor de paquets del teu sistema.</p>
 
         <div class="tab-bar" data-tabs="setup">
             <button class="active" data-tab="fedora">Fedora (DNF)</button>
@@ -761,23 +759,23 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
 
         <div class="tab-content active" data-tab-content="fedora">
             <div class="info-box">
-                A single repository serves all xibo-players packages. RPM metadata is hosted here; actual packages are downloaded directly from each project's GitHub Releases.
+                Un sol repositori serveix tots els paquets de xibo-players. Les metadades RPM s'allotgen aquí; els paquets reals es descarreguen directament des de les GitHub Releases de cada projecte.
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>1. Add the repository</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <h3>1. Afegeix el repositori</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copia</button>
                 </div>
-                <pre id="dnf-add"><span class="c"># Install the xiboplayer repository and GPG key</span>
+                <pre id="dnf-add"><span class="c"># Instal·la el repositori i la clau GPG de xiboplayer</span>
 sudo dnf install \
   https://dl.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-2.noarch.rpm</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>2. Install packages</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <h3>2. Instal·la paquets</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copia</button>
                 </div>
-                <pre><span class="c"># Install one or more packages</span>
+                <pre><span class="c"># Instal·la un o més paquets</span>
 sudo dnf install xiboplayer-kiosk
 sudo dnf install xiboplayer-electron
 sudo dnf install xiboplayer-chromium
@@ -785,34 +783,34 @@ sudo dnf install arexibo</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>3. Start the kiosk session</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <h3>3. Inicia la sessió de quiosc</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copia</button>
                 </div>
-                <pre><span class="c"># Enable auto-login on tty1 (reboot to start)</span>
+                <pre><span class="c"># Activa l'inici de sessió automàtic a tty1 (reinicia per començar)</span>
 sudo systemctl set-default graphical.target
-<span class="c"># The kiosk session starts automatically on the next boot</span></pre>
+<span class="c"># La sessió de quiosc s'inicia automàticament al proper arrencada</span></pre>
             </div>
         </div>
 
         <div class="tab-content" data-tab-content="ubuntu">
             <div class="info-box">
-                DEB packages are served directly from this repository. Currently available: <strong>xiboplayer-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
+                Els paquets DEB es serveixen directament des d'aquest repositori. Actualment disponibles: <strong>xiboplayer-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>1. Add the repository</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <h3>1. Afegeix el repositori</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copia</button>
                 </div>
-                <pre><span class="c"># Download and install the xiboplayer repository and GPG key</span>
+                <pre><span class="c"># Descarrega i instal·la el repositori i la clau GPG de xiboplayer</span>
 curl -fsSLO https://dl.xiboplayer.org/deb/ubuntu/24.04/all/xiboplayer-release_1.0.0_all.deb
 sudo apt install ./xiboplayer-release_1.0.0_all.deb</pre>
             </div>
             <div class="setup-block">
                 <div class="setup-header">
-                    <h3>2. Install packages</h3>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <h3>2. Instal·la paquets</h3>
+                    <button class="copy-btn" onclick="copyCode(this)">Copia</button>
                 </div>
-                <pre><span class="c"># Update and install one or more packages</span>
+                <pre><span class="c"># Actualitza i instal·la un o més paquets</span>
 sudo apt update
 sudo apt install xiboplayer-kiosk
 sudo apt install xiboplayer-electron
@@ -822,77 +820,75 @@ sudo apt install arexibo</pre>
         </div>
     </section>
 
-    <!-- Browse -->
+    <!-- Explorar -->
     <section id="browse">
-        <h2>Browse packages</h2>
-        <p class="section-desc">View all packages available in the repository.</p>
+        <h2>Explorar paquets</h2>
+        <p class="section-desc">Consulta tots els paquets disponibles al repositori.</p>
 
         <div class="tab-bar" data-tabs="browse">
-            <button class="active" data-tab="browse-rpm">RPM packages</button>
-            <button data-tab="browse-deb">DEB packages</button>
+            <button class="active" data-tab="browse-rpm">Paquets RPM</button>
+            <button data-tab="browse-deb">Paquets DEB</button>
         </div>
 
         <div class="tab-content active" data-tab-content="browse-rpm">
             <div class="tab-bar" id="rpm-arch-filter"></div>
-            <div id="rpm-list" class="loading">Loading RPM package list...</div>
+            <div id="rpm-list" class="loading">Carregant llista de paquets RPM...</div>
         </div>
 
         <div class="tab-content" data-tab-content="browse-deb">
             <div class="tab-bar" id="deb-arch-filter"></div>
-            <div id="deb-list" class="loading">Loading DEB package list...</div>
+            <div id="deb-list" class="loading">Carregant llista de paquets DEB...</div>
         </div>
 
     </section>
-
-    <!-- "How it works" removed — info is in the Repository setup section -->
 
 </div>
 
 <footer>
     <p>
         <a href="https://github.com/xibo-players">github.com/xibo-players</a>
-        &middot; Open-source digital signage
-        &middot; Powered by <a href="https://pages.github.com">GitHub Pages</a>
+        &middot; Signage digital de codi obert
+        &middot; Impulsat per <a href="https://pages.github.com">GitHub Pages</a>
     </p>
     <p class="footer-disclaimer">
-        Not affiliated with Xibo Ltd. Xibo is a registered trademark of Xibo Ltd.
+        No està afiliat amb Xibo Ltd. Xibo és una marca registrada de Xibo Ltd.
     </p>
 </footer>
 
 <script src="/shared.js"></script>
 <script>
 initSite({
-    copy: 'Copy',
-    copied: 'Copied!',
-    noPackagesArch: 'No packages for this architecture.',
-    noDebPackages: 'No DEB packages found.',
-    errorDebPackages: 'Could not load DEB packages.',
-    noRpmReleases: 'No RPM releases found yet.',
-    noImagesYet: 'No images yet',
-    noImagesDesc: 'Kiosk images will appear here after the first tagged release.',
-    kioskImages: 'Kiosk images',
-    imagesFallback: 'Images are available from <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases">GitHub Releases</a>.',
-    thPackage: 'Package',
-    thVersion: 'Version',
-    thArch: 'Arch',
-    thSize: 'Size',
-    thDescription: 'Description',
-    thFile: 'File',
-    thRelease: 'Release',
-    thImage: 'Image',
+    copy: 'Copia',
+    copied: 'Copiat!',
+    noPackagesArch: 'No hi ha paquets per a aquesta arquitectura.',
+    noDebPackages: 'No s\'han trobat paquets DEB.',
+    errorDebPackages: 'No s\'han pogut carregar els paquets DEB.',
+    noRpmReleases: 'Encara no hi ha versions RPM.',
+    noImagesYet: 'Encara no hi ha imatges',
+    noImagesDesc: 'Les imatges de quiosc apareixeran aquí després de la primera versió etiquetada.',
+    kioskImages: 'Imatges de quiosc',
+    imagesFallback: 'Les imatges estan disponibles des de <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases">GitHub Releases</a>.',
+    thPackage: 'Paquet',
+    thVersion: 'Versió',
+    thArch: 'Arq.',
+    thSize: 'Mida',
+    thDescription: 'Descripció',
+    thFile: 'Fitxer',
+    thRelease: 'Versió',
+    thImage: 'Imatge',
     thFormat: 'Format',
-    thUseCase: 'Use case',
-    fmtIso: 'ISO installer',
+    thUseCase: 'Cas d\'ús',
+    fmtIso: 'Instal\u00b7lador ISO',
     fmtQcow2: 'QCOW2',
-    fmtRaw: 'Raw disk',
-    fmtCompressed: 'Compressed',
-    fmtImage: 'Image',
-    useCaseIso: 'Flash to USB, boot on any PC \u2014 fully automated install',
-    useCaseQcow2: 'Ready-to-boot VM for GNOME Boxes, virt-manager, Proxmox, QEMU',
-    useCaseRawArm: 'Flash to SD card for Raspberry Pi 4/5 or ARM boards',
-    useCaseRawX86: 'Write to SSD or SD card for Intel NUCs, embedded PCs',
-    imagesNote: 'All images include: GNOME Kiosk session, auto-login, xiboplayer-kiosk + xiboplayer-electron pre-installed. Default login: <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> / <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> \u2014 change your password after first boot.',
-    imagesEtcher: 'Use <a href="https://etcher.balena.io/" style="color:var(--blue);">Balena Etcher</a> for an easy graphical tool to flash any image. <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" style="color:var(--blue);">All releases</a>'
+    fmtRaw: 'Disc raw',
+    fmtCompressed: 'Comprimit',
+    fmtImage: 'Imatge',
+    useCaseIso: 'Grava a USB, arrenca en qualsevol PC \u2014 instal\u00b7laci\u00f3 totalment autom\u00e0tica',
+    useCaseQcow2: 'VM llesta per arrencar per a GNOME Boxes, virt-manager, Proxmox, QEMU',
+    useCaseRawArm: 'Grava a targeta SD per a Raspberry Pi 4/5 o plaques ARM',
+    useCaseRawX86: 'Escriu a SSD o targeta SD per a Intel NUCs, PCs encastats',
+    imagesNote: 'Totes les imatges inclouen: sessió GNOME Kiosk, inici de sessió automàtic, xiboplayer-kiosk + xiboplayer-electron preinstal\u00b7lats. Inici de sessió per defecte: <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> / <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> \u2014 canvia la contrasenya després del primer arrencada.',
+    imagesEtcher: 'Utilitza <a href="https://etcher.balena.io/" style="color:var(--blue);">Balena Etcher</a> com a eina gràfica fàcil per gravar qualsevol imatge. <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" style="color:var(--blue);">Totes les versions</a>'
 });
 </script>
 
