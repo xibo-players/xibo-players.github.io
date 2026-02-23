@@ -500,7 +500,6 @@
     <a href="#players">Players</a>
     <a href="#getting-started">Getting started</a>
     <a href="#sdk">SDK</a>
-    <a href="#packages">Packages</a>
     <a href="#setup">Setup</a>
     <a href="#browse">Browse</a>
     <a href="#images">Images</a>
@@ -509,34 +508,34 @@
 
 <div class="container">
 
-    <!-- What's New -->
-    <section id="whats-new">
-        <h2>What's new in v0.4.0</h2>
-        <p class="section-desc">Major feature release with 15+ new capabilities across the SDK and PWA player.</p>
+    <!-- Features -->
+    <section id="features">
+        <h2>Built for digital signage</h2>
+        <p class="section-desc">Everything you need to run professional signage on commodity hardware.</p>
         <div class="pkg-grid">
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F4FA;</span> Multi-display sync</h3>
-                <p class="desc">BroadcastChannel-based lead/follower synchronization for video walls. Synchronized video start across displays.</p>
+                <h3><span class="icon">&#x1F4E1;</span> Works offline</h3>
+                <p class="desc">Content is stored on the device. Displays keep playing even without a network connection and sync back when connectivity returns.</p>
             </div>
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x26C5;</span> Weather &amp; geolocation</h3>
-                <p class="desc">Weather-based schedule criteria for conditional content. Geolocation fallback chain: browser → Google API → IP lookup.</p>
+                <h3><span class="icon">&#x1F3AC;</span> Any content type</h3>
+                <p class="desc">Video, images, audio, PDF, live RSS feeds, clocks, web pages, and streaming — play virtually any media format on your screens.</p>
             </div>
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F3B5;</span> Audio &amp; rendering</h3>
-                <p class="desc">Audio widget with overlay visualization, image scaleType/align/valign, region exit transitions, and renderer pause/resume control.</p>
+                <h3><span class="icon">&#x1F4C5;</span> Smart scheduling</h3>
+                <p class="desc">Schedule campaigns by time of day, priority, or location. Set up interrupt content, overlay zones, and weather-triggered playlists from your CMS.</p>
             </div>
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x23ED;</span> Playback control</h3>
-                <p class="desc">Keyboard shortcuts and timeline click-to-skip for layout navigation. Pause/resume, next/previous, revert to schedule.</p>
+                <h3><span class="icon">&#x1F527;</span> Easy deployment</h3>
+                <p class="desc">Flash an image, power on, and connect to your CMS. Displays register themselves and receive updates automatically — no manual setup needed.</p>
             </div>
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F4CA;</span> Schedule &amp; stats</h3>
-                <p class="desc">Conflict detection, interleaved default layouts, scheduled commands, event-based proof of play, and log batching.</p>
+                <h3><span class="icon">&#x1F50D;</span> Monitor everything</h3>
+                <p class="desc">See what's playing on every screen with proof of play, remote screenshots, download progress, and detailed logs — all visible from your CMS.</p>
             </div>
             <div class="pkg-card" style="cursor:default;">
-                <h3><span class="icon">&#x1F3F7;</span> CMS integration</h3>
-                <p class="desc">Display tag config parsing, licence result handling, and REST weather endpoint support.</p>
+                <h3><span class="icon">&#x1F4FA;</span> Video walls</h3>
+                <p class="desc">Synchronize multiple screens into a single video wall. Coordinated playback, layout transitions, and scheduling across all displays.</p>
             </div>
         </div>
     </section>
@@ -544,22 +543,13 @@
     <!-- Players -->
     <section id="players">
         <h2>Choose your player</h2>
-        <p class="section-desc">Five ways to run Xibo on your hardware. The PWA engine powers all players — pick the shell that fits your deployment.</p>
+        <p class="section-desc">Pick the player that fits your hardware. Electron and Chromium are powered by the same PWA engine — arexibo is an independent native player.</p>
 
         <div class="player-grid">
-            <a class="player-card featured" href="https://github.com/xibo-players/xiboplayer-pwa">
-                <h3><span class="icon">&#x1F4F1;</span> PWA Player</h3>
-                <div class="player-mono">@xiboplayer/pwa</div>
-                <p class="desc">Lightweight browser-based player and the engine that powers all other players. Offline-first with Service Worker caching. Supports video, images, audio, PDF, text/tickers, web pages, HLS streaming, multi-display sync, and playback control.</p>
-                <div class="meta">
-                    <span class="badge">Browser</span>
-                    <span class="badge">npm</span>
-                </div>
-            </a>
             <a class="player-card" href="https://github.com/xibo-players/xiboplayer-electron">
                 <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
                 <div class="player-mono">xiboplayer-electron</div>
-                <p class="desc">Desktop app wrapping the PWA player. Best for development and testing. Standalone window with DevTools access and automatic CMS registration.</p>
+                <p class="desc">Self-contained desktop app — includes its own browser, nothing else to install. Best choice for a quick setup on any Linux PC. Connects to your CMS automatically.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
@@ -567,30 +557,19 @@
                 </div>
             </a>
             <a class="player-card" href="https://github.com/xibo-players/xiboplayer-chromium">
-                <h3><span class="icon">&#x1F310;</span> Chromium Kiosk</h3>
+                <h3><span class="icon">&#x1F310;</span> Chromium Player</h3>
                 <div class="player-mono">xiboplayer-chromium</div>
-                <p class="desc">Locked-down Chromium browser running the PWA. Lightweight alternative when Electron is not needed. Minimal resource usage.</p>
+                <p class="desc">Lightweight player for systems that already have Chromium or a Chromium-based browser installed. Uses the existing browser instead of bundling its own — ideal for kiosks and embedded devices.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
                     <span class="badge">noarch</span>
-                </div>
-            </a>
-            <a class="player-card" href="https://github.com/xibo-players/xibo-kiosk">
-                <h3><span class="icon">&#x1F5A5;</span> Xibo Kiosk</h3>
-                <div class="player-mono">xibo-kiosk</div>
-                <p class="desc">Complete kiosk operating system. GNOME Kiosk session with auto-login, first-boot registration wizard, health monitoring, and dunst notifications. Pre-built bootable images for PCs and Raspberry Pi.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                    <span class="badge arch">aarch64</span>
                 </div>
             </a>
             <a class="player-card" href="https://github.com/xibo-players/arexibo">
                 <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
                 <div class="player-mono">arexibo</div>
-                <p class="desc">Native Rust-based player with Qt6 WebEngine. High performance, dual architecture. Independent from the PWA engine.</p>
+                <p class="desc">High-performance native player built in Rust. Standalone — does not use the PWA engine. Runs on both Intel/AMD and ARM hardware.</p>
                 <div class="meta">
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
@@ -599,132 +578,145 @@
                 </div>
             </a>
         </div>
+
     </section>
 
-    <!-- Getting Started -->
+    <!-- Getting Started — unified deployment section -->
     <section id="getting-started">
         <h2>Getting started</h2>
-        <p class="section-desc">The fastest way to get a signage display running. Pick your hardware, download an image, flash and boot — no Linux experience needed.</p>
+        <p class="section-desc">Two ways to set up a signage display. Choose the one that fits your situation.</p>
 
-        <div class="gs-grid">
-            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
-                <div class="gs-icon">&#x1F5A5;</div>
-                <h3>PC or laptop</h3>
-                <div class="gs-format">Installer ISO</div>
-                <p class="desc">Flash the ISO to a USB stick with <strong>Balena Etcher</strong> or <code>dd</code>. Boot from USB — the installer formats the disk and sets everything up automatically. Remove USB and reboot.</p>
-                <div class="gs-action">Download ISO &#x2192;</div>
-            </a>
-            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
-                <div class="gs-icon">&#x1F353;</div>
-                <h3>Raspberry Pi 4/5</h3>
-                <div class="gs-format">Raw image (aarch64)</div>
-                <p class="desc">Flash the <code>.raw.xz</code> image directly to an SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Insert the card, power on, and the kiosk boots ready to use.</p>
-                <div class="gs-action">Download aarch64 &#x2192;</div>
-            </a>
-            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
-                <div class="gs-icon">&#x1F4BB;</div>
-                <h3>Virtual machine</h3>
-                <div class="gs-format">QCOW2</div>
-                <p class="desc">Ready-to-boot VM image. Open in <strong>GNOME Boxes</strong>, <strong>virt-manager</strong>, <strong>Proxmox</strong>, or run directly with <strong>QEMU</strong>. No installation needed.</p>
-                <div class="gs-action">Download QCOW2 &#x2192;</div>
-            </a>
-            <a class="gs-card" href="https://github.com/xibo-players/xibo-kiosk/releases/latest">
-                <div class="gs-icon">&#x1F527;</div>
-                <h3>Intel NUC / embedded</h3>
-                <div class="gs-format">Raw image (x86_64)</div>
-                <p class="desc">Write the <code>.raw.xz</code> image directly to the internal SSD or SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Same as the Pi image but for Intel/AMD hardware.</p>
-                <div class="gs-action">Download x86_64 &#x2192;</div>
-            </a>
+        <!-- Tab buttons for deployment path -->
+        <div class="deploy-tabs" style="display:flex; gap:0.5rem; margin-bottom:1.5rem;">
+            <button class="deploy-tab active" data-target="deploy-images" style="flex:1; padding:1rem; border:2px solid var(--accent); border-radius:10px; background:var(--card-bg); color:var(--text); cursor:pointer; text-align:left;">
+                <strong style="display:block; font-size:1.1rem; margin-bottom:0.25rem;">&#x1F4BF; Flash a ready-made image</strong>
+                <span style="opacity:0.7; font-size:0.9rem;">No Linux experience needed. Download, flash, boot — done.</span>
+            </button>
+            <button class="deploy-tab" data-target="deploy-package" style="flex:1; padding:1rem; border:2px solid var(--border); border-radius:10px; background:var(--card-bg); color:var(--text); cursor:pointer; text-align:left;">
+                <strong style="display:block; font-size:1.1rem; margin-bottom:0.25rem;">&#x1F4E6; Install on existing Linux</strong>
+                <span style="opacity:0.7; font-size:0.9rem;">Already have Fedora or Ubuntu? Install the kiosk package with DNF/APT.</span>
+            </button>
         </div>
 
-        <div class="gs-tip">
-            <h4>After booting</h4>
-            <p>
-                Log in with user <code>xibo</code> / password <code>xibo</code>.
-                Change your password with <code>passwd</code>.
-                Connect to your Xibo CMS from the kiosk setup screen — the display registers automatically and starts playing your scheduled content.
-            </p>
-        </div>
+        <!-- Path 1: Pre-built images -->
+        <div id="deploy-images" class="deploy-content">
+            <p style="margin-bottom:1rem; opacity:0.8;"><strong>Xibo Kiosk</strong> images include everything: the operating system, auto-login, a setup wizard, all players, health monitoring, and automatic updates. You choose which player to run at setup time — and can switch at any time. Pick your hardware:</p>
+            <div class="gs-grid">
+                <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
+                    <div class="gs-icon">&#x1F5A5;</div>
+                    <h3>PC or laptop</h3>
+                    <div class="gs-format">Installer ISO</div>
+                    <p class="desc">Flash the ISO to a USB stick with <strong>Balena Etcher</strong> or <code>dd</code>. Boot from USB — the installer formats the disk and sets everything up automatically. Remove USB and reboot.</p>
+                    <div class="gs-action">Download ISO &#x2192;</div>
+                </a>
+                <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
+                    <div class="gs-icon">&#x1F353;</div>
+                    <h3>Raspberry Pi 4/5</h3>
+                    <div class="gs-format">Raw image (aarch64)</div>
+                    <p class="desc">Flash the <code>.raw.xz</code> image directly to an SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Insert the card, power on, and the kiosk boots ready to use.</p>
+                    <div class="gs-action">Download aarch64 &#x2192;</div>
+                </a>
+                <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
+                    <div class="gs-icon">&#x1F4BB;</div>
+                    <h3>Virtual machine</h3>
+                    <div class="gs-format">QCOW2</div>
+                    <p class="desc">Ready-to-boot VM image. Open in <strong>GNOME Boxes</strong>, <strong>virt-manager</strong>, <strong>Proxmox</strong>, or run directly with <strong>QEMU</strong>. No installation needed.</p>
+                    <div class="gs-action">Download QCOW2 &#x2192;</div>
+                </a>
+                <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
+                    <div class="gs-icon">&#x1F527;</div>
+                    <h3>Intel NUC / embedded</h3>
+                    <div class="gs-format">Raw image (x86_64)</div>
+                    <p class="desc">Write the <code>.raw.xz</code> image directly to the internal SSD or SD card with <strong>Balena Etcher</strong> or <code>dd</code>. Same as the Pi image but for Intel/AMD hardware.</p>
+                    <div class="gs-action">Download x86_64 &#x2192;</div>
+                </a>
+            </div>
 
-        <div class="gs-tip">
-            <h4>Already have Fedora or Ubuntu?</h4>
-            <p>
-                You don't need a kiosk image — just install the player packages directly.
-                Jump to the <a href="#setup" style="color:var(--blue);">repository setup</a> to add our DNF/APT repo and install with a single command.
-            </p>
-        </div>
-    </section>
-
-    <!-- SDK -->
-    <section id="sdk">
-        <h2>SDK</h2>
-        <p class="section-desc">The building blocks behind every player.</p>
-
-        <div class="sdk-box">
-            <div class="sdk-icon">&#x1F9F1;</div>
-            <div>
+            <div class="gs-tip">
+                <h4>After booting</h4>
                 <p>
-                    All players are built on the <strong>@xiboplayer SDK</strong> — 13 modular TypeScript packages for
-                    caching, rendering, scheduling, multi-display sync, XMDS/SOAP + REST communication, XMR real-time commands,
-                    statistics, and more. 1258 tests across 31 suites. Each package is published independently to npm.
+                    Log in with user <code>xibo</code> / password <code>xibo</code>.
+                    Change your password with <code>passwd</code>.
+                    Connect to your Xibo CMS from the kiosk setup screen — the display registers automatically and starts playing your scheduled content.
                 </p>
-                <div class="sdk-links">
-                    <a href="https://github.com/xibo-players/xiboplayer">&#x1F4E6; GitHub</a>
-                    <a href="https://www.npmjs.com/org/xiboplayer">&#x1F4E6; npm packages</a>
-                    <a href="https://github.com/xibo-players/xiboplayer/tree/main/mcp-server">&#x1F916; MCP Server</a>
-                    <a href="https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md">&#x1F4CA; Feature comparison</a>
+            </div>
+        </div>
+
+        <!-- Path 2: Package install on existing system -->
+        <div id="deploy-package" class="deploy-content" style="display:none;">
+            <p style="margin-bottom:1rem; opacity:0.8;">Install <strong>xiboplayer-kiosk</strong> on your existing Fedora or Ubuntu system. It configures auto-login, a kiosk session, health monitoring, and the Electron player — without reinstalling the OS.</p>
+
+            <div style="margin-bottom:1.5rem;">
+                <div class="deploy-os-tabs" style="display:flex; gap:0; margin-bottom:0;">
+                    <button class="deploy-os-tab active" data-os="fedora" style="padding:0.6rem 1.5rem; border:1px solid var(--border); border-bottom:none; border-radius:8px 8px 0 0; background:var(--card-bg); color:var(--text); cursor:pointer; font-weight:600;">Fedora (DNF)</button>
+                    <button class="deploy-os-tab" data-os="ubuntu" style="padding:0.6rem 1.5rem; border:1px solid var(--border); border-bottom:none; border-radius:8px 8px 0 0; background:transparent; color:var(--text); cursor:pointer; opacity:0.6;">Ubuntu (APT)</button>
                 </div>
+                <div class="deploy-os-content" data-os-content="fedora" style="padding:1.5rem; border:1px solid var(--border); border-radius:0 10px 10px 10px; background:var(--card-bg);">
+                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Add the repository
+sudo dnf install \
+  https://dnf.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-1.fc43.noarch.rpm
+
+# Install kiosk
+sudo dnf install xiboplayer-kiosk
+
+# Enable kiosk session
+sudo systemctl set-default graphical.target</code></pre>
+                </div>
+                <div class="deploy-os-content" data-os-content="ubuntu" style="display:none; padding:1.5rem; border:1px solid var(--border); border-radius:0 10px 10px 10px; background:var(--card-bg);">
+                    <pre style="background:var(--pre-bg); padding:1rem; border-radius:8px; overflow-x:auto; font-size:0.85rem; margin:0;"><code># Add the repository and GPG key
+curl -fsSL https://dnf.xiboplayer.org/deb/DEB-GPG-KEY-xiboplayer | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/xiboplayer.gpg
+echo "deb https://dnf.xiboplayer.org/deb/ubuntu/24.04 ./" | \
+  sudo tee /etc/apt/sources.list.d/xiboplayer.list
+
+# Install kiosk
+sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
+                </div>
+            </div>
+
+            <div class="gs-tip">
+                <h4>What gets installed</h4>
+                <p>
+                    The <code>xiboplayer-kiosk</code> package pulls in the Electron player, sets up a dedicated kiosk user with auto-login, configures a fullscreen browser session, and enables health monitoring and on-screen notifications. Reboot to start the kiosk.
+                </p>
             </div>
         </div>
     </section>
 
-    <!-- Packages -->
-    <section id="packages">
-        <h2>Available packages</h2>
-        <p class="section-desc">All packages are available for Fedora 43 (RPM). Select packages also support Ubuntu 24.04 (DEB).</p>
+    <!-- SDK & PWA Engine -->
+    <section id="sdk">
+        <h2>For developers &amp; CMS administrators</h2>
+        <p class="section-desc">The engine and building blocks behind every player. Most users don't need these — they're for custom integrations and self-hosted deployments.</p>
 
-        <div class="pkg-grid">
-            <a class="pkg-card" href="https://github.com/xibo-players/xibo-kiosk">
-                <h3><span class="icon">&#x1F5A5;</span> xibo-kiosk</h3>
-                <p class="desc">GNOME Kiosk session with auto-login, first-boot registration wizard, health monitoring, dunst notifications, and keyd shortcuts.</p>
+        <div class="player-grid">
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-pwa">
+                <h3><span class="icon">&#x1F4F1;</span> PWA Engine</h3>
+                <div class="player-mono">@xiboplayer/pwa</div>
+                <p class="desc">The rendering engine that powers all players. Can also run standalone in any browser — deploy it on your own server and point a browser at it. Handles video, images, audio, PDF, tickers, web pages, HLS, and multi-display sync.</p>
                 <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                    <span class="badge arch">aarch64</span>
-                    <span class="badge">noarch</span>
+                    <span class="badge">npm</span>
+                    <span class="badge">Self-hosted</span>
                 </div>
             </a>
-            <a class="pkg-card" href="https://github.com/xibo-players/xiboplayer-electron">
-                <h3><span class="icon">&#x26A1;</span> xiboplayer-electron</h3>
-                <p class="desc">Electron-based Xibo player with offline support, service worker caching, and automatic CMS registration.</p>
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer">
+                <h3><span class="icon">&#x1F9F1;</span> @xiboplayer SDK</h3>
+                <div class="player-mono">13 npm packages</div>
+                <p class="desc">Modular TypeScript packages for caching, rendering, scheduling, multi-display sync, CMS communication (REST + SOAP), real-time commands, statistics, and more. 1258 tests across 31 suites.</p>
                 <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                </div>
-            </a>
-            <a class="pkg-card" href="https://github.com/xibo-players/xiboplayer-chromium">
-                <h3><span class="icon">&#x1F310;</span> xiboplayer-chromium</h3>
-                <p class="desc">Chromium kiosk wrapper that runs the Xibo PWA player in a locked-down browser window.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge">noarch</span>
-                </div>
-            </a>
-            <a class="pkg-card" href="https://github.com/xibo-players/arexibo">
-                <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
-                <p class="desc">Native Rust-based Xibo player with Qt6 WebEngine. High performance, dual architecture.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                    <span class="badge arch">aarch64</span>
+                    <span class="badge">npm</span>
+                    <span class="badge">TypeScript</span>
                 </div>
             </a>
         </div>
+        <div class="sdk-links" style="margin-top:1rem; display:flex; gap:1.5rem; flex-wrap:wrap;">
+            <a href="https://github.com/xibo-players/xiboplayer">&#x1F4E6; GitHub</a>
+            <a href="https://www.npmjs.com/org/xiboplayer">&#x1F4E6; npm packages</a>
+            <a href="https://github.com/xibo-players/xiboplayer/tree/main/mcp-server">&#x1F916; MCP Server</a>
+            <a href="https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md">&#x1F4CA; Feature comparison</a>
+        </div>
     </section>
+
+    <!-- "Available packages" section removed — redundant with Players and Browse -->
 
     <!-- Setup -->
     <section id="setup">
@@ -755,7 +747,7 @@ sudo dnf install \
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
                 <pre><span class="c"># Install one or more packages</span>
-sudo dnf install xibo-kiosk
+sudo dnf install xiboplayer-kiosk
 sudo dnf install xiboplayer-electron
 sudo dnf install xiboplayer-chromium
 sudo dnf install arexibo</pre>
@@ -773,7 +765,7 @@ sudo systemctl set-default graphical.target
 
         <div class="tab-content" data-tab-content="ubuntu">
             <div class="info-box">
-                DEB packages are served directly from this repository. Currently available: <strong>xibo-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
+                DEB packages are served directly from this repository. Currently available: <strong>xiboplayer-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
             </div>
             <div class="setup-block">
                 <div class="setup-header">
@@ -791,7 +783,7 @@ sudo apt install ./xiboplayer-release_1.0.0_all.deb</pre>
                 </div>
                 <pre><span class="c"># Update and install</span>
 sudo apt update
-sudo apt install xibo-kiosk</pre>
+sudo apt install xiboplayer-kiosk</pre>
             </div>
         </div>
     </section>
@@ -826,32 +818,7 @@ sudo apt install xibo-kiosk</pre>
         <div id="images-list" class="loading">Loading kiosk images...</div>
     </section>
 
-    <!-- How it works -->
-    <section id="how">
-        <h2>How it works</h2>
-        <p class="section-desc">Architecture of the package repository.</p>
-
-        <div class="setup-block" style="padding:20px;">
-            <p style="margin-bottom:12px;">This is a <strong>unified package repository</strong> serving all xibo-players projects from a single URL.</p>
-
-            <table class="browse-table" style="margin:16px 0;">
-                <tr>
-                    <th style="width:100px;">Format</th>
-                    <th>How packages are served</th>
-                </tr>
-                <tr>
-                    <td><span class="badge rpm">RPM</span></td>
-                    <td>Repository metadata (repodata XML) is hosted here. When <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">dnf install</code> runs, it reads metadata from this site but downloads the actual <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">.rpm</code> files directly from each project's <a href="https://github.com/xibo-players">GitHub Releases</a>. This keeps the repository lightweight.</td>
-                </tr>
-                <tr>
-                    <td><span class="badge deb">DEB</span></td>
-                    <td>Both metadata and <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:0.85em;">.deb</code> packages are hosted directly in this repository. APT downloads everything from here.</td>
-                </tr>
-            </table>
-
-            <p style="font-size:0.9em; color:var(--gray-500);">Each project's CI automatically publishes to this central repository on every release. Repository metadata is rebuilt and merged by GitHub Actions.</p>
-        </div>
-    </section>
+    <!-- "How it works" removed — info is in the Repository setup section -->
 
 </div>
 
@@ -878,6 +845,37 @@ document.querySelectorAll('.tab-bar').forEach(bar => {
             parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             parent.querySelector(`[data-tab-content="${btn.dataset.tab}"]`).classList.add('active');
         });
+    });
+});
+
+// Deploy path tabs
+document.querySelectorAll('.deploy-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.deploy-tab').forEach(b => {
+            b.classList.remove('active');
+            b.style.borderColor = 'var(--border)';
+        });
+        btn.classList.add('active');
+        btn.style.borderColor = 'var(--accent)';
+        document.querySelectorAll('.deploy-content').forEach(c => c.style.display = 'none');
+        document.getElementById(btn.dataset.target).style.display = 'block';
+    });
+});
+
+// OS tabs (Fedora / Ubuntu) inside deploy-package
+document.querySelectorAll('.deploy-os-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const os = btn.dataset.os;
+        document.querySelectorAll('.deploy-os-tab').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'transparent';
+            b.style.opacity = '0.6';
+        });
+        btn.classList.add('active');
+        btn.style.background = 'var(--card-bg)';
+        btn.style.opacity = '1';
+        document.querySelectorAll('.deploy-os-content').forEach(c => c.style.display = 'none');
+        document.querySelector(`[data-os-content="${os}"]`).style.display = 'block';
     });
 });
 
@@ -1023,7 +1021,7 @@ function setupRpmFilter() {
 async function loadRpmPackages() {
     var el = document.getElementById('rpm-list');
     var repos = [
-        { name: 'xibo-kiosk', repo: 'xibo-players/xibo-kiosk' },
+        { name: 'xiboplayer-kiosk', repo: 'xibo-players/xiboplayer-kiosk' },
         { name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' },
         { name: 'xiboplayer-chromium', repo: 'xibo-players/xiboplayer-chromium' },
         { name: 'arexibo', repo: 'xibo-players/arexibo' },
@@ -1072,7 +1070,7 @@ function updateToggleIcon(theme) {
 async function loadKioskImages() {
     const el = document.getElementById('images-list');
     try {
-        const resp = await fetch('https://api.github.com/repos/xibo-players/xibo-kiosk/releases/latest');
+        const resp = await fetch('https://api.github.com/repos/xibo-players/xiboplayer-kiosk/releases/latest');
         if (!resp.ok) throw new Error('No release');
         const release = await resp.json();
         const images = (release.assets || []).filter(a =>
@@ -1113,16 +1111,16 @@ async function loadKioskImages() {
         }
         html += '</tbody></table>';
         html += '<div style="margin-top:16px; font-size:0.85em; color:var(--gray-500);">' +
-            '<p>All images include: GNOME Kiosk session, auto-login, xibo-kiosk + xiboplayer-electron pre-installed. ' +
+            '<p>All images include: GNOME Kiosk session, auto-login, xiboplayer-kiosk + xiboplayer-electron pre-installed. ' +
             'Default login: <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> / <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">xibo</code> — change your password after first boot.</p>' +
             '<p style="margin-top:6px;">Use <a href="https://etcher.balena.io/" style="color:var(--blue);">Balena Etcher</a> for an easy graphical tool to flash any image. ' +
-            '<a href="https://github.com/xibo-players/xibo-kiosk/releases" style="color:var(--blue);">All releases</a></p>' +
+            '<a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" style="color:var(--blue);">All releases</a></p>' +
             '</div>';
         el.innerHTML = html;
     } catch (e) {
         el.innerHTML = '<div class="pkg-grid">' +
             '<div class="pkg-card" style="cursor:default;"><h3>Kiosk images</h3>' +
-            '<p class="desc">Images are available from <a href="https://github.com/xibo-players/xibo-kiosk/releases">GitHub Releases</a>.</p></div></div>';
+            '<p class="desc">Images are available from <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases">GitHub Releases</a>.</p></div></div>';
     }
 }
 
