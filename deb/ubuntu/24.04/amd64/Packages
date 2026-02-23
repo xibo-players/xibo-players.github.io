@@ -38,16 +38,16 @@ Package: xiboplayer-kiosk
 Version: 0.4.4
 Architecture: all
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
-Depends: gnome-kiosk, dunst, unclutter, zenity
+Depends: gnome-kiosk, dunst, unclutter, zenity, xiboplayer-electron | xiboplayer-chromium | arexibo
 Recommends: keyd
 Filename: ./xiboplayer-kiosk_0.4.4_all.deb
-Size: 6256
-MD5sum: ca1b7769e85310fba78147dfd08356ff
-SHA1: cf53be939fd235e348c3d0b16f21bb5d4d581946
-SHA256: 206b6451f56f0c8403c6b53b241fd4dae80eda414f56e551c332feb628a6ceaa
+Size: 6258
+MD5sum: 17060c96919e71c9c19570f865dd08cb
+SHA1: 0a9e17bf5bc52dadca410336233c50e2cced62cd
+SHA256: 44ff5ac154f2d06106fc182f44f46af90e7aa59f8be0aedc6bf65f69e28d2187
 Section: misc
 Priority: optional
-Homepage: https://github.com/xibo-players/xiboplayer-kiosk
+Homepage: https://xiboplayer.org
 Description: Kiosk session scripts for Xibo digital signage players
  Kiosk session scripts for running Xibo digital signage players as full-screen
  displays under GNOME Kiosk. Includes a first-boot registration wizard,
