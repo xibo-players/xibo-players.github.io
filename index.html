@@ -923,7 +923,8 @@ var debArch = 'amd64';
 
 function renderDebTable() {
     var el = document.getElementById('deb-list');
-    var filtered = debArch ? debData.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : debData;
+    var sorted = debData.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
+    var filtered = debArch ? sorted.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : sorted;
     if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No packages for this architecture.</p>'; return; }
     var html = '<table class="browse-table"><thead><tr><th>Package</th><th>Version</th><th>Arch</th><th>Size</th><th>Description</th></tr></thead><tbody>';
     filtered.forEach(function(p) {
@@ -1001,7 +1002,8 @@ var rpmArch = 'x86_64';
 
 function renderRpmTable() {
     var el = document.getElementById('rpm-list');
-    var filtered = rpmArch ? rpmData.filter(function(p) { return p.arch === rpmArch || p.arch === 'noarch'; }) : rpmData;
+    var sorted = rpmData.slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
+    var filtered = rpmArch ? sorted.filter(function(p) { return p.arch === rpmArch || p.arch === 'noarch'; }) : sorted;
     if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">No packages for this architecture.</p>'; return; }
     var html = '<table class="browse-table"><thead><tr><th>Package</th><th>File</th><th>Size</th><th>Arch</th><th>Release</th></tr></thead><tbody>';
     filtered.forEach(function(r) {
