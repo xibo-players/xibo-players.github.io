@@ -16,24 +16,6 @@ Description: Rust-based digital signage player for Xibo CMS
  It provides a lightweight alternative to the official Xibo player,
  designed for kiosk and digital signage deployments on Linux.
 
-Package: xiboplayer-chromium
-Version: 0.4.5-1
-Architecture: all
-Maintainer: Pau Aliagas <pau@linuxnow.com>
-Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
-Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.4.5-1_all.deb
-Size: 7578538
-MD5sum: ba874e3bf11760a9375b53a0722b02c1
-SHA1: 7cc6842e4596556499f9f562128aecfa619e6a79
-SHA256: 969825ded3fbe231c4ea9f56225432c5a81c80350da804188f910bcb4dd6ce45
-Section: misc
-Priority: optional
-Homepage: https://github.com/xibo-players/xiboplayer-chromium
-Description: Self-contained Xibo digital signage player (Chromium kiosk)
- Bundles the PWA player locally and serves it via a Node.js server,
- then launches Chromium in kiosk mode. Only the CMS base URL is needed.
-
 Package: xiboplayer-kiosk
 Version: 0.4.4
 Architecture: all
