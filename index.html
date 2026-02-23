@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xibo Players — Open-source digital signage players</title>
+    <title>Xibo Player — Open-source digital signage players</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="logo-192.png">
+    <link rel="apple-touch-icon" href="logo-192.png">
     <meta name="description" content="Open-source digital signage players for Xibo CMS. PWA, Electron, Chromium kiosk, and pre-built bootable images for PCs and Raspberry Pi.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        darkMode: ['selector', '[data-theme="dark"]'],
+    }
+    </script>
     <style>
         :root {
             --blue: #0969da;
@@ -13,8 +22,8 @@
             --orange: #bf5700;
             --purple: #6639ba;
             --rust: #b7410e;
-            --gray-50: #f6f8fa;
-            --gray-100: #eaeef2;
+            --gray-50: #e6e9ed;
+            --gray-100: #e2e6eb;
             --gray-200: #d0d7de;
             --gray-500: #656d76;
             --gray-700: #32383f;
@@ -74,21 +83,34 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
             color: var(--gray-900);
-            background: var(--gray-50);
             line-height: 1.6;
         }
 
         /* Hero */
         .hero {
-            background: linear-gradient(135deg, #0550ae 0%, #0969da 50%, #218bff 100%);
+            background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 40%, #e65100 100%);
             color: #fff;
-            padding: 56px 20px 48px;
+            padding: 56px 20px 60px;
             text-align: center;
+            position: relative;
         }
         [data-theme="dark"] .hero {
-            background: linear-gradient(135deg, #0a1929 0%, #0d2240 50%, #0f2d5e 100%);
+            background: linear-gradient(135deg, #1e0407 0%, #420a10 40%, #580d14 100%);
         }
-        .hero h1 { font-size: 2.4em; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .hero-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 12px;
+        }
+        .hero-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+        .hero h1 { font-size: 2.4em; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
         .hero p { font-size: 1.15em; opacity: 0.9; max-width: 560px; margin: 0 auto 24px; }
         .hero-links a {
             display: inline-block;
@@ -120,7 +142,6 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 0;
-            background: var(--card-bg);
             border-bottom: 1px solid var(--gray-200);
             position: sticky;
             top: 0;
@@ -141,6 +162,7 @@
         /* Main content */
         .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
         section { padding: 40px 0; }
+        section:first-of-type { padding-top: 32px; }
         section + section { border-top: 1px solid var(--gray-100); }
 
         h2 {
@@ -159,7 +181,6 @@
             margin: 20px 0;
         }
         .pkg-card {
-            background: var(--card-bg);
             border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             padding: 20px;
@@ -207,7 +228,6 @@
             margin: 20px 0;
         }
         .player-card {
-            background: var(--card-bg);
             border: 1px solid var(--gray-200);
             border-radius: var(--radius);
             padding: 20px;
@@ -467,6 +487,8 @@
         /* Responsive */
         @media (max-width: 640px) {
             .hero { padding: 36px 16px 32px; }
+            .hero-brand { gap: 14px; }
+            .hero-logo { width: 52px; height: 52px; border-radius: 12px; }
             .hero h1 { font-size: 1.8em; }
             .nav a { padding: 10px 12px; font-size: 0.82em; }
             .pkg-grid, .player-grid { grid-template-columns: 1fr; }
@@ -478,10 +500,13 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-200 dark:bg-gray-900">
 
 <div class="hero">
-    <h1>Xibo Players</h1>
+    <div class="hero-brand">
+        <img src="logo-192.png" alt="XiboPlayer" class="hero-logo">
+        <h1>Xibo Player</h1>
+    </div>
     <p>Open-source digital signage players for Xibo CMS.<br>Turn any PC, Raspberry Pi, or browser into a signage display.</p>
     <div class="hero-links">
         <a href="https://github.com/xibo-players">GitHub</a>
@@ -496,7 +521,7 @@
     </div>
 </div>
 
-<nav class="nav">
+<nav class="nav bg-white dark:bg-gray-800">
     <a href="#getting-started">Getting started</a>
     <a href="#images">Images</a>
     <a href="#players">Players</a>
@@ -513,27 +538,27 @@
         <h2>Built for digital signage</h2>
         <p class="section-desc">Everything you need to run professional signage on commodity hardware.</p>
         <div class="pkg-grid">
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F4E1;</span> Works offline</h3>
                 <p class="desc">Content is stored on the device. Displays keep playing even without a network connection and sync back when connectivity returns.</p>
             </div>
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F3AC;</span> Any content type</h3>
                 <p class="desc">Video, images, audio, PDF, live RSS feeds, clocks, web pages, and streaming — play virtually any media format on your screens.</p>
             </div>
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F4C5;</span> Smart scheduling</h3>
                 <p class="desc">Schedule campaigns by time of day, priority, or location. Set up interrupt content, overlay zones, and weather-triggered playlists from your CMS.</p>
             </div>
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F527;</span> Easy deployment</h3>
                 <p class="desc">Flash an image, power on, and connect to your CMS. Displays register themselves and receive updates automatically — no manual setup needed.</p>
             </div>
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F50D;</span> Monitor everything</h3>
                 <p class="desc">See what's playing on every screen with proof of play, remote screenshots, download progress, and detailed logs — all visible from your CMS.</p>
             </div>
-            <div class="pkg-card" style="cursor:default;">
+            <div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;">
                 <h3><span class="icon">&#x1F4FA;</span> Video walls</h3>
                 <p class="desc">Synchronize multiple screens into a single video wall. Coordinated playback, layout transitions, and scheduling across all displays.</p>
             </div>
@@ -646,7 +671,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         <p class="section-desc">Pick the player that fits your hardware. Electron and Chromium are powered by the same PWA engine — arexibo is an independent native player.</p>
 
         <div class="player-grid">
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-electron">
+            <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-electron">
                 <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
                 <div class="player-mono">xiboplayer-electron</div>
                 <p class="desc">Self-contained desktop app — includes its own browser, nothing else to install. Best choice for a quick setup on any Linux PC. Connects to your CMS automatically.</p>
@@ -656,7 +681,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                     <span class="badge arch">x86_64</span>
                 </div>
             </a>
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-chromium">
+            <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-chromium">
                 <h3><span class="icon">&#x1F310;</span> Chromium Player</h3>
                 <div class="player-mono">xiboplayer-chromium</div>
                 <p class="desc">Lightweight player for systems that already have Chromium or a Chromium-based browser installed. Uses the existing browser instead of bundling its own — ideal for kiosks and embedded devices.</p>
@@ -666,7 +691,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                     <span class="badge">noarch</span>
                 </div>
             </a>
-            <a class="player-card" href="https://github.com/xibo-players/arexibo">
+            <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/arexibo">
                 <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
                 <div class="player-mono">arexibo</div>
                 <p class="desc">High-performance native player built in Rust. Standalone — does not use the PWA engine. Runs on both Intel/AMD and ARM hardware.</p>
@@ -687,7 +712,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         <p class="section-desc">The engine and building blocks behind every player. Most users don't need these — they're for custom integrations and self-hosted deployments.</p>
 
         <div class="player-grid">
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-pwa">
+            <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-pwa">
                 <h3><span class="icon">&#x1F4F1;</span> PWA Engine</h3>
                 <div class="player-mono">@xiboplayer/pwa</div>
                 <p class="desc">The rendering engine that powers all players. Can also run standalone in any browser — deploy it on your own server and point a browser at it. Handles video, images, audio, PDF, tickers, web pages, HLS, and multi-display sync.</p>
@@ -696,7 +721,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                     <span class="badge">Self-hosted</span>
                 </div>
             </a>
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer">
+            <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer">
                 <h3><span class="icon">&#x1F9F1;</span> @xiboplayer SDK</h3>
                 <div class="player-mono">13 npm packages</div>
                 <p class="desc">Modular TypeScript packages for caching, rendering, scheduling, multi-display sync, CMS communication (REST + SOAP), real-time commands, statistics, and more. 1258 tests across 31 suites.</p>
@@ -1059,7 +1084,7 @@ async function loadKioskImages() {
         );
         if (images.length === 0) {
             el.innerHTML = '<div class="pkg-grid">' +
-                '<div class="pkg-card" style="cursor:default;"><h3>No images yet</h3>' +
+                '<div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;"><h3>No images yet</h3>' +
                 '<p class="desc">Kiosk images will appear here after the first tagged release.</p></div></div>';
             return;
         }
@@ -1100,7 +1125,7 @@ async function loadKioskImages() {
         el.innerHTML = html;
     } catch (e) {
         el.innerHTML = '<div class="pkg-grid">' +
-            '<div class="pkg-card" style="cursor:default;"><h3>Kiosk images</h3>' +
+            '<div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;"><h3>Kiosk images</h3>' +
             '<p class="desc">Images are available from <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases">GitHub Releases</a>.</p></div></div>';
     }
 }
