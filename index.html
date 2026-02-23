@@ -485,8 +485,8 @@
     <p>Open-source digital signage players for Xibo CMS. Turn any PC, Raspberry Pi, or browser into a signage display.</p>
     <div class="hero-links">
         <a href="https://github.com/xibo-players">GitHub</a>
-        <a href="#players">Players</a>
         <a href="#getting-started">Getting started</a>
+        <a href="#players">Players</a>
         <a href="#setup">Install packages</a>
     </div>
     <div class="disclaimer">
@@ -497,12 +497,12 @@
 </div>
 
 <nav class="nav">
-    <a href="#players">Players</a>
     <a href="#getting-started">Getting started</a>
+    <a href="#images">Images</a>
+    <a href="#players">Players</a>
     <a href="#sdk">SDK</a>
     <a href="#setup">Setup</a>
     <a href="#browse">Browse</a>
-    <a href="#images">Images</a>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light theme" aria-label="Toggle theme">&#x1F319;</button>
 </nav>
 
@@ -538,47 +538,6 @@
                 <p class="desc">Synchronize multiple screens into a single video wall. Coordinated playback, layout transitions, and scheduling across all displays.</p>
             </div>
         </div>
-    </section>
-
-    <!-- Players -->
-    <section id="players">
-        <h2>Choose your player</h2>
-        <p class="section-desc">Pick the player that fits your hardware. Electron and Chromium are powered by the same PWA engine — arexibo is an independent native player.</p>
-
-        <div class="player-grid">
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-electron">
-                <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
-                <div class="player-mono">xiboplayer-electron</div>
-                <p class="desc">Self-contained desktop app — includes its own browser, nothing else to install. Best choice for a quick setup on any Linux PC. Connects to your CMS automatically.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                </div>
-            </a>
-            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-chromium">
-                <h3><span class="icon">&#x1F310;</span> Chromium Player</h3>
-                <div class="player-mono">xiboplayer-chromium</div>
-                <p class="desc">Lightweight player for systems that already have Chromium or a Chromium-based browser installed. Uses the existing browser instead of bundling its own — ideal for kiosks and embedded devices.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge">noarch</span>
-                </div>
-            </a>
-            <a class="player-card" href="https://github.com/xibo-players/arexibo">
-                <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
-                <div class="player-mono">arexibo</div>
-                <p class="desc">High-performance native player built in Rust. Standalone — does not use the PWA engine. Runs on both Intel/AMD and ARM hardware.</p>
-                <div class="meta">
-                    <span class="badge rpm">RPM</span>
-                    <span class="badge deb">DEB</span>
-                    <span class="badge arch">x86_64</span>
-                    <span class="badge arch">aarch64</span>
-                </div>
-            </a>
-        </div>
-
     </section>
 
     <!-- Getting Started — unified deployment section -->
@@ -671,6 +630,55 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                 </p>
             </div>
         </div>
+    </section>
+
+    <!-- Images -->
+    <section id="images">
+        <h2>Kiosk images</h2>
+        <p class="section-desc">Pre-built bootable images — no Linux install needed. Download, flash to USB or SD card, boot and your kiosk is ready. See <a href="#getting-started" style="color:var(--blue);">Getting started</a> for step-by-step instructions.</p>
+
+        <div id="images-list" class="loading">Loading kiosk images...</div>
+    </section>
+
+    <!-- Players -->
+    <section id="players">
+        <h2>Choose your player</h2>
+        <p class="section-desc">Pick the player that fits your hardware. Electron and Chromium are powered by the same PWA engine — arexibo is an independent native player.</p>
+
+        <div class="player-grid">
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-electron">
+                <h3><span class="icon">&#x26A1;</span> Electron Player</h3>
+                <div class="player-mono">xiboplayer-electron</div>
+                <p class="desc">Self-contained desktop app — includes its own browser, nothing else to install. Best choice for a quick setup on any Linux PC. Connects to your CMS automatically.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/xiboplayer-chromium">
+                <h3><span class="icon">&#x1F310;</span> Chromium Player</h3>
+                <div class="player-mono">xiboplayer-chromium</div>
+                <p class="desc">Lightweight player for systems that already have Chromium or a Chromium-based browser installed. Uses the existing browser instead of bundling its own — ideal for kiosks and embedded devices.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge">noarch</span>
+                </div>
+            </a>
+            <a class="player-card" href="https://github.com/xibo-players/arexibo">
+                <h3><img src="https://github.com/birkenfeld/arexibo/blob/master/assets/logo.png?raw=true" alt="" width="22" height="22" style="vertical-align:middle;"> arexibo</h3>
+                <div class="player-mono">arexibo</div>
+                <p class="desc">High-performance native player built in Rust. Standalone — does not use the PWA engine. Runs on both Intel/AMD and ARM hardware.</p>
+                <div class="meta">
+                    <span class="badge rpm">RPM</span>
+                    <span class="badge deb">DEB</span>
+                    <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
+                </div>
+            </a>
+        </div>
+
     </section>
 
     <!-- SDK & PWA Engine -->
@@ -801,14 +809,6 @@ sudo apt install arexibo</pre>
             <div id="deb-list" class="loading">Loading DEB package list...</div>
         </div>
 
-    </section>
-
-    <!-- Images -->
-    <section id="images">
-        <h2>Kiosk images</h2>
-        <p class="section-desc">Pre-built bootable images — no Linux install needed. Download, flash to USB or SD card, boot and your kiosk is ready. See <a href="#getting-started" style="color:var(--blue);">Getting started</a> for step-by-step instructions.</p>
-
-        <div id="images-list" class="loading">Loading kiosk images...</div>
     </section>
 
     <!-- "How it works" removed — info is in the Repository setup section -->
