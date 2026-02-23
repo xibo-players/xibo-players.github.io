@@ -1,0 +1,100 @@
+name: Build xiboplayer-release packages
+
+# Builds the xiboplayer-release RPM and DEB — the repo-config packages
+# that users install to add the Xibo Players repository to their system.
+#
+# These packages ship a .repo/.sources file and GPG key, nothing else.
+# The built packages are committed directly to this repo (gh-pages)
+# so they're immediately available for download.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_repos/xiboplayer-release/**'
+      - 'rpm/RPM-GPG-KEY'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build RPM + DEB
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:43
+
+    steps:
+      - name: Install git
+        run: dnf install -y git
+
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: dnf install -y rpm-build rpmdevtools dpkg dpkg-dev
+
+      - name: Build RPM
+        run: |
+          rpmdev-setuptree
+
+          # Copy sources (individual files, not a tarball)
+          cp _repos/xiboplayer-release/xiboplayer.repo ~/rpmbuild/SOURCES/
+          cp rpm/RPM-GPG-KEY ~/rpmbuild/SOURCES/RPM-GPG-KEY-xiboplayer
+
+          # Build
+          rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec
+
+          # Copy to output
+          mkdir -p dist
+          find ~/rpmbuild/RPMS/ -name '*.rpm' -exec cp {} dist/ \;
+          echo "RPM:"
+          ls -lh dist/*.rpm
+
+      - name: Build DEB
+        run: |
+          cd _repos/xiboplayer-release
+          bash build-deb.sh
+          cp *.deb ../../dist/
+          cd ../..
+          echo "DEB:"
+          ls -lh dist/*.deb
+
+      - name: Install packages into repo
+        run: |
+          # RPM goes into the noarch dir (all Fedora versions)
+          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/noarch/ 2>/dev/null || true
+          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/x86_64/ 2>/dev/null || true
+          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/aarch64/ 2>/dev/null || true
+
+          # DEB goes into the all arch dir
+          cp dist/xiboplayer-release_*.deb deb/ubuntu/24.04/all/ 2>/dev/null || true
+
+          echo "Installed packages:"
+          ls -lh rpm/fedora/43/noarch/xiboplayer-release-* 2>/dev/null || true
+          ls -lh deb/ubuntu/24.04/all/xiboplayer-release_* 2>/dev/null || true
+
+      - name: Push changes
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Update xiboplayer-release packages"
+
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Push succeeded (attempt $attempt)"
+              exit 0
+            fi
+            echo "Push failed (attempt $attempt), rebasing..."
+            git pull --rebase
+          done
+          echo "Push failed after 3 attempts"
+          exit 1
