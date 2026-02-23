@@ -354,14 +354,25 @@ jobs:
           TRIGGER="${{ github.event.client_payload.package || 'manual' }}"
           git commit -m "Update repositories (trigger: ${TRIGGER})"
 
-          # Retry with rebase to handle concurrent update-repos runs
+          # Retry push — each run regenerates everything from scratch,
+          # so on conflict we pull, re-stage our generated files, and push.
+          # Binary repo metadata (.xml.zst, .gz) can't auto-rebase, but
+          # our version is always authoritative since we fetched all latest
+          # releases and rebuilt all indices in this run.
           for attempt in 1 2 3; do
             if git push; then
               echo "Push succeeded (attempt $attempt)"
               exit 0
             fi
-            echo "Push failed (attempt $attempt), rebasing..."
-            git pull --rebase
+            echo "Push failed (attempt $attempt), pulling and re-committing..."
+            git reset --soft HEAD~1
+            git pull --ff-only || git pull --rebase -X theirs
+            git add -A
+            if git diff --cached --quiet; then
+              echo "No changes after pull (another run already updated)"
+              exit 0
+            fi
+            git commit -m "Update repositories (trigger: ${TRIGGER})"
           done
           echo "Push failed after 3 attempts"
           exit 1
