@@ -30,7 +30,7 @@
 - [9. Screenshot Capture](#9-screenshot-capture)
 - [10. Performance](#10-performance-comparison)
 - [11. Packaging and Distribution](#11-packaging-and-distribution)
-- [12. Kiosk Environment](#12-kiosk-environment-xibo-kiosk)
+- [12. Kiosk Environment](#12-kiosk-environment-xiboplayer-kiosk)
 - [13. Remaining Gaps](#13-remaining-gaps)
 - [14. Where XiboPlayer is Better](#14-where-xiboplayer-is-better-than-all-upstream-players)
 - [15. Arexibo Detailed Comparison](#15-arexibo-detailed-comparison)
@@ -54,7 +54,7 @@
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
 | **Multi-display** | ~98% | BroadcastChannel lead/follower sync (same transport as XLR). Synchronized video start |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
-| **Kiosk Environment** | New | xibo-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
+| **Kiosk Environment** | New | xiboplayer-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
 **Overall: ~96% feature parity with unique capabilities (REST transport, progressive streaming, cross-platform packaging, multi-display sync, playback control, kiosk OS)**
 
@@ -486,13 +486,13 @@ The RPM/DEB packages are built automatically on git tag push via GitHub Actions,
 
 ---
 
-## 12. Kiosk Environment (xibo-kiosk)
+## 12. Kiosk Environment (xiboplayer-kiosk)
 
-xibo-kiosk is a **complete kiosk operating environment** — not a player itself, but the infrastructure layer that turns any Linux machine into a dedicated signage display. It uses the `alternatives` system to delegate playback to whichever player is installed (xiboplayer-electron priority 30, xiboplayer-chromium priority 20, arexibo priority 10).
+xiboplayer-kiosk is a **complete kiosk operating environment** — not a player itself, but the infrastructure layer that turns any Linux machine into a dedicated signage display. It uses the `alternatives` system to delegate playback to whichever player is installed (xiboplayer-electron priority 30, xiboplayer-chromium priority 20, arexibo priority 10).
 
 ### Kiosk Feature Comparison
 
-| Feature | xibo-kiosk | Arexibo (standalone) | Windows Player | Status |
+| Feature | xiboplayer-kiosk | Arexibo (standalone) | Windows Player | Status |
 |---------|-----------|---------------------|----------------|--------|
 | **Session manager** | GNOME Kiosk (Wayland compositor, locked-down) | None (runs within existing desktop) | Windows Shell Replacement / Assigned Access | **XiboPlayer** — dedicated Wayland compositor with no app switching, no desktop shell |
 | **Player-agnostic** | Yes (alternatives system) | No (is itself the player) | No (proprietary player only) | **XiboPlayer** — swap players without reconfiguring the kiosk |
@@ -512,7 +512,7 @@ xibo-kiosk is a **complete kiosk operating environment** — not a player itself
 
 ### Bootable Image Formats
 
-Pre-built images include everything: Fedora 43 + xibo-kiosk + xiboplayer-electron + arexibo + keyd + VLC + ffmpeg + GStreamer + VA-API drivers + WireGuard + avahi/mDNS + Wi-Fi support.
+Pre-built images include everything: Fedora 43 + xiboplayer-kiosk + xiboplayer-electron + arexibo + keyd + VLC + ffmpeg + GStreamer + VA-API drivers + WireGuard + avahi/mDNS + Wi-Fi support.
 
 | Image | Use case |
 |-------|----------|
@@ -577,7 +577,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 23. **MAC address reporting** - Wake-on-LAN support in status messages
 24. **Timeline debug overlay** - T-key toggleable schedule visualization with click-to-skip
 25. **Documentation server** - Searchable API reference and SDK docs
-26. **Complete kiosk OS** - xibo-kiosk with GNOME Kiosk, health monitoring, first-boot wizard, keyboard shortcuts
+26. **Complete kiosk OS** - xiboplayer-kiosk with GNOME Kiosk, health monitoring, first-boot wizard, keyboard shortcuts
 27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
 28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
 29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
@@ -616,7 +616,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **XMR** | ZeroMQ + RSA encryption | WebSocket (xibo-communication-framework) |
 | **Platform** | Linux only (Qt/Rust deps, RPi5 supported) | Any browser (cross-platform) |
 | **Last update** | 2025-05-18 (dormant 9+ months) | Active development |
-| **Packaging** | RPM (xibo-kiosk CI) | RPM/DEB auto-built via CI |
+| **Packaging** | RPM (xiboplayer-kiosk CI) | RPM/DEB auto-built via CI |
 
 ### Feature Parity: ~95% protocol, different capabilities
 
@@ -628,12 +628,12 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS, audio overlay) | **XiboPlayer** |
 | **Cache** | Disk + MD5, sequential | Cache API + parallel 4x chunks + streaming | **XiboPlayer** (4x faster) |
 | **Commands** | Shell, HTTP, RS232 serial | HTTP only (browser sandbox) | Arexibo |
-| **Kiosk** | systemd + GNOME Kiosk + health monitor | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** (with xibo-kiosk) |
+| **Kiosk** | systemd + GNOME Kiosk + health monitor | xiboplayer-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** (with xiboplayer-kiosk) |
 | **Performance** | Multi-threaded, native code | Parallel downloads, element reuse | **XiboPlayer** (measured faster) |
 | **Transitions** | CSS (4 types, 8 directions) | Web Animations API (same) | Tie |
 | **Logging** | CMS submission, memory-limited queue | CMS submission + IndexedDB + fault dedup | **XiboPlayer** |
 | **Offline** | `--allow-offline` flag | IndexedDB auto-fallback | **XiboPlayer** |
-| **Packaging** | RPM (via xibo-kiosk CI) | RPM/DEB + PWA + npm | **XiboPlayer** |
+| **Packaging** | RPM (via xiboplayer-kiosk CI) | RPM/DEB + PWA + npm | **XiboPlayer** |
 
 ### Arexibo-Only Features (XiboPlayer Cannot Replicate)
 
@@ -642,7 +642,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 3. **ZeroMQ transport** - Direct ZeroMQ for XMR (vs WebSocket relay); both use RSA encryption
 4. **XLF Translation Cache** - Pre-generates HTML at download time, version-tracked invalidation. Note: this is an architectural necessity for Arexibo (Rust/Qt cannot render XLF natively), not a performance advantage — XiboPlayer's runtime rendering is faster because it parses XLF directly into DOM elements (<10ms), supports dynamic adaptation (ResizeObserver, orientation changes), and avoids stale cache risks
 
-Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kiosk, which provides the same functionality plus health monitoring, first-boot wizard, keyboard shortcuts, bootable images, and player-agnostic alternatives system. Arexibo can run inside xibo-kiosk.
+Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xiboplayer-kiosk, which provides the same functionality plus health monitoring, first-boot wizard, keyboard shortcuts, bootable images, and player-agnostic alternatives system. Arexibo can run inside xiboplayer-kiosk.
 
 ### XiboPlayer-Only Advantages Over Arexibo
 
@@ -656,7 +656,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 8. **Auto offline fallback** - IndexedDB cache without explicit flag
 9. **Wake Lock API** - Native browser sleep prevention
 10. **Screenshot capture** - getDisplayMedia + html2canvas (Arexibo has none)
-11. **RPM/DEB packages** - Native package management with auto-update repos (Arexibo also packaged as RPM via xibo-kiosk CI)
+11. **RPM/DEB packages** - Native package management with auto-update repos (Arexibo also packaged as RPM via xiboplayer-kiosk CI)
 12. **Runtime XLF rendering** - Direct XLF-to-DOM parsing (<10ms) vs Arexibo's pre-generated HTML cache — supports dynamic resize, no stale cache, no translation step
 13. **Active development** - Arexibo dormant since May 2025
 
@@ -688,7 +688,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 | **Webcam/Mic** | Yes (new in R406) | Yes (Electron auto-grants media permission) | **Match** |
 | **Weather criteria** | Fixed in R406 | Yes (GetWeather + criteria evaluation) | **Match** |
 | **Platform** | Windows 10+ only | Any browser | **XiboPlayer** — runs on Linux, macOS, ChromeOS, any device with a modern browser |
-| **Kiosk** | Native Windows kiosk | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
+| **Kiosk** | Native Windows kiosk | xiboplayer-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
 | **Installation** | MSI installer | Zero (open URL) or RPM/DEB | **XiboPlayer** — PWA needs no install at all; RPM/DEB auto-update from repo |
 | **CEF update** | Chromium 141 | Browser's own engine | Tie |
 | **Shell commands** | Yes | No (browser sandbox) | Windows better |

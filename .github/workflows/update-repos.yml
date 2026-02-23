@@ -74,7 +74,7 @@ jobs:
           REPOS=(
             "xibo-players/xiboplayer-chromium"
             "xibo-players/xiboplayer-electron"
-            "xibo-players/xibo-kiosk"
+            "xibo-players/xiboplayer-kiosk"
             "xibo-players/arexibo"
           )
 
