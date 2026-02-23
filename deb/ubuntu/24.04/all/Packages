@@ -1,3 +1,21 @@
+Package: xiboplayer-chromium
+Version: 0.4.6-1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./xiboplayer-chromium_0.4.6-1_all.deb
+Size: 7384934
+MD5sum: 4b0fb7dc87e5e684ff8f71b8066cad00
+SHA1: 66796d724bb2d8fec1b34a2c9cc3b34f8dc8278d
+SHA256: 540f053791459037dc2fc83de1b4c16dd6ec6491fa64513ac0161207ebca7a62
+Section: misc
+Priority: optional
+Homepage: https://xiboplayer.org
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
 Package: xiboplayer-kiosk
 Version: 0.4.4
 Architecture: all
