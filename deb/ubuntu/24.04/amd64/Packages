@@ -16,26 +16,6 @@ Description: Rust-based digital signage player for Xibo CMS
  It provides a lightweight alternative to the official Xibo player,
  designed for kiosk and digital signage deployments on Linux.
 
-Package: xibo-kiosk
-Version: 0.3.0
-Architecture: all
-Maintainer: Pau Aliagas <linuxnow@gmail.com>
-Depends: gnome-kiosk, dunst, unclutter, zenity
-Recommends: keyd
-Filename: ./xibo-kiosk_0.3.0_all.deb
-Size: 5664
-MD5sum: 01e7b4cdd51ac32f5626c006b0d83006
-SHA1: 9d3f4cb9cca9771c9de900a2845771138ace288f
-SHA256: fcd5e95ca0d28f6b0b5685736055a07942024618abc646dfa671219e85f96d7a
-Section: misc
-Priority: optional
-Homepage: https://github.com/xibo-players/xibo-kiosk
-Description: Kiosk session scripts for Xibo digital signage players
- Kiosk session scripts for running Xibo digital signage players as full-screen
- displays under GNOME Kiosk. Includes a first-boot registration wizard,
- session holder with health monitoring, dunst notification config, and
- a systemd user unit for the player process.
-
 Package: xiboplayer-chromium
 Version: 0.4.4-1
 Architecture: all
@@ -53,4 +33,24 @@ Homepage: https://github.com/xibo-players/xiboplayer-chromium
 Description: Self-contained Xibo digital signage player (Chromium kiosk)
  Bundles the PWA player locally and serves it via a Node.js server,
  then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
+Package: xiboplayer-kiosk
+Version: 0.4.4
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Depends: gnome-kiosk, dunst, unclutter, zenity
+Recommends: keyd
+Filename: ./xiboplayer-kiosk_0.4.4_all.deb
+Size: 6256
+MD5sum: ca1b7769e85310fba78147dfd08356ff
+SHA1: cf53be939fd235e348c3d0b16f21bb5d4d581946
+SHA256: 206b6451f56f0c8403c6b53b241fd4dae80eda414f56e551c332feb628a6ceaa
+Section: misc
+Priority: optional
+Homepage: https://github.com/xibo-players/xiboplayer-kiosk
+Description: Kiosk session scripts for Xibo digital signage players
+ Kiosk session scripts for running Xibo digital signage players as full-screen
+ displays under GNOME Kiosk. Includes a first-boot registration wizard,
+ session holder with health monitoring, dunst notification config, and
+ a systemd user unit for the player process.
 
