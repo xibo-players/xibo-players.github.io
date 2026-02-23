@@ -584,22 +584,11 @@
     <!-- Getting Started — unified deployment section -->
     <section id="getting-started">
         <h2>Getting started</h2>
-        <p class="section-desc">Two ways to set up a signage display. Choose the one that fits your situation.</p>
-
-        <!-- Tab buttons for deployment path -->
-        <div class="deploy-tabs" style="display:flex; gap:0.5rem; margin-bottom:1.5rem;">
-            <button class="deploy-tab active" data-target="deploy-images" style="flex:1; padding:1rem; border:2px solid var(--accent); border-radius:10px; background:var(--card-bg); color:var(--text); cursor:pointer; text-align:left;">
-                <strong style="display:block; font-size:1.1rem; margin-bottom:0.25rem;">&#x1F4BF; Flash a ready-made image</strong>
-                <span style="opacity:0.7; font-size:0.9rem;">No Linux experience needed. Download, flash, boot — done.</span>
-            </button>
-            <button class="deploy-tab" data-target="deploy-package" style="flex:1; padding:1rem; border:2px solid var(--border); border-radius:10px; background:var(--card-bg); color:var(--text); cursor:pointer; text-align:left;">
-                <strong style="display:block; font-size:1.1rem; margin-bottom:0.25rem;">&#x1F4E6; Install on existing Linux</strong>
-                <span style="opacity:0.7; font-size:0.9rem;">Already have Fedora or Ubuntu? Install the kiosk package with DNF/APT.</span>
-            </button>
-        </div>
+        <p class="section-desc">Two ways to set up a signage display.</p>
 
         <!-- Path 1: Pre-built images -->
-        <div id="deploy-images" class="deploy-content">
+        <h3 style="margin-top:1.5rem; margin-bottom:0.75rem;">&#x1F4BF; Flash a ready-made image</h3>
+        <div id="deploy-images">
             <p style="margin-bottom:1rem; opacity:0.8;"><strong>Xibo Kiosk</strong> images include everything: the operating system, auto-login, a setup wizard, all players, health monitoring, and automatic updates. You choose which player to run at setup time — and can switch at any time. Pick your hardware:</p>
             <div class="gs-grid">
                 <a class="gs-card" href="https://github.com/xibo-players/xiboplayer-kiosk/releases/latest">
@@ -643,7 +632,8 @@
         </div>
 
         <!-- Path 2: Package install on existing system -->
-        <div id="deploy-package" class="deploy-content" style="display:none;">
+        <h3 style="margin-top:2.5rem; margin-bottom:0.75rem;">&#x1F4E6; Install on existing Linux</h3>
+        <div id="deploy-package">
             <p style="margin-bottom:1rem; opacity:0.8;">Install <strong>xiboplayer-kiosk</strong> on your existing Fedora or Ubuntu system. It configures auto-login, a kiosk session, health monitoring, and the Electron player — without reinstalling the OS.</p>
 
             <div style="margin-bottom:1.5rem;">
@@ -848,20 +838,6 @@ document.querySelectorAll('.tab-bar').forEach(bar => {
             parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             parent.querySelector(`[data-tab-content="${btn.dataset.tab}"]`).classList.add('active');
         });
-    });
-});
-
-// Deploy path tabs
-document.querySelectorAll('.deploy-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.deploy-tab').forEach(b => {
-            b.classList.remove('active');
-            b.style.borderColor = 'var(--border)';
-        });
-        btn.classList.add('active');
-        btn.style.borderColor = 'var(--accent)';
-        document.querySelectorAll('.deploy-content').forEach(c => c.style.display = 'none');
-        document.getElementById(btn.dataset.target).style.display = 'block';
     });
 });
 
