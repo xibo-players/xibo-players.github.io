@@ -229,9 +229,12 @@
         /* Player cards */
         .player-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
             margin: 20px 0;
+        }
+        .player-grid.sdk-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
         .player-card {
             background: var(--card-bg);
@@ -289,7 +292,7 @@
         /* Getting started cards */
         .gs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin: 20px 0;
         }
@@ -687,6 +690,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                     <span class="badge rpm">RPM</span>
                     <span class="badge deb">DEB</span>
                     <span class="badge arch">x86_64</span>
+                    <span class="badge arch">aarch64</span>
                 </div>
             </a>
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-chromium">
@@ -719,7 +723,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         <h2>Per a desenvolupadors i administradors de CMS</h2>
         <p class="section-desc">El motor i els components bàsics darrere de cada reproductor. La majoria d'usuaris no els necessiten — són per a integracions personalitzades i desplegaments autoallotjats.</p>
 
-        <div class="player-grid">
+        <div class="player-grid sdk-grid">
             <a class="player-card bg-white dark:bg-gray-800" href="https://github.com/xibo-players/xiboplayer-pwa">
                 <h3><span class="icon">&#x1F4F1;</span> Motor PWA</h3>
                 <div class="player-mono">@xiboplayer/pwa</div>
