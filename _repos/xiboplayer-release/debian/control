@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.2
-Homepage: https://dnf.xiboplayer.org
+Homepage: https://dl.xiboplayer.org
 
 Package: xiboplayer-release
 Architecture: all

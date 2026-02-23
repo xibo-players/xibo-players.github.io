@@ -3,7 +3,7 @@ Version:        43
 Release:        1%{?dist}
 Summary:        Xibo Players repository configuration
 License:        MIT
-URL:            https://dnf.xiboplayer.org
+URL:            https://dl.xiboplayer.org
 BuildArch:      noarch
 
 Source0:        xiboplayer.repo

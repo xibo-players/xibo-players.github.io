@@ -27,7 +27,7 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Description: Xibo Players repository configuration
  This package contains the Xibo Players APT repository configuration
  and the GPG key used to sign packages.
-Homepage: https://dnf.xiboplayer.org
+Homepage: https://dl.xiboplayer.org
 Section: misc
 Priority: optional
 EOF
