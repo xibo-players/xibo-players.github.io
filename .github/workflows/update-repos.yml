@@ -117,7 +117,7 @@ jobs:
             repo=$(cat "$pkg_dir/.repo")
             baseurl="https://github.com/$repo/releases/download/$tag"
 
-            # Check if this repo has RPMs
+            # Check if this repo has RPMs (exclude SRPMs for binary processing)
             shopt -s nullglob
             rpms=("$pkg_dir"*.rpm)
             shopt -u nullglob
@@ -130,11 +130,12 @@ jobs:
               mkdir -p /tmp/rpm-repo/$pkg/$arch
             done
 
-            # Distribute RPMs by arch
+            # Distribute RPMs by arch (skip SRPMs — handled separately)
             for rpm in "${rpms[@]}"; do
               name=$(basename "$rpm")
-              # Skip GPG key files
+              # Skip GPG key files and SRPMs
               [[ "$name" == RPM-GPG-KEY-* ]] && continue
+              [[ "$name" == *.src.rpm ]] && continue
               case "$name" in
                 *.x86_64.rpm)  cp "$rpm" /tmp/rpm-repo/$pkg/x86_64/ ;;
                 *.aarch64.rpm) cp "$rpm" /tmp/rpm-repo/$pkg/aarch64/ ;;
@@ -146,16 +147,24 @@ jobs:
               esac
             done
 
-            # Generate repodata per arch
-            for arch in x86_64 aarch64 noarch; do
-              if ls /tmp/rpm-repo/$pkg/$arch/*.rpm &>/dev/null; then
+            # Distribute SRPMs
+            for rpm in "${rpms[@]}"; do
+              name=$(basename "$rpm")
+              [[ "$name" == *.src.rpm ]] || continue
+              mkdir -p /tmp/rpm-repo/$pkg/SRPMS
+              cp "$rpm" /tmp/rpm-repo/$pkg/SRPMS/
+            done
+
+            # Generate repodata per arch (binary + SRPMS)
+            for arch in x86_64 aarch64 noarch SRPMS; do
+              if ls /tmp/rpm-repo/$pkg/$arch/*.rpm &>/dev/null 2>&1; then
                 echo "  createrepo_c $arch"
                 createrepo_c --baseurl "$baseurl" /tmp/rpm-repo/$pkg/$arch/
               fi
             done
 
             # Save repodata to _repos structure (no RPM binaries stored)
-            for arch in x86_64 aarch64 noarch; do
+            for arch in x86_64 aarch64 noarch SRPMS; do
               target="_repos/$pkg/rpm/fedora/${FEDORA_VER}/$arch"
               rm -rf "$target"
               if [ -d "/tmp/rpm-repo/$pkg/$arch/repodata" ]; then
@@ -177,7 +186,7 @@ jobs:
         run: |
           WORKDIR="$(pwd)"
 
-          for arch in x86_64 aarch64 noarch; do
+          for arch in x86_64 aarch64 noarch SRPMS; do
             output="rpm/fedora/${FEDORA_VER}/$arch"
             mkdir -p "$output"
 
@@ -260,6 +269,36 @@ jobs:
             echo "::endgroup::"
           done
 
+          # Handle source DEB files (.dsc, .orig.tar.*, .debian.tar.*)
+          mkdir -p "$REPO_BASE/source"
+          rm -f "$REPO_BASE/source"/*.dsc "$REPO_BASE/source"/*.tar.*
+
+          for pkg_dir in /tmp/assets/*/; do
+            pkg=$(basename "$pkg_dir")
+            [ -f "$pkg_dir/.tag" ] || continue
+
+            shopt -s nullglob
+            src_files=("$pkg_dir"*.dsc "$pkg_dir"*.orig.tar.* "$pkg_dir"*.debian.tar.*)
+            shopt -u nullglob
+            [ ${#src_files[@]} -gt 0 ] || continue
+
+            echo "::group::DEB source: $pkg"
+            for src_file in "${src_files[@]}"; do
+              name=$(basename "$src_file")
+              size=$(stat -c%s "$src_file")
+              size_mb=$((size / 1048576))
+
+              if [ "$size" -gt "$SIZE_LIMIT" ]; then
+                echo "  SKIP $name (${size_mb}MB > ${FILE_SIZE_LIMIT_MB}MB)"
+                continue
+              fi
+
+              cp "$src_file" "$REPO_BASE/source/"
+              echo "  source: $name (${size_mb}MB)"
+            done
+            echo "::endgroup::"
+          done
+
           # Rebuild Packages index for each arch
           echo "Rebuilding APT indices..."
           for arch in amd64 arm64 all; do
@@ -276,6 +315,18 @@ jobs:
             fi
           done
 
+          # Rebuild Sources index for source packages
+          src_dir="$REPO_BASE/source"
+          shopt -s nullglob
+          dsc_files=("$src_dir"/*.dsc)
+          shopt -u nullglob
+          if [ ${#dsc_files[@]} -gt 0 ]; then
+            echo "  source: ${#dsc_files[@]} source packages"
+            (cd "$src_dir" && dpkg-scansources . /dev/null > Sources && gzip -9c Sources > Sources.gz)
+          else
+            rm -f "$src_dir/Sources" "$src_dir/Sources.gz"
+          fi
+
           # Generate Release file with checksums (subshell to avoid changing cwd)
           (
             cd "$REPO_BASE"
@@ -288,17 +339,17 @@ jobs:
               echo "Components: main"
               echo "Date: $(date -Ru)"
               echo "MD5Sum:"
-              for f in */Packages */Packages.gz; do
+              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
                 [ -f "$f" ] || continue
                 echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
               done
               echo "SHA1:"
-              for f in */Packages */Packages.gz; do
+              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
                 [ -f "$f" ] || continue
                 echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
               done
               echo "SHA256:"
-              for f in */Packages */Packages.gz; do
+              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
                 [ -f "$f" ] || continue
                 echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
               done

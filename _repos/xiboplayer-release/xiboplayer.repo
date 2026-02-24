@@ -4,3 +4,10 @@ enabled=1
 baseurl=https://dl.xiboplayer.org/rpm/fedora/$releasever/$basearch/
 gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
+
+[xibo-players-source]
+name=Xibo Players - Source
+enabled=0
+baseurl=https://dl.xiboplayer.org/rpm/fedora/$releasever/SRPMS/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
