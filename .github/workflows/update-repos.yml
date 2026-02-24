@@ -223,7 +223,8 @@ jobs:
           done
 
           # Remove old .deb files (will re-download current versions from releases)
-          find "$REPO_BASE" -name '*.deb' -delete
+          # Preserve xiboplayer-release DEBs — they're built locally, not from GitHub Releases
+          find "$REPO_BASE" -name '*.deb' ! -name 'xiboplayer-release*' -delete
 
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
