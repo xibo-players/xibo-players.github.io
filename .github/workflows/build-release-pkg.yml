@@ -60,12 +60,27 @@ jobs:
           echo "DEB:"
           ls -lh dist/*.deb
 
+      - name: Install tools for repodata
+        run: dnf install -y createrepo_c
+
       - name: Install packages into repo
         run: |
           # RPM goes into the noarch dir (all Fedora versions)
           cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/noarch/ 2>/dev/null || true
           cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/x86_64/ 2>/dev/null || true
           cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/aarch64/ 2>/dev/null || true
+
+          # Generate per-repo repodata so update-repos merges it correctly
+          # (xiboplayer-release is local, not fetched from GitHub Releases)
+          for arch in x86_64 aarch64 noarch; do
+            repo_dir="_repos/xiboplayer-release/rpm/fedora/43/$arch"
+            mkdir -p "$repo_dir"
+            rm -rf "$repo_dir/repodata"
+            # Copy RPMs temporarily for createrepo_c, then remove
+            cp dist/xiboplayer-release-*.noarch.rpm "$repo_dir/"
+            createrepo_c "$repo_dir"
+            rm -f "$repo_dir"/*.rpm
+          done
 
           # DEB goes into the all arch dir
           cp dist/xiboplayer-release_*.deb deb/ubuntu/24.04/all/ 2>/dev/null || true
