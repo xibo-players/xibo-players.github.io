@@ -1,6 +1,6 @@
 Name:           xiboplayer-release
 Version:        43
-Release:        2
+Release:        3
 Summary:        Xibo Players repository configuration
 License:        MIT
 URL:            https://dl.xiboplayer.org
@@ -25,6 +25,9 @@ install -pm 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-x
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
 
 %changelog
+* Tue Feb 25 2026 Pau Aliagas <linuxnow@gmail.com> - 43-3
+- Add source repo config (SRPMs + deb-src)
+
 * Sun Feb 23 2026 Pau Aliagas <linuxnow@gmail.com> - 43-2
 - Update repository URL from dnf.xiboplayer.org to dl.xiboplayer.org
 

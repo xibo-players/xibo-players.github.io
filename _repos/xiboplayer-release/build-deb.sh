@@ -7,7 +7,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VERSION="1.0.1"
+VERSION="1.0.2"
 PKG_NAME="xiboplayer-release"
 PKG_DIR="/tmp/${PKG_NAME}_${VERSION}_all"
 
