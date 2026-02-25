@@ -4,15 +4,12 @@ name: Build xiboplayer-release packages
 # that users install to add the Xibo Players repository to their system.
 #
 # These packages ship a .repo/.sources file and GPG key, nothing else.
-# The built packages are committed directly to this repo (gh-pages)
-# so they're immediately available for download.
+# Built packages are uploaded to a GitHub Release; update-repos.yml then
+# fetches and indexes them alongside all other packages.
 
 on:
   push:
-    branches: [main]
-    paths:
-      - '_repos/xiboplayer-release/**'
-      - 'rpm/RPM-GPG-KEY'
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -60,56 +57,29 @@ jobs:
           echo "DEB:"
           ls -lh dist/*.deb
 
-      - name: Install tools for repodata
-        run: dnf install -y createrepo_c
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
+          generate_release_notes: false
+          body: |
+            Repository configuration package for Xibo Players.
 
-      - name: Install packages into repo
+            Install with:
+            ```
+            sudo dnf install ./xiboplayer-release-*.noarch.rpm
+            ```
+
+      - name: Trigger update-repos
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          # RPM goes into the noarch dir (all Fedora versions)
-          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/noarch/ 2>/dev/null || true
-          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/x86_64/ 2>/dev/null || true
-          cp dist/xiboplayer-release-*.noarch.rpm rpm/fedora/43/aarch64/ 2>/dev/null || true
-
-          # Generate per-repo repodata so update-repos merges it correctly
-          # (xiboplayer-release is local, not fetched from GitHub Releases)
-          for arch in x86_64 aarch64 noarch; do
-            repo_dir="_repos/xiboplayer-release/rpm/fedora/43/$arch"
-            mkdir -p "$repo_dir"
-            rm -rf "$repo_dir/repodata"
-            # Copy RPMs temporarily for createrepo_c, then remove
-            cp dist/xiboplayer-release-*.noarch.rpm "$repo_dir/"
-            createrepo_c "$repo_dir"
-            rm -f "$repo_dir"/*.rpm
-          done
-
-          # DEB goes into the all arch dir
-          cp dist/xiboplayer-release_*.deb deb/ubuntu/24.04/all/ 2>/dev/null || true
-
-          echo "Installed packages:"
-          ls -lh rpm/fedora/43/noarch/xiboplayer-release-* 2>/dev/null || true
-          ls -lh deb/ubuntu/24.04/all/xiboplayer-release_* 2>/dev/null || true
-
-      - name: Push changes
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-
-          git commit -m "Update xiboplayer-release packages"
-
-          for attempt in 1 2 3; do
-            if git push; then
-              echo "Push succeeded (attempt $attempt)"
-              exit 0
-            fi
-            echo "Push failed (attempt $attempt), rebasing..."
-            git pull --rebase
-          done
-          echo "Push failed after 3 attempts"
-          exit 1
+          dnf install -y curl
+          curl -sf -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/xibo-players/xibo-players.github.io/dispatches" \
+            -d '{"event_type": "update-repos", "client_payload": {"package": "xiboplayer-release", "repo": "xibo-players/xibo-players.github.io", "tag": "${{ github.ref_name }}"}}'
+          echo "Triggered update-repos for xiboplayer-release"

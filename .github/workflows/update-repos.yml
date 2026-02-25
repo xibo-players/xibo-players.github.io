@@ -76,6 +76,7 @@ jobs:
             "xibo-players/xiboplayer-electron"
             "xibo-players/xiboplayer-kiosk"
             "xibo-players/arexibo"
+            "xibo-players/xibo-players.github.io"
           )
 
           for repo in "${REPOS[@]}"; do
@@ -223,8 +224,7 @@ jobs:
           done
 
           # Remove old .deb files (will re-download current versions from releases)
-          # Preserve xiboplayer-release DEBs — they're built locally, not from GitHub Releases
-          find "$REPO_BASE" -name '*.deb' ! -name 'xiboplayer-release*' -delete
+          find "$REPO_BASE" -name '*.deb' -delete
 
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
