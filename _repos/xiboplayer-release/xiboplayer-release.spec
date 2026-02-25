@@ -1,6 +1,6 @@
 Name:           xiboplayer-release
 Version:        43
-Release:        4
+Release:        5
 Summary:        Xibo Players repository configuration
 License:        MIT
 URL:            https://dl.xiboplayer.org
@@ -25,6 +25,9 @@ install -pm 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-x
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
 
 %changelog
+* Tue Feb 25 2026 Pau Aliagas <linuxnow@gmail.com> - 43-5
+- GPG-sign RPM in CI workflow
+
 * Tue Feb 25 2026 Pau Aliagas <linuxnow@gmail.com> - 43-4
 - Build via GitHub Releases instead of committing to repo
 
