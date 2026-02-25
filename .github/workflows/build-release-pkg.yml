@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install tools
-        run: dnf install -y rpm-build rpmdevtools dpkg dpkg-dev
+        run: dnf install -y rpm-build rpmdevtools dpkg dpkg-dev rpm-sign gnupg2 pinentry
 
       - name: Build RPM
         run: |
@@ -56,6 +56,56 @@ jobs:
           cd ../..
           echo "DEB:"
           ls -lh dist/*.deb
+
+      - name: Sign RPM
+        env:
+          GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.RPM_GPG_PASSPHRASE }}
+          GPG_KEY_ID: ${{ secrets.RPM_GPG_KEY_ID }}
+        run: |
+          # Import GPG private key (base64-encoded secret)
+          echo "$GPG_KEY" | base64 -d | gpg --batch --import
+
+          # Custom pinentry for non-interactive signing in CI
+          printf '%s' "$GPG_PASSPHRASE" > /tmp/.gpg-passphrase
+          chmod 600 /tmp/.gpg-passphrase
+          cat > /usr/local/bin/pinentry-ci << 'PINENTRY'
+          #!/bin/bash
+          echo "OK Pleased to meet you"
+          while IFS= read -r cmd; do
+            case "${cmd%%\ *}" in
+              GETPIN)
+                echo "D $(cat /tmp/.gpg-passphrase)"
+                echo "OK"
+                ;;
+              BYE)
+                echo "OK"
+                exit 0
+                ;;
+              *)
+                echo "OK"
+                ;;
+            esac
+          done
+          PINENTRY
+          chmod 755 /usr/local/bin/pinentry-ci
+
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "pinentry-program /usr/local/bin/pinentry-ci" >> ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent || true
+
+          echo "%_gpg_name ${GPG_KEY_ID}" >> ~/.rpmmacros
+
+          for rpm_file in dist/*.rpm; do
+            echo "Signing: $(basename $rpm_file)"
+            rpm --addsign "$rpm_file"
+          done
+
+          rm -f /tmp/.gpg-passphrase
+
+          echo "Verifying signatures..."
+          rpm -qpi dist/*.rpm | grep -E "^(Name|Signature)" || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
