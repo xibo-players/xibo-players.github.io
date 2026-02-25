@@ -34,3 +34,19 @@ Description: Self-contained Xibo digital signage player (Chromium kiosk)
  Bundles the PWA player locally and serves it via a Node.js server,
  then launches Chromium in kiosk mode. Only the CMS base URL is needed.
 
+Package: xiboplayer-release
+Version: 1.0.2
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./xiboplayer-release_1.0.2_all.deb
+Size: 3816
+MD5sum: f1cbdd8dca05d6435e0cab76be3ca2fb
+SHA1: 2f354bce469e41aa733e759f9a3065d183988f84
+SHA256: 78c3e780032d774a75bc0c99260c8c5b129363cd39d8c7c0a22bfe21bb712ece
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
