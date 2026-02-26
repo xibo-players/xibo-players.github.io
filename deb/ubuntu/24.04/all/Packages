@@ -5,10 +5,10 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
 Filename: ./xiboplayer-chromium_0.5.11-1_all.deb
-Size: 8455958
-MD5sum: fa33a31ec14b125b08ee5610c1b14f2f
-SHA1: 103c12f1ecc38a8f7793fc32a564b753003686f1
-SHA256: f0547c03836515fd4ebe0cf97a1aeda75e9db3b4c43de1c30f8de9c114044305
+Size: 8458562
+MD5sum: 36751183c31779ffdae171d061c7ad02
+SHA1: 84431c837f8e55149d4ced9402c5fe2222ce2def
+SHA256: 81b45dc625e712ecef0e5b7a0f28c6a28953f947ac89b1ba42176ae46f8a0043
 Section: misc
 Priority: optional
 Homepage: https://xiboplayer.org
