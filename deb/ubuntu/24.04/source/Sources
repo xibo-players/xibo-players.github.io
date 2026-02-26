@@ -1,0 +1,27 @@
+Format: 3.0 (quilt)
+Package: xiboplayer-chromium
+Binary: xiboplayer-chromium
+Architecture: all
+Version: 0.5.11-1
+Priority: optional
+Section: unknown
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Homepage: https://xiboplayer.org
+Standards-Version: 4.6.0
+Build-Depends: debhelper (>= 12), nodejs, npm
+Package-List:
+ xiboplayer-chromium deb misc optional arch=all
+Directory: .
+Checksums-Sha1:
+ 52e91edb3b21067907c616ed8f20002ecd035f12 924 xiboplayer-chromium_0.5.11-1.dsc
+ 5860c722afa358eb97219d55d7b66f1330c30eae 86498 xiboplayer-chromium_0.5.11.orig.tar.gz
+ 0bc29a8e6b9a803bf277a28b10565e503fe710ef 796 xiboplayer-chromium_0.5.11-1.debian.tar.xz
+Checksums-Sha256:
+ 9b61ec774bc6024eb33941f25e56aeebb7a19c9af15051d320f722cf4f36aad5 924 xiboplayer-chromium_0.5.11-1.dsc
+ 6d3b1512881b1c7ebef8bc7fec949de82eec7f09607f37425cb19fd7304aca2a 86498 xiboplayer-chromium_0.5.11.orig.tar.gz
+ 5bfd3755480c96a37c88bd570a74f9d08ce534584dd30211b209d003d818ced7 796 xiboplayer-chromium_0.5.11-1.debian.tar.xz
+Files:
+ aa96793841cf45b8684cec9375800898 924 xiboplayer-chromium_0.5.11-1.dsc
+ 11148a412f3a44bf041264206b98a5b4 86498 xiboplayer-chromium_0.5.11.orig.tar.gz
+ 9262ddf67c8eea32c4b3ea92f62b4f72 796 xiboplayer-chromium_0.5.11-1.debian.tar.xz
+
