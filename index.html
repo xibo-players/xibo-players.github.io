@@ -67,6 +67,11 @@
         .browse-table tr:hover td { background-color: #e8ecf1; }
         [data-theme="dark"] .browse-table tr:hover td { background-color: #161b22; }
 
+        /* Brand title: "xibo" in blue, "player" in white, lowercase */
+        .brand-title { font-size: 4.2em; font-weight: 700; letter-spacing: -0.5px; color: #fff; }
+        .brand-title .xibo { color: #0097D8; }
+        @media (max-width: 639px) { .brand-title { font-size: 2.8em; } }
+
         /* Tab show/hide (JS toggles .active) */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
@@ -77,7 +82,7 @@
 <div class="hero-gradient text-white py-14 px-5 text-center relative max-sm:py-9 max-sm:px-4">
     <div class="inline-flex items-center gap-5 mb-3 max-sm:gap-3.5">
         <img src="/logo-192.png" alt="XiboPlayer" class="w-[72px] h-[72px] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] shrink-0 max-sm:w-[52px] max-sm:h-[52px] max-sm:rounded-xl">
-        <h1 class="text-[2.4em] font-bold tracking-tight max-sm:text-[1.8em]">Xibo Player</h1>
+        <h1 class="brand-title"><span class="xibo">xibo</span> player</h1>
     </div>
     <p class="text-[1.15em] opacity-90 max-w-[560px] mx-auto mb-6">Open-source digital signage players for Xibo CMS.<br>Turn any PC, Raspberry Pi, or browser into a signage display.</p>
     <div class="max-w-[540px] mx-auto mt-5 py-2.5 px-4 bg-white/10 border border-white/20 rounded-md text-[0.8em] opacity-75 leading-normal">
