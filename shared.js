@@ -26,7 +26,7 @@ function initSite(T) {
                 b.style.opacity = '0.6';
             });
             btn.classList.add('active');
-            btn.style.background = '';
+            btn.style.background = 'var(--card-bg)';
             btn.style.opacity = '1';
             document.querySelectorAll('.deploy-os-content').forEach(function(c) { c.style.display = 'none'; });
             document.querySelector('[data-os-content="' + os + '"]').style.display = 'block';
@@ -45,7 +45,7 @@ function initSite(T) {
 
     // --- Sticky nav highlight ---
     var sections = document.querySelectorAll('section[id]');
-    var navLinks = document.querySelectorAll('nav a[href^="#"]');
+    var navLinks = document.querySelectorAll('.nav a');
     window.addEventListener('scroll', function() {
         var current = '';
         sections.forEach(function(s) {
@@ -76,17 +76,17 @@ function initSite(T) {
         var el = document.getElementById('deb-list');
         var sorted = debData.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
         var filtered = debArch ? sorted.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : sorted;
-        if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
+        if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">' + T.noPackagesArch + '</p>'; return; }
         var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
         filtered.forEach(function(p) {
             var bytes = parseInt(p.Size) || 0;
             var size = !bytes ? '\u2014' : bytes > 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(1) + ' KB';
             var homepage = p.Homepage || '#';
             var desc = (p.Description || '').split('\n')[0];
-            var note = p._releaseOnly ? ' <span class="inline-block text-[0.7em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">GitHub Release</span>' : '';
+            var note = p._releaseOnly ? ' <span class="badge" style="font-size:0.7em;">GitHub Release</span>' : '';
             html += '<tr><td><a href="' + homepage + '">' + (p.Package || '?') + '</a>' + note + '</td>' +
                 '<td>' + (p.Version || '?') + '</td>' +
-                '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + (p.Architecture || '?') + '</span></td>' +
+                '<td><span class="badge arch">' + (p.Architecture || '?') + '</span></td>' +
                 '<td>' + size + '</td><td>' + desc + '</td></tr>';
         });
         el.innerHTML = html + '</tbody></table>';
@@ -140,10 +140,10 @@ function initSite(T) {
                 } catch (e) { /* skip */ }
             }
             debData = Array.from(pkgs.values());
-            if (debData.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noDebPackages + '</p>'; return; }
+            if (debData.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">' + T.noDebPackages + '</p>'; return; }
             setupDebFilter();
         } catch (e) {
-            el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.errorDebPackages + '</p>';
+            el.innerHTML = '<p style="color:var(--gray-500)">' + T.errorDebPackages + '</p>';
         }
     }
 
@@ -155,12 +155,12 @@ function initSite(T) {
         var el = document.getElementById('rpm-list');
         var sorted = rpmData.slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
         var filtered = rpmArch ? sorted.filter(function(p) { return p.arch === rpmArch || p.arch === 'noarch'; }) : sorted;
-        if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
+        if (filtered.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">' + T.noPackagesArch + '</p>'; return; }
         var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thFile + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
         filtered.forEach(function(r) {
             html += '<tr><td><a href="https://github.com/' + r.repo + '">' + r.name + '</a></td>' +
                 '<td><a href="' + r.url + '">' + r.file + '</a></td>' +
-                '<td>' + r.size + '</td><td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + r.arch + '</span></td>' +
+                '<td>' + r.size + '</td><td><span class="badge arch">' + r.arch + '</span></td>' +
                 '<td><a href="' + r.releaseUrl + '">' + r.tag + '</a></td></tr>';
         });
         el.innerHTML = html + '</tbody></table>';
@@ -195,7 +195,7 @@ function initSite(T) {
                 });
             } catch (e) { /* skip */ }
         }
-        if (rpmData.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noRpmReleases + '</p>'; return; }
+        if (rpmData.length === 0) { el.innerHTML = '<p style="color:var(--gray-500)">' + T.noRpmReleases + '</p>'; return; }
         setupRpmFilter();
     }
 
@@ -232,9 +232,9 @@ function initSite(T) {
                 return a.name.endsWith('.iso') || a.name.endsWith('.qcow2') || a.name.endsWith('.raw.xz') || a.name.endsWith('.xz');
             });
             if (images.length === 0) {
-                el.innerHTML = '<div class="grid grid-cols-3 gap-4 my-5 max-sm:grid-cols-1">' +
-                    '<div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col cursor-default"><h3>' + T.noImagesYet + '</h3>' +
-                    '<p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">' + T.noImagesDesc + '</p></div></div>';
+                el.innerHTML = '<div class="pkg-grid">' +
+                    '<div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;"><h3>' + T.noImagesYet + '</h3>' +
+                    '<p class="desc">' + T.noImagesDesc + '</p></div></div>';
                 return;
             }
             var html = '<table class="browse-table"><thead><tr><th>' + T.thImage + '</th><th>' + T.thFormat + '</th><th>' + T.thUseCase + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
@@ -259,22 +259,22 @@ function initSite(T) {
                 html += '<tr>' +
                     '<td><a href="' + img.browser_download_url + '">' + img.name + '</a></td>' +
                     '<td>' + fmt + '</td>' +
-                    '<td class="text-gh-500 dark:text-gh-d500 text-[0.85em]">' + useCase + '</td>' +
+                    '<td style="color:var(--gray-500);font-size:0.85em;">' + useCase + '</td>' +
                     '<td>' + size + '</td>' +
-                    '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + arch + '</span></td>' +
+                    '<td><span class="badge arch">' + arch + '</span></td>' +
                     '<td><a href="' + release.html_url + '">' + release.tag_name + '</a></td>' +
                     '</tr>';
             }
             html += '</tbody></table>';
-            html += '<div class="mt-4 text-[0.85em] text-gh-500 dark:text-gh-d500">' +
+            html += '<div style="margin-top:16px; font-size:0.85em; color:var(--gray-500);">' +
                 '<p>' + T.imagesNote + '</p>' +
-                '<p class="mt-1.5">' + T.imagesEtcher + '</p>' +
+                '<p style="margin-top:6px;">' + T.imagesEtcher + '</p>' +
                 '</div>';
             el.innerHTML = html;
         } catch (e) {
-            el.innerHTML = '<div class="grid grid-cols-3 gap-4 my-5 max-sm:grid-cols-1">' +
-                '<div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col cursor-default"><h3>' + T.kioskImages + '</h3>' +
-                '<p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">' + T.imagesFallback + '</p></div></div>';
+            el.innerHTML = '<div class="pkg-grid">' +
+                '<div class="pkg-card bg-white dark:bg-gray-800" style="cursor:default;"><h3>' + T.kioskImages + '</h3>' +
+                '<p class="desc">' + T.imagesFallback + '</p></div></div>';
         }
     }
 
