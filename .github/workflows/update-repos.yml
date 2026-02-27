@@ -395,7 +395,8 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
+          # Only stage repo metadata — never touch site HTML/CSS/JS
+          git add rpm/ deb/ _repos/
 
           if git diff --cached --quiet; then
             echo "No changes to commit"
@@ -407,26 +408,15 @@ jobs:
           git commit -m "Update repositories (trigger: ${TRIGGER})"
 
           # Retry push — each run regenerates everything from scratch,
-          # so on conflict we pull, re-stage our generated files, and push.
-          # Binary repo metadata (.xml.zst, .gz) can't auto-rebase, but
-          # our version is always authoritative since we fetched all latest
-          # releases and rebuilt all indices in this run.
+          # so on conflict we pull, re-commit our staged files, and push.
           for attempt in 1 2 3; do
             if git push; then
               echo "Push succeeded (attempt $attempt)"
               exit 0
             fi
             echo "Push failed (attempt $attempt), rebasing onto remote..."
-            # Our generated files are always authoritative (rebuilt from
-            # all latest releases). Save our tree, reset to remote, then
-            # restore our files on top — no merge conflicts possible.
-            OUR_TREE=$(git rev-parse HEAD^{tree})
             git fetch origin main
-            git reset --hard origin/main
-            # Restore our generated tree as a new commit
-            NEW_COMMIT=$(git commit-tree "$OUR_TREE" -p HEAD \
-              -m "Update repositories (trigger: ${TRIGGER})")
-            git reset --hard "$NEW_COMMIT"
+            git rebase origin/main
           done
           echo "Push failed after 3 attempts"
           exit 1
