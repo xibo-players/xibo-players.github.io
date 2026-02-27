@@ -10,11 +10,11 @@ Build-Depends: debhelper (>= 12), nodejs, npm
 Package-List:
  xiboplayer-chromium deb misc optional arch=all
 Checksums-Sha1:
- 336eb5cc4ecd3b2478d50209f71653c83aeb525e 85856 xiboplayer-chromium_0.5.16.orig.tar.gz
- 81927938b8fb425a3ce629df15a28df828058970 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
+ be410574fff0c4ba455f006cba819b2f4e16f639 85871 xiboplayer-chromium_0.5.16.orig.tar.gz
+ b6f3cc4efe5c03eb3f1f087757196f8996005321 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
 Checksums-Sha256:
- 2d138a0f91de9082484a3ef2e5147544b50b609d2bd2e1a8fdae2e4f2e281949 85856 xiboplayer-chromium_0.5.16.orig.tar.gz
- 928b6b344bcf0b37fd21aeef9b472a6a7f0aad85952342d952b8de636ebfb370 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
+ c63c49d24c049ebe124c26c65d3d9a81592ec9afff17fdbe7d44d494c4b5b7bc 85871 xiboplayer-chromium_0.5.16.orig.tar.gz
+ f7dd59f0b960c81e7fbfc830b80bf7f3a31b35e029840e1399d8f681506a75ab 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
 Files:
- 47940798df85ffb5e8f4901858e4b6b7 85856 xiboplayer-chromium_0.5.16.orig.tar.gz
- 44a8fbd5a6d2e5941cd897c4d97f595d 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
+ b9a6dd9ff29637605f1d476e679eb834 85871 xiboplayer-chromium_0.5.16.orig.tar.gz
+ 7c2a31a66b13b2fefb872e9e8d808dff 796 xiboplayer-chromium_0.5.16-1.debian.tar.xz
