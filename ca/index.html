@@ -135,6 +135,31 @@
                 <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">Sincronitza múltiples pantalles en un sol video wall. Reproducció coordinada, transicions de dissenys i programació a totes les pantalles.</p>
             </div>
         </div>
+
+        <!-- Aprovisionament sense intervenció — secció completa -->
+        <div style="margin-top:24px; background:var(--card-bg); border:2px solid var(--blue); border-radius:var(--radius); padding:28px 32px; display:flex; gap:28px; align-items:flex-start;">
+            <div style="font-size:2.4em; flex-shrink:0; line-height:1;">&#x1F510;</div>
+            <div>
+                <h3 style="font-size:1.15em; font-weight:700; margin-bottom:8px;">Aprovisionament sense intervenció per a grans desplegaments</h3>
+                <p style="color:var(--gray-500); font-size:0.95em; margin-bottom:12px;">
+                    Desplegueu centenars de pantalles? Elimineu el pas d'autorització manual al CMS. Preconfigureu les credencials OAuth2 API en un fitxer de configuració o imatge d'arrencada — cada pantalla nova es registra, s'auto-autoritza via l'API REST del CMS i comença a reproduir immediatament.
+                </p>
+                <div style="display:flex; gap:24px; flex-wrap:wrap; font-size:0.9em;">
+                    <div style="flex:1; min-width:200px;">
+                        <strong style="display:block; margin-bottom:4px;">Com funciona</strong>
+                        <span style="color:var(--gray-500);">Creeu una Aplicació al CMS amb grant <code style="background:var(--code-bg); padding:1px 5px; border-radius:3px; font-size:0.9em;">client_credentials</code> i l'abast <code style="background:var(--code-bg); padding:1px 5px; border-radius:3px; font-size:0.9em;">displays</code>. Afegiu el Client ID i el Secret a la configuració del reproductor.</span>
+                    </div>
+                    <div style="flex:1; min-width:200px;">
+                        <strong style="display:block; margin-bottom:4px;">Aïllament per client</strong>
+                        <span style="color:var(--gray-500);">Creeu Aplicacions CMS separades per a cada client o ubicació. Cada joc de credencials només pot autoritzar pantalles dins el seu abast — sense accés creuat.</span>
+                    </div>
+                    <div style="flex:1; min-width:200px;">
+                        <strong style="display:block; margin-bottom:4px;">Funciona a tot arreu</strong>
+                        <span style="color:var(--gray-500);">Integrat a la pàgina de configuració del PWA. Funciona amb Electron, Chromium kiosk i PWA autònom — el mateix format de configuració a tots els reproductors.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Primers passos -->

@@ -49,7 +49,7 @@
 | **Renderer** | ~96% | Performance BETTER. Audio overlay, image scale/align, exit transitions, drawers, sub-playlists, isPaused |
 | **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
 | **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup |
-| **Config/Settings** | ~96% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config |
+| **Config/Settings** | ~96% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize |
 | **Interactive Control** | ~96% | Full IC server + touch/keyboard actions + playback control (next/prev/pause/skip) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
 | **Multi-display** | ~90% | BroadcastChannel lead/follower sync. Synchronized video start |
@@ -405,6 +405,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | CMS tag config parsing | No | No | Yes (geoApiKey\|value) | **Ours BETTER** — per-display configuration via CMS display tags |
 | Playback control | No | No | Yes (keyboard + click-to-skip) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click |
 | Timeline debug overlay | No | No | Yes (T-key toggle, clickable, conflict indicators) | **Ours BETTER** — press T to see upcoming schedule with clickable layouts and conflict highlighting |
+| Auto-authorize via API | No | No | Yes (OAuth2 client_credentials) | **Ours BETTER** — new displays self-authorize via CMS REST API, no manual CMS intervention needed |
 
 ---
 
@@ -573,6 +574,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 39. **Region exit transitions** - animated transitions when leaving regions
 40. **Drawer regions** - hidden regions revealed via navigateToWidget with auto-hide
 41. **Sub-playlist cycle playback** - round-robin or random widget selection per group per layout cycle
+42. **Auto-authorize via API** - OAuth2 `client_credentials` flow for zero-touch display provisioning
 
 ---
 
