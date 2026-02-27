@@ -195,7 +195,7 @@
                 <div class="deploy-os-content p-6 border border-gh-200 dark:border-gh-d200 rounded-[0_10px_10px_10px] bg-card dark:bg-card-dark" data-os-content="fedora">
                     <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 rounded-lg overflow-x-auto text-[0.85rem] m-0"><code><span class="c"># Afegeix el repositori</span>
 sudo dnf install \
-  https://dl.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-2.noarch.rpm
+  https://github.com/xibo-players/xibo-players.github.io/releases/download/v43-5/xiboplayer-release-43-5.noarch.rpm
 
 <span class="c"># Instal·la el quiosc</span>
 sudo dnf install xiboplayer-kiosk
@@ -328,7 +328,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                 </div>
                 <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0" id="dnf-add"><span class="c"># Instal·la el repositori i la clau GPG de xiboplayer</span>
 sudo dnf install \
-  https://dl.xiboplayer.org/rpm/fedora/43/noarch/xiboplayer-release-43-2.noarch.rpm</pre>
+  https://github.com/xibo-players/xibo-players.github.io/releases/download/v43-5/xiboplayer-release-43-5.noarch.rpm</pre>
             </div>
             <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg my-4 overflow-hidden">
                 <div class="flex items-center justify-between py-3 px-4 bg-gh-50 dark:bg-gh-d50 border-b border-gh-200 dark:border-gh-d200">
@@ -362,8 +362,8 @@ sudo systemctl set-default graphical.target
                     <button class="copy-btn bg-transparent border border-gh-200 dark:border-gh-d200 rounded-md py-1 px-2.5 text-[0.8em] cursor-pointer text-gh-500 dark:text-gh-d500 transition-colors hover:text-brand hover:dark:text-brand-light hover:border-brand hover:dark:border-brand-light" onclick="copyCode(this)">Copia</button>
                 </div>
                 <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0"><span class="c"># Descarrega i instal·la el repositori i la clau GPG de xiboplayer</span>
-curl -fsSLO https://dl.xiboplayer.org/deb/ubuntu/24.04/all/xiboplayer-release_1.0.0_all.deb
-sudo apt install ./xiboplayer-release_1.0.0_all.deb</pre>
+curl -fsSLO https://dl.xiboplayer.org/deb/ubuntu/24.04/all/xiboplayer-release_1.0.2_all.deb
+sudo apt install ./xiboplayer-release_1.0.2_all.deb</pre>
             </div>
             <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg my-4 overflow-hidden">
                 <div class="flex items-center justify-between py-3 px-4 bg-gh-50 dark:bg-gh-d50 border-b border-gh-200 dark:border-gh-d200">
