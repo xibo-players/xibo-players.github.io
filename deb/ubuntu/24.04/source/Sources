@@ -2,7 +2,7 @@ Format: 3.0 (quilt)
 Package: xiboplayer-chromium
 Binary: xiboplayer-chromium
 Architecture: all
-Version: 0.5.17-1
+Version: 0.5.18-1
 Priority: optional
 Section: unknown
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
@@ -13,17 +13,17 @@ Package-List:
  xiboplayer-chromium deb misc optional arch=all
 Directory: .
 Checksums-Sha1:
- c7887f24277c86cd2b5106b018637f07e08738c4 924 xiboplayer-chromium_0.5.17-1.dsc
- 81f4307b7038f5000fe7ae193a991fb507980c4c 86700 xiboplayer-chromium_0.5.17.orig.tar.gz
- 24161659d5c1b26dfab7b636ba41947facbcc893 796 xiboplayer-chromium_0.5.17-1.debian.tar.xz
+ d8ba0b909efa33044ab8f882f33d075b52ecd43b 924 xiboplayer-chromium_0.5.18-1.dsc
+ 23ac4a0d3f6e3aba0bbff3747396f03b6f8d991d 86764 xiboplayer-chromium_0.5.18.orig.tar.gz
+ c4edbaf9f70af2b0f88ed9c692a8a91497eb1637 796 xiboplayer-chromium_0.5.18-1.debian.tar.xz
 Checksums-Sha256:
- 8da0aaefcbe08fbd1b2f967b8d0a126c48d569ca5f26bda440ea57d3c35acac1 924 xiboplayer-chromium_0.5.17-1.dsc
- c850f9d265a65a6ccee22ea2f25ea48258fb00f7f2c5d3866309664e2e60468a 86700 xiboplayer-chromium_0.5.17.orig.tar.gz
- 835b9525b60cce7555eee7a7ca5170e171e478e873c0ea8019feb909340c9b82 796 xiboplayer-chromium_0.5.17-1.debian.tar.xz
+ b7b2c1274866e68175549eb61e2c56e9688565327f1e3e99e3319a4beef64129 924 xiboplayer-chromium_0.5.18-1.dsc
+ 25a96a3b93be694efcbb3a3d1124b1079f659e806af236370b5f0cdc2ab30df0 86764 xiboplayer-chromium_0.5.18.orig.tar.gz
+ c0ba0bf62e6baab8778c0375cbae1d0b9a9ba98f3a0eac9d2ef7f56129082595 796 xiboplayer-chromium_0.5.18-1.debian.tar.xz
 Files:
- 7c0c20087d217e34de477cd2970ce186 924 xiboplayer-chromium_0.5.17-1.dsc
- 206b5660c04102ada296c0ada0c42acc 86700 xiboplayer-chromium_0.5.17.orig.tar.gz
- e530cf1bd387c90858bc14b705504c61 796 xiboplayer-chromium_0.5.17-1.debian.tar.xz
+ 2e63b4155bfe024cffd4a08b75d913a3 924 xiboplayer-chromium_0.5.18-1.dsc
+ a5fff25abedf28b7ee91377dd2818a80 86764 xiboplayer-chromium_0.5.18.orig.tar.gz
+ 126bcbbf5e4db1589ceba7aba4a0f678 796 xiboplayer-chromium_0.5.18-1.debian.tar.xz
 
 Format: 3.0 (quilt)
 Package: xiboplayer-electron
