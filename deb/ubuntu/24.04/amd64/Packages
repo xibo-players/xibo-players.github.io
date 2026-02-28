@@ -1,13 +1,13 @@
 Package: arexibo
-Version: 0.3.1-1
+Version: 0.3.1-3
 Architecture: amd64
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
-Filename: ./arexibo_0.3.1-1_amd64.deb
-Size: 5477506
-MD5sum: e48b47c9f26e77169628a2b5bee99cf9
-SHA1: 15e51a51c3f47bc0b14946065ccb054db7d0e8b5
-SHA256: 69b62506932fcb98fb991f6037a8ab2d61e2d35162fa9fbd85f0c5a282396ad8
+Filename: ./arexibo_0.3.1-3_amd64.deb
+Size: 5477368
+MD5sum: a343206e30d52f8575c055b645f0f032
+SHA1: 9dc2a504de42cf0ca53697fa42e287f6fc518d9e
+SHA256: e0d64f98eaed59f2db88d0bdebe514f4932d76b8c31127624fb5103550aad42b
 Section: misc
 Priority: optional
 Homepage: https://github.com/linuxnow/arexibo
