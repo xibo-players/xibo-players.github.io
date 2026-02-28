@@ -1,7 +1,7 @@
-# Feature Comparison: XiboPlayer v0.5.2 vs Upstream Players
+# Feature Comparison: XiboPlayer v0.5.16 vs Upstream Players
 
-**Last Updated:** 2026-02-24
-**Our Version:** v0.5.2 (SDK v0.5.2, PWA v0.5.2, Electron v0.5.2, Chromium v0.5.2)
+**Last Updated:** 2026-02-28
+**Our Version:** v0.5.16 (SDK v0.5.16, PWA v0.5.16, Electron v0.5.16, Chromium v0.5.16)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
 - [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
@@ -50,7 +50,7 @@
 | **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
 | **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup |
 | **Config/Settings** | ~96% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize |
-| **Interactive Control** | ~96% | Full IC server + touch/keyboard actions + playback control (next/prev/pause/skip) |
+| **Interactive Control** | ~96% | Full IC server + touch/keyboard actions + playback control (config-gated, disabled by default) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
 | **Multi-display** | ~90% | BroadcastChannel lead/follower sync. Synchronized video start |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
@@ -97,7 +97,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 
 ### XiboPlayer vs XLR (electron-player scheduleManager.ts)
 
-| Feature | XLR v1.0.22 | XiboPlayer v0.5.2 | Status |
+| Feature | XLR v1.0.22 | XiboPlayer v0.5.16 | Status |
 |---------|-------------|-------------------|--------|
 | Layout events | Yes | Yes | **Match** |
 | Overlay events | Yes | Yes | **Match** |
@@ -254,8 +254,8 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Previous/next widget | Yes | Yes (nextWidget/previousWidget) | **Match** |
 | Widget duration webhooks | Yes | Yes (widgetAction event → HTTP POST) | **Match** |
 | Audio overlay on parent media | Yes | Yes (attached `<audio>` element lifecycle) | **Match** |
-| Playback control (keyboard) | No | Yes (←/→/Space/PgUp/PgDn/R) | **Ours BETTER** — keyboard shortcuts for next/prev layout, pause/resume, and revert to schedule |
-| Timeline click-to-skip | No | Yes (click layout in timeline overlay) | **Ours BETTER** — click any layout in the debug timeline to jump to it instantly |
+| Playback control (keyboard) | No | Yes (←/→/Space/PgUp/PgDn/R, config-gated) | **Ours BETTER** — keyboard shortcuts for next/prev layout, pause/resume, and revert to schedule; disabled by default, enabled via `controls` config |
+| Timeline click-to-skip | No | Yes (click layout in timeline overlay, config-gated) | **Ours BETTER** — click any layout in the debug timeline to jump to it instantly; requires `controls.keyboard.debugOverlays: true` |
 | Drawer regions | Yes | Yes (hidden, revealed via navigateToWidget) | **Match** |
 | Sub-playlist cycle playback | Yes | Yes (round-robin/random per group) | **Match** |
 
@@ -362,7 +362,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Touch/click triggers | Yes | Yes (attachTouchAction) | **Match** |
 | Keyboard triggers | Yes | Yes (setupKeyboardListener) | **Match** |
 | Data connector support | Yes | Yes (DataConnectorManager) | **Match** |
-| Playback control (next/prev/pause) | No | Yes (keyboard + timeline click-to-skip) | **Ours BETTER** — operators can navigate layouts and pause playback |
+| Playback control (next/prev/pause) | No | Yes (keyboard + timeline click-to-skip, config-gated) | **Ours BETTER** — operators can navigate layouts and pause playback; all controls disabled by default for kiosk security |
 
 ---
 
@@ -403,8 +403,8 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
 | Log level from CMS | No | Yes | Yes (applyCmsLogLevel) | **Match** |
 | CMS tag config parsing | No | No | Yes (geoApiKey\|value) | **Ours BETTER** — per-display configuration via CMS display tags |
-| Playback control | No | No | Yes (keyboard + click-to-skip) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click |
-| Timeline debug overlay | No | No | Yes (T-key toggle, clickable, conflict indicators) | **Ours BETTER** — press T to see upcoming schedule with clickable layouts and conflict highlighting |
+| Playback control | No | No | Yes (keyboard + click-to-skip, config-gated) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click; disabled by default, enabled per-group in `controls` config |
+| Timeline debug overlay | No | No | Yes (T-key toggle, config-gated) | **Ours BETTER** — clickable timeline with conflict indicators; requires `controls.keyboard.debugOverlays: true` (independent of log level) |
 | Auto-authorize via API | No | No | Yes (OAuth2 client_credentials) | **Ours BETTER** — new displays self-authorize via CMS REST API, no manual CMS intervention needed |
 
 ---
@@ -426,7 +426,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 
 ## 10. Performance Comparison
 
-| Metric | XLR v1.0.22 | Windows v4 R406 | Arexibo | XiboPlayer v0.5.2 |
+| Metric | XLR v1.0.22 | Windows v4 R406 | Arexibo | XiboPlayer v0.5.16 |
 |--------|-------------|-----------------|---------|-------------------|
 | Initial load (cold) | 17-20s | 5-10s | 12-15s | **3-5s** |
 | Layout replay | 2-3s | 1-2s | <1s | **<0.5s** |
@@ -556,14 +556,14 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 21. **RPM/DEB packaging** - Native Linux package management with auto-update repos
 22. **npm provenance** - SLSA attestation for supply chain security
 23. **MAC address reporting** - Wake-on-LAN support in status messages
-24. **Timeline debug overlay** - T-key toggleable schedule visualization with click-to-skip
+24. **Timeline debug overlay** - Config-gated schedule visualization with click-to-skip (requires `controls.keyboard.debugOverlays: true`)
 25. **Documentation server** - Searchable API reference and SDK docs
 26. **Complete kiosk OS** - xibo-kiosk with GNOME Kiosk, health monitoring, first-boot wizard, keyboard shortcuts
 27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
 28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
 29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
 30. **Multi-display sync** - BroadcastChannel lead/follower for video walls with synchronized video start
-31. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation
+31. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation; all controls disabled by default, enabled via `controls` config
 32. **Event stats** - Tracks touch interactions and webhook events with tags for engagement analytics
 33. **Layout interleaving** - Inserts default layout between scheduled layouts for smoother content cycling
 34. **Weather criteria** - Evaluates weather-based schedule criteria from CMS GetWeather data
@@ -638,7 +638,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 
 ### Performance Comparison
 
-| Metric | Arexibo | XiboPlayer v0.5.2 |
+| Metric | Arexibo | XiboPlayer v0.5.16 |
 |--------|---------|-------------------|
 | Initial load | 12-15s | **3-5s** |
 | Layout replay | <1s | **<0.5s** |
@@ -657,7 +657,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 
 ### Xibo for Windows v4 R406 (Released 2025-12-10)
 
-| Feature | Windows v4 R406 | XiboPlayer v0.5.2 | Status |
+| Feature | Windows v4 R406 | XiboPlayer v0.5.16 | Status |
 |---------|----------------|-------------------|--------|
 | **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
 | **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
@@ -690,7 +690,7 @@ The Windows player is a mature, commercial product with full native OS integrati
 | xibo-communication-framework | 0.0.6 | 2025-12-11 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) |
 | Xibo for Windows | v4 R406 | 2025-12-10 | [GitHub](https://github.com/xibosignage/xibo-dotnetclient/releases) |
 | Arexibo | latest | 2025-05-18 | [GitHub](https://github.com/birkenfeld/arexibo) |
-| XiboPlayer SDK | v0.5.2 | 2026-02-24 | [npm](https://www.npmjs.com/org/xiboplayer) |
-| XiboPlayer PWA | v0.5.2 | 2026-02-24 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
-| XiboPlayer Electron | v0.5.2 | 2026-02-24 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
-| XiboPlayer Chromium | v0.5.2 | 2026-02-24 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
+| XiboPlayer SDK | v0.5.16 | 2026-02-24 | [npm](https://www.npmjs.com/org/xiboplayer) |
+| XiboPlayer PWA | v0.5.16 | 2026-02-24 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
+| XiboPlayer Electron | v0.5.16 | 2026-02-24 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
+| XiboPlayer Chromium | v0.5.16 | 2026-02-24 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
