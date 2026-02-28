@@ -162,9 +162,9 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | Purge list parsing | Yes | Yes | **Match** |
 | Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
 | Offline fallback | No | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
-| Geolocation fallback chain | No | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
-| CMS tag config parsing | No | No | Yes (geoApiKey\|value from RegisterDisplay) | **Ours BETTER** — parses display tag configuration for per-display settings |
-| Licence result handling | No | No | Yes | **Ours BETTER** — properly handles CMS licence status in RegisterDisplay response |
+| Geolocation fallback chain | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
+| CMS tag config parsing | No | Yes (geoApiKey\|value from RegisterDisplay) | **Ours BETTER** — parses display tag configuration for per-display settings |
+| Licence result handling | No | Yes | **Ours BETTER** — properly handles CMS licence status in RegisterDisplay response |
 | Storage estimate in status | No | Yes (navigator.storage.estimate) | **Ours BETTER** — CMS admins can see remaining disk space remotely |
 | Timezone in status | No | Yes (Intl.DateTimeFormat) | **Ours BETTER** — CMS can display and account for the player's local timezone |
 | MAC address reporting | No | Yes (Wake-on-LAN support) | **Ours BETTER** — enables remote Wake-on-LAN from CMS |
@@ -402,10 +402,10 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Offline fallback | No | File system | IndexedDB auto-cache | **Ours BETTER** — automatically caches schedule and settings so player boots even without CMS |
 | Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
 | Log level from CMS | No | Yes | Yes (applyCmsLogLevel) | **Match** |
-| CMS tag config parsing | No | No | Yes (geoApiKey\|value) | **Ours BETTER** — per-display configuration via CMS display tags |
-| Playback control | No | No | Yes (keyboard + click-to-skip, config-gated) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click; disabled by default, enabled per-group in `controls` config |
-| Timeline debug overlay | No | No | Yes (T-key toggle, config-gated) | **Ours BETTER** — clickable timeline with conflict indicators; requires `controls.keyboard.debugOverlays: true` (independent of log level) |
-| Auto-authorize via API | No | No | Yes (OAuth2 client_credentials) | **Ours BETTER** — new displays self-authorize via CMS REST API, no manual CMS intervention needed |
+| CMS tag config parsing | No | No | Yes (geoApiKey\|value) | **Ours BETTER** — per-display config via CMS display tags |
+| Playback control | No | No | Yes (config-gated) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click |
+| Timeline debug overlay | No | No | Yes (T-key, config-gated) | **Ours BETTER** — clickable timeline with conflict indicators |
+| Auto-authorize via API | No | No | Yes (OAuth2) | **Ours BETTER** — new displays self-authorize via CMS REST API |
 
 ---
 
