@@ -2,7 +2,7 @@ Format: 3.0 (quilt)
 Package: xiboplayer-chromium
 Binary: xiboplayer-chromium
 Architecture: all
-Version: 0.5.20-1
+Version: 0.6.0-1
 Priority: optional
 Section: unknown
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
@@ -13,17 +13,17 @@ Package-List:
  xiboplayer-chromium deb misc optional arch=all
 Directory: .
 Checksums-Sha1:
- f8f95016b3cfc8e880bbeec48a7b1828b572139e 924 xiboplayer-chromium_0.5.20-1.dsc
- 1ddd8775942859b79e199d0408122b30f38f8e00 87933 xiboplayer-chromium_0.5.20.orig.tar.gz
- e4e4d03922735b001241a5379ef5057a339c8189 792 xiboplayer-chromium_0.5.20-1.debian.tar.xz
+ a8f871e4eaabb8b782f4e659bd361a613841da8a 917 xiboplayer-chromium_0.6.0-1.dsc
+ b9beb667160f64ca1d29ae2958aae315c6bfd73e 88154 xiboplayer-chromium_0.6.0.orig.tar.gz
+ bf0a71764099a87df4c526d0800c244a0c5e04f6 792 xiboplayer-chromium_0.6.0-1.debian.tar.xz
 Checksums-Sha256:
- 59833f5e564a9b433145040e1990e3d61a5826ff8fa7fca2fd403295daa73111 924 xiboplayer-chromium_0.5.20-1.dsc
- a9ddd0c75dbf12a01cb9877c53f78aeb971d490cc19fd1320f4a704af4b0211c 87933 xiboplayer-chromium_0.5.20.orig.tar.gz
- b0333f5b4818388d962e4b141c470ffd7e1ba80c23530d85b06ca92a01088cfc 792 xiboplayer-chromium_0.5.20-1.debian.tar.xz
+ 079576b97070d16137035e6791f36e78f890a6730ca5982d760a62f3196690c7 917 xiboplayer-chromium_0.6.0-1.dsc
+ c18696ea8ed41a0201911c9298563ceae5e56a6d7e011a8874c4cde119789b3f 88154 xiboplayer-chromium_0.6.0.orig.tar.gz
+ 54333eb31f809fbab7ff0716cb170e290a86b1c6b6330124be3af3bce9528b30 792 xiboplayer-chromium_0.6.0-1.debian.tar.xz
 Files:
- c76ba635e202a7b0e6cbc0a18e05df81 924 xiboplayer-chromium_0.5.20-1.dsc
- ef0b377a9065982fcd54b5ea995bc6e4 87933 xiboplayer-chromium_0.5.20.orig.tar.gz
- 780c4d24637bef255a813f59c1a9bda0 792 xiboplayer-chromium_0.5.20-1.debian.tar.xz
+ c385ce4886d97779913f2e6f9882b1fd 917 xiboplayer-chromium_0.6.0-1.dsc
+ 2d05d1139711e625765170b21a2726cf 88154 xiboplayer-chromium_0.6.0.orig.tar.gz
+ 6e17e553e5e47426d52ffcc97271319c 792 xiboplayer-chromium_0.6.0-1.debian.tar.xz
 
 Format: 3.0 (quilt)
 Package: xiboplayer-electron
