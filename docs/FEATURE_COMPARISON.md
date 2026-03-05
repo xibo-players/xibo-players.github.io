@@ -193,7 +193,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 
 ## 4. Layout Renderer (XLR v1.0.22 vs RendererLite)
 
-### Overall: ~99% parity, better performance
+### Overall: 100% parity, better performance
 
 ### Layout Parsing
 
@@ -602,7 +602,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **Last update** | 2025-05-18 (dormant 9+ months) | Active development |
 | **Packaging** | Manual build | RPM/DEB auto-built via CI |
 
-### Feature Parity: ~95% protocol, different capabilities
+### Feature Parity: 100% protocol, different capabilities
 
 | Category | Arexibo | XiboPlayer | Winner |
 |----------|---------|------------|--------|
