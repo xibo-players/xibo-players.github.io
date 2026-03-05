@@ -46,17 +46,17 @@
 | **Schedule Management** | ~98% | Dayparting BETTER. Interrupts, conflict detection, interleaved defaults, weather criteria, scheduled commands |
 | **XMDS Communication** | ~98% | SOAP + REST dual transport with auto-detection. CRC32 + ETag caching. All 10 methods + GetWeather + tag config. *Missing: display status codes 0/2/3 partial* |
 | **File Management** | ~97% | Parallel 4-chunk downloads BETTER. Download resume. Service Worker progressive streaming |
-| **Renderer** | ~98% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers. *Missing: shellcommand (N/A in browser)* |
+| **Renderer** | ~99% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands (Electron IPC + Chromium HTTP) |
 | **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
 | **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup |
 | **Config/Settings** | ~97% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. *Missing: display status machine partial (0/2/3 codes)* |
 | **Interactive Control** | ~98% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | ~90% | BroadcastChannel lead/follower sync. Synchronized video start. *Missing: cross-machine WebSocket/LAN transport for different-origin displays* |
+| **Multi-display** | **100%** | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Synchronized layout transitions, coordinated video start, stats/logs delegation, auto-reconnect with exponential backoff. The lead's proxy server acts as a lightweight relay — no additional infrastructure. **Only Xibo player with cross-device sync.** |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xibo-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
-**Overall: ~98% feature parity, with significantly better performance and unique capabilities (REST transport, protocol auto-detect, progressive streaming, persistent durations, canvas regions, cross-platform, RPM/DEB packaging, multi-display sync, playback control, complete kiosk OS)**
+**Overall: ~98% feature parity, with significantly better performance and unique capabilities (REST transport, protocol auto-detect, progressive streaming, persistent durations, canvas regions, cross-platform, RPM/DEB packaging, cross-device video walls, playback control, complete kiosk OS)**
 
 ---
 
@@ -225,7 +225,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | ticker | Duration-per-item | iframe | Partial |
 | dataset | Yes | Via getWidgetHtml | **Match** (server-rendered) |
 | HLS streaming | Yes | Yes (native + hls.js dynamic import) | **Match** |
-| shellcommand | Yes | No | N/A (browser sandbox) |
+| shellcommand | Yes | Yes (Electron IPC / Chromium HTTP) | **Match** (gated by `allowShellCommands` config) |
 
 ### Transitions
 
@@ -521,13 +521,12 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 
 ### Low Impact (Rarely Used Features)
 
-1. **Multi-display sync transport** - @xiboplayer/sync uses BroadcastChannel (same-origin tabs); no WebSocket/LAN transport yet for cross-machine sync
-2. **BroadcastChannel stats** - Stats go direct to CMS, no cross-tab sync needed
+1. **RS232 serial port** — not available in the browser sandbox. Arexibo and Windows support this natively.
 
-### Not Applicable (Browser Sandbox)
+### Previously Missing, Now Implemented
 
-- Shell commands (N/A in browser; use HTTP commands instead)
-- RS232 serial port (N/A in browser)
+- ~~**Multi-display sync transport**~~ — **DONE in v0.6.3**: BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN)
+- ~~**Shell commands**~~ — **DONE**: Electron uses IPC (`ipcMain.handle('execute-shell-command')`), Chromium uses an HTTP endpoint on the proxy (`POST /shell-command`). Gated by `allowShellCommands: true` in config.json. 30-second timeout per command.
 
 ---
 
@@ -562,7 +561,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
 28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
 29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
-30. **Multi-display sync** - BroadcastChannel lead/follower for video walls with synchronized video start
+30. **Cross-device video walls** - BroadcastChannel (same-machine) + WebSocket relay (LAN) with synchronized layout transitions, coordinated video start, auto-reconnect, and stats delegation. No additional infrastructure — the lead's proxy server acts as the relay. The only Xibo player with cross-device sync
 31. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation; all controls disabled by default, enabled via `controls` config
 32. **Event stats** - Tracks touch interactions and webhook events with tags for engagement analytics
 33. **Layout interleaving** - Inserts default layout between scheduled layouts for smoother content cycling
@@ -621,7 +620,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 ### Arexibo-Only Features (XiboPlayer Cannot Replicate)
 
 1. **RS232 Serial Port** - Full serial config (baud, parity, handshake), hex encoding, response reading
-2. **Shell Commands** - `/bin/sh -c` execution with regex output validation
+2. ~~**Shell Commands**~~ — **DONE**: XiboPlayer supports shell commands via Electron IPC and Chromium HTTP endpoint (`allowShellCommands` config). Arexibo additionally supports regex output validation
 3. **ZeroMQ transport** - Direct ZeroMQ for XMR (vs WebSocket relay); both use RSA encryption
 4. **XLF Translation Cache** - Pre-generates HTML at download time, version-tracked invalidation. Note: this is an architectural necessity for Arexibo (Rust/Qt cannot render XLF natively), not a performance advantage — XiboPlayer's runtime rendering is faster because it parses XLF directly into DOM elements (<10ms), supports dynamic adaptation (ResizeObserver, orientation changes), and avoids stale cache risks
 
@@ -655,8 +654,8 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 
 ### Recommendation
 
-- **Use Arexibo** for: Linux-only kiosks requiring serial port control, shell commands, or encrypted XMR (note: project appears dormant)
-- **Use XiboPlayer** for: Everything else — cross-platform, rapid setup, REST API, RPM/DEB packaging, active development
+- **Use Arexibo** for: Linux-only kiosks requiring serial port control or encrypted XMR via ZeroMQ (note: project appears dormant)
+- **Use XiboPlayer** for: Everything else — cross-platform, shell commands, cross-device video walls, rapid setup, REST API, RPM/DEB packaging, active development
 
 ---
 
@@ -674,7 +673,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 | **Kiosk** | Native Windows kiosk | xibo-kiosk: GNOME Kiosk + health monitor + bootable images | **Ours BETTER** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
 | **Installation** | MSI installer | Zero (open URL) or RPM/DEB | **Ours BETTER** — PWA needs no install at all; RPM/DEB auto-update from repo |
 | **CEF update** | Chromium 141 | Browser's own engine | Tie |
-| **Shell commands** | Yes | No (browser sandbox) | Windows better |
+| **Shell commands** | Yes | Yes (Electron IPC / Chromium HTTP) | **Match** |
 | **Serial port** | Yes | No (browser sandbox) | Windows better |
 | **REST API** | No | Yes | **Ours BETTER** — 30% smaller payloads and ETag caching reduce bandwidth and latency |
 | **Parallel downloads** | No | Yes (4 chunks) | **Ours BETTER** — 4x faster large file downloads via concurrent HTTP Range requests |
@@ -685,7 +684,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xibo-kio
 
 ### Key Differences
 
-The Windows player is a mature, commercial product with full native OS integration (shell commands, serial ports, kiosk mode, webcam). XiboPlayer trades these native capabilities for cross-platform reach, zero installation, REST API support, RPM/DEB packaging, and significantly faster media downloads.
+The Windows player is a mature, commercial product with full native OS integration (serial ports, kiosk mode, webcam). XiboPlayer now matches shell command support (Electron IPC + Chromium HTTP) and adds cross-platform reach, zero installation, REST API support, RPM/DEB packaging, cross-device video wall sync, and significantly faster media downloads.
 
 ---
 
