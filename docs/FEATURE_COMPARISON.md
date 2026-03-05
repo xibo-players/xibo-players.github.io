@@ -43,20 +43,20 @@
 
 | Area | Parity | Notes |
 |------|--------|-------|
-| **Schedule Management** | ~98% | Dayparting BETTER. Interrupts, conflict detection, interleaved defaults, weather criteria, scheduled commands |
-| **XMDS Communication** | ~98% | SOAP + REST dual transport with auto-detection. CRC32 + ETag caching. All 10 methods + GetWeather + tag config. *Missing: display status codes 0/2/3 partial* |
-| **File Management** | ~97% | Parallel 4-chunk downloads BETTER. Download resume. Service Worker progressive streaming |
-| **Renderer** | ~99% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands (Electron IPC + Chromium HTTP) |
-| **XMR Push Messaging** | ~98% | All 13 command handlers. Exponential backoff reconnect |
-| **Stats/Logging** | ~97% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup |
-| **Config/Settings** | ~97% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. *Missing: display status machine partial (0/2/3 codes)* |
-| **Interactive Control** | ~98% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
+| **Schedule Management** | 100% | Dayparting BETTER (ISO day-of-week, midnight crossing). Interrupts, conflict detection, interleaved defaults, weather criteria, scheduled commands. All upstream features matched or exceeded |
+| **XMDS Communication** | ~99% | SOAP + REST dual transport with auto-detection. CRC32 + ETag caching. All 10 methods + GetWeather + tag config. *Gap: display status codes (0=ready/2=downloading/3=error) only partially reported — CMS dashboard shows the display as "ready" but doesn't reflect intermediate states. Low impact: CMS still knows the display is online and content plays correctly* |
+| **File Management** | 100% | Parallel 4-chunk downloads BETTER. Download resume. Service Worker progressive streaming. Storage backend differs (Cache API + IndexedDB vs SQLite) but all functionality is equivalent |
+| **Renderer** | ~99% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands (Electron IPC + Chromium HTTP). *Gap: ticker widget uses server-rendered iframe instead of client-side duration-per-item cycling. Low impact: ticker content displays correctly, only the cycling animation differs slightly* |
+| **XMR Push Messaging** | 100% | All 13 command handlers matched. Exponential backoff reconnect (BETTER than upstream 60s fixed interval) |
+| **Stats/Logging** | ~99% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup. *Gap: no BroadcastChannel stats relay between tabs — each tab submits stats directly to CMS. No impact: stats reach the CMS either way, the relay is an internal optimization in XLR that doesn't affect CMS data* |
+| **Config/Settings** | ~99% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. *Gap: display status machine (0/2/3 codes) only partially implemented — same as XMDS gap above. Low impact: does not affect content playback or CMS connectivity* |
+| **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated). All upstream features matched, plus additional playback control shortcuts |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | **100%** | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Synchronized layout transitions, coordinated video start, stats/logs delegation, auto-reconnect with exponential backoff. The lead's proxy server acts as a lightweight relay — no additional infrastructure. **Only Xibo player with cross-device sync.** |
+| **Multi-display** | **100%** | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Synchronized layout transitions, coordinated video start, stats/logs delegation, auto-reconnect with exponential backoff. The lead's proxy server acts as a lightweight relay — no additional infrastructure. **Only Xibo player with cross-device sync** |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xibo-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
-**Overall: ~98% feature parity, with significantly better performance and unique capabilities (REST transport, protocol auto-detect, progressive streaming, persistent durations, canvas regions, cross-platform, RPM/DEB packaging, cross-device video walls, playback control, complete kiosk OS)**
+**Overall: ~99% feature parity. The only functional gaps are cosmetic status reporting (display status codes 0/2/3) and ticker client-side cycling — neither affects content playback. XiboPlayer adds significantly better performance and unique capabilities (REST transport, protocol auto-detect, progressive streaming, persistent durations, canvas regions, cross-platform, RPM/DEB packaging, cross-device video walls, playback control, complete kiosk OS)**
 
 ---
 
@@ -193,7 +193,7 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 
 ## 4. Layout Renderer (XLR v1.0.22 vs RendererLite)
 
-### Overall: ~96% parity, better performance
+### Overall: ~99% parity, better performance
 
 ### Layout Parsing
 
