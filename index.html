@@ -172,6 +172,35 @@
                 </a>
             </div>
 
+            <h3 class="mt-8 mb-3">&#x1F512; Atomic Silverblue image</h3>
+            <div id="deploy-atomic">
+                <p class="mb-4 opacity-80"><strong>Immutable OS</strong> based on Fedora Silverblue with atomic updates, automatic rollback, and full multimedia codecs (ffmpeg, VLC, mpv). Updates are delivered as OCI container images &mdash; the entire OS is replaced atomically, so a failed update can always be rolled back.</p>
+                <div class="grid grid-cols-2 gap-4 my-5 max-sm:grid-cols-2 max-xs:grid-cols-1">
+                    <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 no-underline text-inherit flex flex-col transition-all hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer-kiosk/releases">
+                        <div class="text-[2em] mb-2.5">&#x1F5A5;</div>
+                        <h3 class="text-base font-semibold mb-1">PC or laptop (Atomic)</h3>
+                        <div class="font-mono text-[0.78em] text-brand dark:text-brand-light mb-2">Atomic ISO (x86_64)</div>
+                        <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">Immutable Fedora Silverblue kiosk. Flash the ISO to USB, boot, and get an OS that updates itself automatically with rollback support. Includes VLC, mpv, ffmpeg, and all players.</p>
+                        <div class="mt-3 inline-flex items-center gap-1 text-brand dark:text-brand-light text-[0.85em] font-medium">Download Atomic x86_64 &#x2192;</div>
+                    </a>
+                    <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 no-underline text-inherit flex flex-col transition-all hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer-kiosk/releases">
+                        <div class="text-[2em] mb-2.5">&#x1F353;</div>
+                        <h3 class="text-base font-semibold mb-1">Raspberry Pi 4/5 (Atomic)</h3>
+                        <div class="font-mono text-[0.78em] text-brand dark:text-brand-light mb-2">Atomic ISO (aarch64)</div>
+                        <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">Same immutable Silverblue kiosk for ARM hardware. Flash to SD card, boot, and get atomic updates with automatic rollback.</p>
+                        <div class="mt-3 inline-flex items-center gap-1 text-brand dark:text-brand-light text-[0.85em] font-medium">Download Atomic aarch64 &#x2192;</div>
+                    </a>
+                </div>
+                <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg py-4 px-5 my-4 text-sm">
+                    <h4 class="text-[0.95em] font-semibold mb-1.5">Updating Atomic kiosks</h4>
+                    <p class="text-gh-500 dark:text-gh-d500">
+                        Kiosks update automatically via <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostreed-automatic.timer</code>.
+                        To update manually: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostree upgrade &amp;&amp; systemctl reboot</code>.
+                        To rollback: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostree rollback &amp;&amp; systemctl reboot</code>.
+                    </p>
+                </div>
+            </div>
+
             <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg py-4 px-5 my-4 text-sm">
                 <h4 class="text-[0.95em] font-semibold mb-1.5">After booting</h4>
                 <p class="text-gh-500 dark:text-gh-d500">
@@ -439,14 +468,22 @@ initSite({
     thFormat: 'Format',
     thUseCase: 'Use case',
     fmtIso: 'ISO installer',
+    fmtSelfContainedIso: 'Self-contained ISO',
+    fmtAtomicIso: 'Atomic ISO',
     fmtQcow2: 'QCOW2',
     fmtRaw: 'Raw disk',
     fmtCompressed: 'Compressed',
     fmtImage: 'Image',
     useCaseIso: 'Flash to USB, boot on any PC \u2014 fully automated install',
+    useCaseSelfContained: 'Offline ISO with all packages \u2014 no network needed during install',
+    useCaseAtomicIso: 'Immutable OS with automatic updates and rollback support',
     useCaseQcow2: 'Ready-to-boot VM for GNOME Boxes, virt-manager, Proxmox, QEMU',
     useCaseRawArm: 'Flash to SD card for Raspberry Pi 4/5 or ARM boards',
     useCaseRawX86: 'Write to SSD or SD card for Intel NUCs, embedded PCs',
+    traditionalTitle: 'Traditional images',
+    traditionalDesc: 'Fedora 43 with GNOME Kiosk. Install via kickstart with network or use the self-contained offline ISO.',
+    atomicTitle: 'Atomic Silverblue images',
+    atomicDesc: 'Immutable Fedora Silverblue OS with atomic updates, automatic rollback, and full multimedia codecs. Updates are delivered as OCI container images.',
     imagesNote: 'All images include: GNOME Kiosk session, auto-login, xiboplayer-kiosk + xiboplayer-electron pre-installed. Default login: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> / <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> \u2014 change your password after first boot.',
     imagesEtcher: 'Use <a href="https://etcher.balena.io/" class="text-brand dark:text-brand-light">Balena Etcher</a> for an easy graphical tool to flash any image. <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" class="text-brand dark:text-brand-light">All releases</a>'
 });

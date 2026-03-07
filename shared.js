@@ -222,50 +222,83 @@ function initSite(T) {
     })();
 
     // --- Kiosk images ---
+    function renderImageRows(images, release) {
+        var rows = '';
+        for (var i = 0; i < images.length; i++) {
+            var img = images[i];
+            var size = img.size > 1073741824 ? (img.size / 1073741824).toFixed(1) + ' GB' : img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
+            var arch = img.name.includes('x86_64') ? 'x86_64'
+                : img.name.includes('aarch64') ? 'aarch64' : '\u2014';
+            var isIso = img.name.endsWith('.iso');
+            var isSelfContained = img.name.includes('selfcontained');
+            var isQcow = img.name.endsWith('.qcow2');
+            var isRaw = img.name.endsWith('.raw.xz');
+            var isArm = img.name.includes('aarch64');
+            var isAtomic = img.name.includes('atomic');
+            var fmt = isIso ? (isSelfContained ? T.fmtSelfContainedIso : isAtomic ? T.fmtAtomicIso : T.fmtIso)
+                : isQcow ? T.fmtQcow2
+                : isRaw ? T.fmtRaw
+                : img.name.endsWith('.xz') ? T.fmtCompressed : T.fmtImage;
+            var useCase = isSelfContained ? T.useCaseSelfContained
+                : (isIso && isAtomic) ? T.useCaseAtomicIso
+                : isIso ? T.useCaseIso
+                : isQcow ? T.useCaseQcow2
+                : (isRaw && isArm) ? T.useCaseRawArm
+                : isRaw ? T.useCaseRawX86
+                : '';
+            rows += '<tr>' +
+                '<td><a href="' + img.browser_download_url + '">' + img.name + '</a></td>' +
+                '<td>' + fmt + '</td>' +
+                '<td class="text-gh-500 dark:text-gh-d500 text-[0.85em]">' + useCase + '</td>' +
+                '<td>' + size + '</td>' +
+                '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + arch + '</span></td>' +
+                '<td><a href="' + release.html_url + '">' + release.tag_name + '</a></td>' +
+                '</tr>';
+        }
+        return rows;
+    }
+
     async function loadKioskImages() {
         var el = document.getElementById('images-list');
         try {
-            var resp = await fetch('https://api.github.com/repos/xibo-players/xiboplayer-kiosk/releases/latest');
-            if (!resp.ok) throw new Error('No release');
-            var release = await resp.json();
-            var images = (release.assets || []).filter(function(a) {
+            var resp = await fetch('https://api.github.com/repos/xibo-players/xiboplayer-kiosk/releases?per_page=20');
+            if (!resp.ok) throw new Error('No releases');
+            var releases = await resp.json();
+            var traditionalRelease = null;
+            var atomicRelease = null;
+            for (var r = 0; r < releases.length; r++) {
+                var rel = releases[r];
+                if (rel.draft || rel.prerelease) continue;
+                if (!atomicRelease && rel.tag_name.startsWith('atomic-')) atomicRelease = rel;
+                if (!traditionalRelease && !rel.tag_name.startsWith('atomic-')) traditionalRelease = rel;
+                if (traditionalRelease && atomicRelease) break;
+            }
+            var imageFilter = function(a) {
                 return a.name.endsWith('.iso') || a.name.endsWith('.qcow2') || a.name.endsWith('.raw.xz') || a.name.endsWith('.xz');
-            });
-            if (images.length === 0) {
+            };
+            var traditionalImages = traditionalRelease ? (traditionalRelease.assets || []).filter(imageFilter) : [];
+            var atomicImages = atomicRelease ? (atomicRelease.assets || []).filter(imageFilter) : [];
+            if (traditionalImages.length === 0 && atomicImages.length === 0) {
                 el.innerHTML = '<div class="grid grid-cols-3 gap-4 my-5 max-sm:grid-cols-1">' +
                     '<div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col cursor-default"><h3>' + T.noImagesYet + '</h3>' +
                     '<p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">' + T.noImagesDesc + '</p></div></div>';
                 return;
             }
-            var html = '<table class="browse-table"><thead><tr><th>' + T.thImage + '</th><th>' + T.thFormat + '</th><th>' + T.thUseCase + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
-            for (var i = 0; i < images.length; i++) {
-                var img = images[i];
-                var size = img.size > 1073741824 ? (img.size / 1073741824).toFixed(1) + ' GB' : img.size > 1048576 ? (img.size / 1048576).toFixed(0) + ' MB' : (img.size / 1024).toFixed(0) + ' KB';
-                var arch = img.name.includes('x86_64') ? 'x86_64'
-                    : img.name.includes('aarch64') ? 'aarch64' : '\u2014';
-                var isIso = img.name.endsWith('.iso');
-                var isQcow = img.name.endsWith('.qcow2');
-                var isRaw = img.name.endsWith('.raw.xz');
-                var isArm = img.name.includes('aarch64');
-                var fmt = isIso ? T.fmtIso
-                    : isQcow ? T.fmtQcow2
-                    : isRaw ? T.fmtRaw
-                    : img.name.endsWith('.xz') ? T.fmtCompressed : T.fmtImage;
-                var useCase = isIso ? T.useCaseIso
-                    : isQcow ? T.useCaseQcow2
-                    : (isRaw && isArm) ? T.useCaseRawArm
-                    : isRaw ? T.useCaseRawX86
-                    : '';
-                html += '<tr>' +
-                    '<td><a href="' + img.browser_download_url + '">' + img.name + '</a></td>' +
-                    '<td>' + fmt + '</td>' +
-                    '<td class="text-gh-500 dark:text-gh-d500 text-[0.85em]">' + useCase + '</td>' +
-                    '<td>' + size + '</td>' +
-                    '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + arch + '</span></td>' +
-                    '<td><a href="' + release.html_url + '">' + release.tag_name + '</a></td>' +
-                    '</tr>';
+            var html = '';
+            if (traditionalImages.length > 0) {
+                html += '<h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-3">' + T.traditionalTitle + '</h3>';
+                html += '<p class="text-gh-500 dark:text-gh-d500 text-sm mb-3">' + T.traditionalDesc + '</p>';
+                html += '<table class="browse-table"><thead><tr><th>' + T.thImage + '</th><th>' + T.thFormat + '</th><th>' + T.thUseCase + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
+                html += renderImageRows(traditionalImages, traditionalRelease);
+                html += '</tbody></table>';
             }
-            html += '</tbody></table>';
+            if (atomicImages.length > 0) {
+                html += '<h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mt-8 mb-3">' + T.atomicTitle + '</h3>';
+                html += '<p class="text-gh-500 dark:text-gh-d500 text-sm mb-3">' + T.atomicDesc + '</p>';
+                html += '<table class="browse-table"><thead><tr><th>' + T.thImage + '</th><th>' + T.thFormat + '</th><th>' + T.thUseCase + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
+                html += renderImageRows(atomicImages, atomicRelease);
+                html += '</tbody></table>';
+            }
             html += '<div class="mt-4 text-[0.85em] text-gh-500 dark:text-gh-d500">' +
                 '<p>' + T.imagesNote + '</p>' +
                 '<p class="mt-1.5">' + T.imagesEtcher + '</p>' +

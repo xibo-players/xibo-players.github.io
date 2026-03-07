@@ -167,9 +167,38 @@
                     <div class="text-[2em] mb-2.5">&#x1F527;</div>
                     <h3 class="text-base font-semibold mb-1">Intel NUC / encastat</h3>
                     <div class="font-mono text-[0.78em] text-brand dark:text-brand-light mb-2">Imatge raw (x86_64)</div>
-                    <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">Escriu la imatge <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">.raw.xz</code> directament al SSD intern o targeta SD amb <strong>Balena Etcher</strong> o <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">dd</code>. Igual que la imatge de Pi però per a maquinari Intel/AMD.</p>
+                    <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">Escriu la imatge <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">.raw.xz</code> directament al SSD intern o targeta SD amb <strong>Balena Etcher</strong> o <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">dd</code>. Igual que la imatge de Pi per&ograve; per a maquinari Intel/AMD.</p>
                     <div class="mt-3 inline-flex items-center gap-1 text-brand dark:text-brand-light text-[0.85em] font-medium">Descarrega x86_64 &#x2192;</div>
                 </a>
+            </div>
+
+            <h3 class="mt-8 mb-3">&#x1F512; Imatge Atomic Silverblue</h3>
+            <div id="deploy-atomic">
+                <p class="mb-4 opacity-80"><strong>Sistema operatiu immutable</strong> basat en Fedora Silverblue amb actualitzacions at&ograve;miques, rollback autom&agrave;tic i c&ograve;decs multim&egrave;dia complets (ffmpeg, VLC, mpv). Les actualitzacions es lliuren com a imatges de contenidor OCI &mdash; tot el sistema operatiu es reempla&ccedil;a at&ograve;micament, de manera que una actualitzaci&oacute; fallida sempre es pot revertir.</p>
+                <div class="grid grid-cols-2 gap-4 my-5 max-sm:grid-cols-2 max-xs:grid-cols-1">
+                    <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 no-underline text-inherit flex flex-col transition-all hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer-kiosk/releases">
+                        <div class="text-[2em] mb-2.5">&#x1F5A5;</div>
+                        <h3 class="text-base font-semibold mb-1">PC o port&agrave;til (Atomic)</h3>
+                        <div class="font-mono text-[0.78em] text-brand dark:text-brand-light mb-2">ISO Atomic (x86_64)</div>
+                        <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">Quiosc Fedora Silverblue immutable. Grava la ISO a un USB, arrenca i obt&eacute; un sistema operatiu que s'actualitza autom&agrave;ticament amb suport de rollback. Inclou VLC, mpv, ffmpeg i tots els reproductors.</p>
+                        <div class="mt-3 inline-flex items-center gap-1 text-brand dark:text-brand-light text-[0.85em] font-medium">Descarrega Atomic x86_64 &#x2192;</div>
+                    </a>
+                    <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 no-underline text-inherit flex flex-col transition-all hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer-kiosk/releases">
+                        <div class="text-[2em] mb-2.5">&#x1F353;</div>
+                        <h3 class="text-base font-semibold mb-1">Raspberry Pi 4/5 (Atomic)</h3>
+                        <div class="font-mono text-[0.78em] text-brand dark:text-brand-light mb-2">ISO Atomic (aarch64)</div>
+                        <p class="text-gh-500 dark:text-gh-d500 text-[0.85em] flex-1">El mateix quiosc Silverblue immutable per a maquinari ARM. Grava a targeta SD, arrenca i obt&eacute; actualitzacions at&ograve;miques amb rollback autom&agrave;tic.</p>
+                        <div class="mt-3 inline-flex items-center gap-1 text-brand dark:text-brand-light text-[0.85em] font-medium">Descarrega Atomic aarch64 &#x2192;</div>
+                    </a>
+                </div>
+                <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg py-4 px-5 my-4 text-sm">
+                    <h4 class="text-[0.95em] font-semibold mb-1.5">Actualitzar quioscs Atomic</h4>
+                    <p class="text-gh-500 dark:text-gh-d500">
+                        Els quioscs s'actualitzen autom&agrave;ticament via <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostreed-automatic.timer</code>.
+                        Per actualitzar manualment: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostree upgrade &amp;&amp; systemctl reboot</code>.
+                        Per revertir: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded text-[0.88em]">rpm-ostree rollback &amp;&amp; systemctl reboot</code>.
+                    </p>
+                </div>
             </div>
 
             <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg py-4 px-5 my-4 text-sm">
@@ -439,16 +468,24 @@ initSite({
     thFormat: 'Format',
     thUseCase: 'Cas d\'ús',
     fmtIso: 'Instal\u00b7lador ISO',
+    fmtSelfContainedIso: 'ISO autocontinguda',
+    fmtAtomicIso: 'ISO Atomic',
     fmtQcow2: 'QCOW2',
     fmtRaw: 'Disc raw',
     fmtCompressed: 'Comprimit',
     fmtImage: 'Imatge',
     useCaseIso: 'Grava a USB, arrenca en qualsevol PC \u2014 instal\u00b7laci\u00f3 totalment autom\u00e0tica',
+    useCaseSelfContained: 'ISO offline amb tots els paquets \u2014 no cal xarxa durant la instal\u00b7laci\u00f3',
+    useCaseAtomicIso: 'Sistema operatiu immutable amb actualitzacions autom\u00e0tiques i suport de rollback',
     useCaseQcow2: 'VM llesta per arrencar per a GNOME Boxes, virt-manager, Proxmox, QEMU',
     useCaseRawArm: 'Grava a targeta SD per a Raspberry Pi 4/5 o plaques ARM',
     useCaseRawX86: 'Escriu a SSD o targeta SD per a Intel NUCs, PCs encastats',
-    imagesNote: 'Totes les imatges inclouen: sessió GNOME Kiosk, inici de sessió automàtic, xiboplayer-kiosk + xiboplayer-electron preinstal\u00b7lats. Inici de sessió per defecte: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> / <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> \u2014 canvia la contrasenya després del primer arrencada.',
-    imagesEtcher: 'Utilitza <a href="https://etcher.balena.io/" class="text-brand dark:text-brand-light">Balena Etcher</a> com a eina gràfica fàcil per gravar qualsevol imatge. <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" class="text-brand dark:text-brand-light">Totes les versions</a>'
+    traditionalTitle: 'Imatges tradicionals',
+    traditionalDesc: 'Fedora 43 amb GNOME Kiosk. Instal\u00b7la via kickstart amb xarxa o utilitza la ISO autocontinguda offline.',
+    atomicTitle: 'Imatges Atomic Silverblue',
+    atomicDesc: 'Sistema operatiu Fedora Silverblue immutable amb actualitzacions at\u00f2miques, rollback autom\u00e0tic i c\u00f2decs multim\u00e8dia complets. Les actualitzacions es lliuren com a imatges de contenidor OCI.',
+    imagesNote: 'Totes les imatges inclouen: sessi\u00f3 GNOME Kiosk, inici de sessi\u00f3 autom\u00e0tic, xiboplayer-kiosk + xiboplayer-electron preinstal\u00b7lats. Inici de sessi\u00f3 per defecte: <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> / <code class="bg-codebg dark:bg-codebg-dark py-0.5 px-1.5 rounded">xibo</code> \u2014 canvia la contrasenya despr\u00e9s del primer arrencada.',
+    imagesEtcher: 'Utilitza <a href="https://etcher.balena.io/" class="text-brand dark:text-brand-light">Balena Etcher</a> com a eina gr\u00e0fica f\u00e0cil per gravar qualsevol imatge. <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases" class="text-brand dark:text-brand-light">Totes les versions</a>'
 });
 </script>
 
