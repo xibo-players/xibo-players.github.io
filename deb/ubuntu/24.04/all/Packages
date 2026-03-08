@@ -1,15 +1,15 @@
 Package: xiboplayer-chromium
-Version: 0.6.7-1
+Version: 0.6.8-1
 Architecture: all
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Installed-Size: 62428
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.6.7-1_all.deb
-Size: 8537124
-MD5sum: e80c286a30a8480952019725a82209df
-SHA1: 8013c0f92463ce5bab96b80d75a7c3ba223d932b
-SHA256: 8b8f2b3dd1422b8761cdd944eccf329dc5c573f919ba95777da489795fa72e0d
+Filename: ./xiboplayer-chromium_0.6.8-1_all.deb
+Size: 8540444
+MD5sum: 2ded26029c641b9e6c6d64df72e165d8
+SHA1: a67085f59522a746b036244ce21f0512b341518a
+SHA256: d326773a1bf1c6c7105c5af63b9d8c81d935fada8abc18b2db02fb44de6db4ac
 Section: misc
 Priority: optional
 Homepage: https://xiboplayer.org
