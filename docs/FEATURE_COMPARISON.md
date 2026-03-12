@@ -5,7 +5,7 @@
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
 - [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
-- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.6 (npm, 2025-12-11) — XMR WebSocket client
+- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.6 (npm, 2025-12-11) — upstream XMR WebSocket client (replaced by our native implementation)
 - [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R406 (C#/.NET + CEF, 2025-12-10) — the only actively maintained upstream player
 - [Arexibo](https://github.com/birkenfeld/arexibo) (Rust + Qt, last commit 2025-05-18 — dormant 9+ months)
 
@@ -47,7 +47,7 @@
 | **XMDS Communication** | 100% | SOAP + REST dual transport with auto-detection. CRC32 + ETag caching. All 10 methods + GetWeather + tag config. Display status codes 1/2/3 fully reported |
 | **File Management** | 100% | Parallel 4-chunk downloads BETTER. Download resume. Service Worker progressive streaming |
 | **Renderer** | 100% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands. Ticker duration-per-item handled server-side (CMS calculates total) + client-side NUMITEMS/DURATION comment parsing — same result as upstream |
-| **XMR Push Messaging** | 100% | All 13 command handlers matched. Exponential backoff reconnect (BETTER than upstream 60s fixed interval) |
+| **XMR Push Messaging** | 100% | Native XmrClient with generic action dispatch — all 14 CMS actions work. Zero deps, 97% smaller bundle. Exponential backoff reconnect |
 | **Stats/Logging** | 100% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup. Stats delegation via SyncManager for multi-display setups (same as XLR BroadcastChannel relay, plus cross-device WebSocket) |
 | **Config/Settings** | 100% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. Display status codes fully implemented |
 | **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
@@ -79,7 +79,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 @xiboplayer/cache      - CacheManager + DownloadManager (shared with SW)
 @xiboplayer/schedule   - ScheduleManager + InterruptScheduler
 @xiboplayer/xmds       - XmdsClient (SOAP) + RestClient (REST)
-@xiboplayer/xmr        - XmrWrapper (wraps @xibosignage/xibo-communication-framework)
+@xiboplayer/xmr        - Native XmrClient + XmrWrapper (all 14 CMS actions, zero deps)
 @xiboplayer/stats      - StatsCollector + LogReporter (IndexedDB)
 @xiboplayer/settings   - DisplaySettings (EventEmitter)
 @xiboplayer/sw         - Service Worker helpers
@@ -145,28 +145,28 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 | SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
 | SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
-| GetWeather | No | Yes | No | Yes | Yes (JSON) | **Match** — fetches weather data for schedule criteria evaluation |
-| ReportFaults | No | Yes | No | Yes | Yes (JSON) | **Match** — submits fault data with dedup cooldown |
+| GetWeather | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo lack weather data; we fetch and evaluate schedule criteria |
+| ReportFaults | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot report faults; we submit with dedup cooldown |
 | BlackList | Yes | Yes | No | Yes | No (REST N/A) | **Match** via SOAP |
 
 ### Communication Features
 
-| Feature | XLR | XiboPlayer | Status |
-|---------|-----|------------|--------|
-| SOAP Fault parsing | Typed classes | Namespace-aware querySelector | XLR slightly richer |
-| CRC32 skip optimization | Yes (checkRf/checkSchedule) | Yes | **Match** |
-| ETag 304 caching | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
-| licenceResult in RegisterDisplay | Yes | Yes (v7 spec) | **Match** |
-| Retry with backoff | Axios built-in | fetchWithRetry (configurable) | **Match** |
-| Purge list parsing | Yes | Yes | **Match** |
-| Electron CORS proxy | No | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
-| Offline fallback | No | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
-| Geolocation fallback chain | No | No | Yes (browser → Google API → IP) | **Ours BETTER** — three-tier fallback ensures location is available even without GPS |
-| CMS tag config parsing | No | No | Yes (geoApiKey\|value from RegisterDisplay) | **Ours BETTER** — parses display tag configuration for per-display settings |
-| Licence result handling | No | No | Yes | **Ours BETTER** — properly handles CMS licence status in RegisterDisplay response |
-| Storage estimate in status | No | Yes (navigator.storage.estimate) | **Ours BETTER** — CMS admins can see remaining disk space remotely |
-| Timezone in status | No | Yes (Intl.DateTimeFormat) | **Ours BETTER** — CMS can display and account for the player's local timezone |
-| MAC address reporting | No | Yes (Wake-on-LAN support) | **Ours BETTER** — enables remote Wake-on-LAN from CMS |
+| Feature | XLR | Windows | XiboPlayer | Status |
+|---------|-----|---------|------------|--------|
+| SOAP Fault parsing | Typed classes | Built-in | Namespace-aware querySelector | XLR slightly richer |
+| CRC32 skip optimization | Yes (checkRf/checkSchedule) | Yes | Yes | **Match** |
+| ETag 304 caching | No | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
+| licenceResult in RegisterDisplay | Yes | Yes | Yes (v7 spec) | **Match** |
+| Retry with backoff | Axios built-in | Built-in | fetchWithRetry (configurable) | **Match** |
+| Purge list parsing | Yes | Yes | Yes | **Match** |
+| Electron CORS proxy | No | N/A | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
+| Offline fallback | No | File system | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
+| Geolocation fallback chain | No | Yes (.NET Location) | Yes (browser → Google API → IP) | **Ours BETTER** vs XLR — three-tier fallback ensures location is available even without GPS |
+| CMS tag config parsing | No | Yes | Yes (geoApiKey\|value from RegisterDisplay) | **Match** vs Windows — both parse display tag configuration for per-display settings |
+| Licence result handling | No | Yes | Yes | **Match** vs Windows — both properly handle CMS licence status in RegisterDisplay response |
+| Storage estimate in status | No | No | Yes (navigator.storage.estimate) | **Ours BETTER** — CMS admins can see remaining disk space remotely |
+| Timezone in status | No | No | Yes (Intl.DateTimeFormat) | **Ours BETTER** — CMS can display and account for the player's local timezone |
+| MAC address reporting | No | Yes | Yes (Wake-on-LAN support) | **Ours BETTER** vs XLR — enables remote Wake-on-LAN from CMS |
 
 ---
 
@@ -307,35 +307,41 @@ The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. I
 
 | Aspect | xibo-xmr (server) | xibo-communication-framework v0.0.6 | @xiboplayer/xmr |
 |--------|-------------------|--------------------------------------|-----------------|
-| Type | PHP/ReactPHP relay | JS WebSocket client library | JS wrapper around the library |
+| Type | PHP/ReactPHP relay | JS WebSocket client library | Native XmrClient — complete XMR protocol implementation |
 | Protocol | ZeroMQ + WebSocket | WebSocket | WebSocket |
+| Action dispatch | N/A (relay) | Hardcoded if-else (5 of 14 actions) | Generic `emit(action, message)` — all actions work automatically |
+| Dependencies | ReactPHP, ZeroMQ | luxon (68KB), nanoevents | None (zero external deps) |
 | npm | N/A | @xibosignage/xibo-communication-framework | @xiboplayer/xmr |
 
 ### Client-Side Comparison
 
 | Feature | xibo-communication-framework | @xiboplayer/xmr | Status |
 |---------|------------------------------|------------------|--------|
-| WebSocket connection | Yes | Yes (wraps Xmr class) | **Match** |
+| WebSocket connection | Yes | Yes (native XmrClient) | **Match** |
 | Heartbeat ("H") detection | Yes | Yes | **Match** |
-| collectNow | Yes | Yes -> PlayerCore.collectNow() | **Match** |
-| screenShot / screenshot | Yes | Yes -> PlayerCore.captureScreenshot() | **Match** |
-| licenceCheck | Yes | Yes (no-op for Linux/PWA) | **Match** |
-| changeLayout | Yes | Yes -> PlayerCore.changeLayout() | **Match** |
-| overlayLayout | Yes | Yes -> PlayerCore.overlayLayout() | **Match** |
-| revertToSchedule | Yes | Yes -> PlayerCore.revertToSchedule() | **Match** |
-| purgeAll | Yes | Yes -> PlayerCore.purgeAll() | **Match** |
-| commandAction | Yes | Yes (HTTP only in browser) | **Match** |
-| triggerWebhook | Yes | Yes -> PlayerCore.triggerWebhook() | **Match** |
-| dataUpdate | Yes | Yes -> PlayerCore.refreshDataConnectors() | **Match** |
-| criteriaUpdate | Yes | Yes (re-collect) | **Match** |
-| currentGeoLocation | Yes | Yes (dual-path: CMS push + browser Geolocation API) | **Match** |
-| rekey | Yes | Yes -> RSA key rotation (Web Crypto) | **Match** |
+| collectNow | Hardcoded handler | Generic dispatch -> PlayerCore.collectNow() | **Match** |
+| screenShot / screenshot | Hardcoded handler | Generic dispatch -> PlayerCore.captureScreenshot() | **Match** |
+| licenceCheck | Hardcoded handler | Generic dispatch (no-op for Linux/PWA) | **Match** |
+| changeLayout | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.changeLayout() | **Ours BETTER** — upstream silently drops this action |
+| overlayLayout | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.overlayLayout() | **Ours BETTER** — upstream silently drops this action |
+| revertToSchedule | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.revertToSchedule() | **Ours BETTER** — upstream silently drops this action |
+| purgeAll | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.purgeAll() | **Ours BETTER** — upstream silently drops this action |
+| commandAction | Hardcoded for 3 subtypes only | Generic dispatch (full message with commandCode) | **Ours BETTER** — upstream only handles showStatusWindow, forceUpdateChromeOS, currentGeoLocation; all other command codes silently dropped |
+| triggerWebhook | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.triggerWebhook() | **Ours BETTER** — upstream silently drops this action |
+| dataUpdate | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.refreshDataConnectors() | **Ours BETTER** — upstream silently drops this action |
+| criteriaUpdate | Hardcoded handler | Generic dispatch (re-collect) | **Match** |
+| currentGeoLocation | Only via commandAction subtypes | Generic dispatch (dual-path: CMS push + browser Geolocation API) | **Ours BETTER** — dedicated handler with coordinate detection |
+| rekey | **Missing** — `console.error('unknown action')` | Generic dispatch -> RSA key rotation (Web Crypto) | **Ours BETTER** — upstream silently drops this action |
+| Future CMS actions | Requires library update | Work automatically (generic dispatch) | **Ours BETTER** — zero maintenance for new actions |
 | JSON message parsing | Yes | Yes | **Match** |
-| TTL/expiry checking | Yes | Yes | **Match** |
+| TTL/expiry checking | luxon DateTime (68KB dep) | Native Date.parse() (0KB) | **Ours BETTER** — same check, no dependency |
 | Channel subscription | Yes | Yes (init message on connect) | **Match** |
-| isActive() health check | Yes (15 min) | Yes | **Match** |
-| Reconnection | 60s fixed interval | Exponential backoff (10 attempts) | **Ours BETTER** — reconnects faster initially, backs off to avoid flooding a struggling server |
+| isActive() health check | Yes (15 min) | Yes (15 min) | **Match** |
+| Reconnection | 60s fixed interval | 60s health check + exponential backoff | **Ours BETTER** — reconnects faster initially, backs off to avoid flooding a struggling server |
 | Connection close handling | Yes | Yes (with intentional shutdown flag) | **Match** |
+| Bundle size | ~70KB (luxon + nanoevents + framework) | ~2KB (native, zero deps) | **Ours BETTER** — 97% smaller |
+
+**Summary:** The upstream `xibo-communication-framework@0.0.6` only dispatches 5 of ~14 CMS actions via a hardcoded if-else chain. The remaining 9 actions (`changeLayout`, `overlayLayout`, `revertToSchedule`, `purgeAll`, `triggerWebhook`, `dataUpdate`, `rekeyAction`, and most `commandAction` subtypes) fall through to `console.error('unknown action')` and are silently lost. Our native `XmrClient` uses generic action dispatch — `emit(message.action, message)` — so every current and future CMS action works automatically without code changes.
 
 ---
 
@@ -402,7 +408,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Offline fallback | No | File system | IndexedDB auto-cache | **Ours BETTER** — automatically caches schedule and settings so player boots even without CMS |
 | Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
 | Log level from CMS | No | Yes | Yes (applyCmsLogLevel) | **Match** |
-| CMS tag config parsing | No | No | Yes (geoApiKey\|value) | **Ours BETTER** — per-display configuration via CMS display tags |
+| CMS tag config parsing | No | Yes | Yes (geoApiKey\|value) | **Match** vs Windows — per-display configuration via CMS display tags |
 | Playback control | No | No | Yes (keyboard + click-to-skip, config-gated) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click; disabled by default, enabled per-group in `controls` config |
 | Timeline debug overlay | No | No | Yes (T-key toggle, config-gated) | **Ours BETTER** — clickable timeline with conflict indicators; requires `controls.keyboard.debugOverlays: true` (independent of log level) |
 | Auto-authorize via API | No | No | Yes (OAuth2 client_credentials) | **Ours BETTER** — new displays self-authorize via CMS REST API, no manual CMS intervention needed |
@@ -583,6 +589,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 47. **Download resume** - incomplete chunked downloads resume from last successful chunk
 48. **Missing media overlay** - timeline overlay highlights layouts with uncached media in red
 49. **Sub-playlist playCount** - widgets respect configured play count per cycle
+50. **Complete XMR implementation** - native XmrClient with generic action dispatch handles all 14 CMS actions; upstream framework only dispatches 5 (changeLayout, overlayLayout, revertToSchedule, purgeAll, triggerWebhook, dataUpdate, rekeyAction all silently dropped). Zero dependencies vs 68KB luxon + nanoevents
 
 ---
 
@@ -597,7 +604,7 @@ sudo alternatives --set xiboplayer /usr/bin/arexibo
 | **Concurrency** | Multi-threaded (backend, GUI, XMR threads) | Single-threaded (async/await, Web Workers) |
 | **Storage** | Disk files + `content.json` inventory | Cache API + IndexedDB |
 | **Media serving** | Local HTTP server (tiny_http, port 9696) | Browser-native + Service Worker |
-| **XMR** | ZeroMQ + RSA encryption | WebSocket (xibo-communication-framework) |
+| **XMR** | ZeroMQ + RSA encryption (collectNow only) | WebSocket (native XmrClient, all 14 actions) |
 | **Platform** | Linux only (Qt/Rust deps, RPi5 supported) | Any browser (cross-platform) |
 | **Last update** | 2025-05-18 (dormant 9+ months) | Active development |
 | **Packaging** | Manual build | RPM/DEB auto-built via CI |
