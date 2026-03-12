@@ -2,7 +2,7 @@ Format: 3.0 (quilt)
 Package: xiboplayer-chromium
 Binary: xiboplayer-chromium
 Architecture: all
-Version: 0.6.10-1
+Version: 0.6.11-1
 Priority: optional
 Section: unknown
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
@@ -13,23 +13,23 @@ Package-List:
  xiboplayer-chromium deb misc optional arch=all
 Directory: .
 Checksums-Sha1:
- 65d080c4df3ff97547db784a7d95e5429e6d9bf2 924 xiboplayer-chromium_0.6.10-1.dsc
- a5aa9898e16839baec188e4f93de72e2e0609e2b 92845 xiboplayer-chromium_0.6.10.orig.tar.gz
- 006d1a4ae9b6e07dccdc34558fadb31ff8c71b8a 796 xiboplayer-chromium_0.6.10-1.debian.tar.xz
+ 15906c3e8dbf4f5e55377717c195c67bd6137d0d 924 xiboplayer-chromium_0.6.11-1.dsc
+ 7e747bd013e7aabeb9b442a2861c91d9db08e465 91660 xiboplayer-chromium_0.6.11.orig.tar.gz
+ 077a67a3a3036de309ff9523d785a180ee05674b 796 xiboplayer-chromium_0.6.11-1.debian.tar.xz
 Checksums-Sha256:
- 620e9162e5f7a9e04e78008775ae775d63c5b08502a880d5c24f4b061c844642 924 xiboplayer-chromium_0.6.10-1.dsc
- 206a57e03e9ce6bcfdf3e937ebd6bec46a20ef5638a8a4c4798eed512e289640 92845 xiboplayer-chromium_0.6.10.orig.tar.gz
- f86944f06b4da6bbbf1a3dbb49a257e9e4762dd1d99a0bbcbd8518dc314a0be5 796 xiboplayer-chromium_0.6.10-1.debian.tar.xz
+ 258e0e7dc7b3235428de5c512bd8782a29dee433d4b8a74d94eaeacbf4a02f24 924 xiboplayer-chromium_0.6.11-1.dsc
+ 57b6ee34d57bf4b434ea97f39735d08e9935feeff3ddb3dc64ad2f2f98219861 91660 xiboplayer-chromium_0.6.11.orig.tar.gz
+ 436bde6acde812a97b8279aa01f9c3231d32d3c1da89b4785629f79d78d1d907 796 xiboplayer-chromium_0.6.11-1.debian.tar.xz
 Files:
- 91cf6888c69cd42bf7433f83dc81ae7f 924 xiboplayer-chromium_0.6.10-1.dsc
- f6a2bbe8add1673c751f92981f76ef1f 92845 xiboplayer-chromium_0.6.10.orig.tar.gz
- ad3e7b5f7de21b8f092c0d4e64a3d59e 796 xiboplayer-chromium_0.6.10-1.debian.tar.xz
+ ffde632fcfb538a1533925e32052d15e 924 xiboplayer-chromium_0.6.11-1.dsc
+ 27c876ea573e0ee8d6931813a5ac35fc 91660 xiboplayer-chromium_0.6.11.orig.tar.gz
+ 0d6935960297aefb57fcac8a16116303 796 xiboplayer-chromium_0.6.11-1.debian.tar.xz
 
 Format: 3.0 (quilt)
 Package: xiboplayer-electron
 Binary: xiboplayer-electron
 Architecture: any
-Version: 0.6.10-1
+Version: 0.6.11-1
 Priority: optional
 Section: unknown
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
@@ -40,15 +40,15 @@ Package-List:
  xiboplayer-electron deb misc optional arch=any
 Directory: .
 Checksums-Sha1:
- b6e944232aa953878d893b6d95c656bdf389754e 927 xiboplayer-electron_0.6.10-1.dsc
- cc9953c89e41d3276fb4e72352769a3c8e725fe9 745816 xiboplayer-electron_0.6.10.orig.tar.gz
- 3fc8b2885d0bf9a30ae7a49cc5e8decec3380b13 808 xiboplayer-electron_0.6.10-1.debian.tar.xz
+ e41b3d3e27c4c0acf4f88cc8ba1f31c0ea501e42 927 xiboplayer-electron_0.6.11-1.dsc
+ 55f710a2dfc497fd95d3f40fff96b80af455cc76 745870 xiboplayer-electron_0.6.11.orig.tar.gz
+ 1874962fdb0c3049f36b747d7a21e477a2f75d5c 808 xiboplayer-electron_0.6.11-1.debian.tar.xz
 Checksums-Sha256:
- f68121265af56fd114af3a6abf7e4a82b2fba7d0e01134e1c05862c65b9263f9 927 xiboplayer-electron_0.6.10-1.dsc
- 61f7588c3a90e0844e7edc2096ff7d8789a282544672e52dfcd785c4bafdefb5 745816 xiboplayer-electron_0.6.10.orig.tar.gz
- fbb1955be1a1f60eedcd54b55ce92cf83283f4422acc17ba8a674f5e780cc8c3 808 xiboplayer-electron_0.6.10-1.debian.tar.xz
+ 1f261c74e5e3d338900e59d6995cb558e286787ee7faf71ef61a5b24a673fc2f 927 xiboplayer-electron_0.6.11-1.dsc
+ 1e27cf8570143ab8be5970f13053b8ca06b43ce78e5b9a781d611e9d8e3e1bdd 745870 xiboplayer-electron_0.6.11.orig.tar.gz
+ 68f6770eb69549c3d74b08340ab8c3d032ae871d9e4fed993a1088b90b287a0c 808 xiboplayer-electron_0.6.11-1.debian.tar.xz
 Files:
- 6bea12dca44587e0c0086b8af7c5f563 927 xiboplayer-electron_0.6.10-1.dsc
- 9c710ee88bc3508ee051729b8268aa5d 745816 xiboplayer-electron_0.6.10.orig.tar.gz
- 8835b3ffcdfd1e428fcfe04b921f4514 808 xiboplayer-electron_0.6.10-1.debian.tar.xz
+ 4329d16ff20b229c0867a19973f0875c 927 xiboplayer-electron_0.6.11-1.dsc
+ 5e9e6c42ec89113be61391b06c85cbb5 745870 xiboplayer-electron_0.6.11.orig.tar.gz
+ b85f8440ba1858f4dff12ef1118b211d 808 xiboplayer-electron_0.6.11-1.debian.tar.xz
 
