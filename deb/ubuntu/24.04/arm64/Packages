@@ -17,17 +17,17 @@ Description: Rust-based digital signage player for Xibo CMS
  designed for kiosk and digital signage deployments on Linux.
 
 Package: xiboplayer-chromium
-Version: 0.6.11-1
+Version: 0.6.12-1
 Architecture: all
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Installed-Size: 62428
 Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.6.11-1_all.deb
-Size: 8538250
-MD5sum: 5e563aa612c2bae32ec78d40a1df83b7
-SHA1: 7699f509b94a3a69ff39eb9ca4a5174cbe0b64aa
-SHA256: e6fe4d6f5abbee9e68e482a9ed7b937939a9449c0c689144f65cb0d0f16234f1
+Filename: ./xiboplayer-chromium_0.6.12-1_all.deb
+Size: 8538600
+MD5sum: f2701f7d3877a6d5d341cc4b8c30fa32
+SHA1: be94b2a5245c360395d7fcef3fa799689028df1e
+SHA256: 2acf077810e58fc0a7683536a3fcc7fde26579394b521226ebf6dc6814cbfdb4
 Section: misc
 Priority: optional
 Homepage: https://xiboplayer.org
