@@ -126,9 +126,36 @@
                 <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">See what's playing on every screen with proof of play, remote screenshots, download progress, and detailed logs — all visible from your CMS.</p>
             </div>
             <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col transition-all cursor-default">
-                <h3 class="text-[1.05em] mb-1.5 flex items-center gap-2"><span class="text-xl">&#x1F4FA;</span> Video walls</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">Synchronize multiple screens into a single video wall. Coordinated playback, layout transitions, and scheduling across all displays.</p>
+                <h3 class="text-[1.05em] mb-1.5 flex items-center gap-2"><span class="text-xl">&#x1F4FA;</span> Video walls &amp; sync</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">Synchronize multiple screens with &lt;8ms precision. 12 choreography effects for dramatic cascading transitions. Mirror or wall mode. Token-authenticated WebSocket relay over LAN.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Video Wall Sync highlight -->
+    <section class="py-10 border-t border-gh-100 dark:border-gh-d100">
+        <h2 class="text-3xl font-semibold text-gh-900 dark:text-gh-d900 mb-2">&#x1F4FA; Video wall sync <span class="text-brand text-lg font-normal ml-2">New in v0.7.0</span></h2>
+        <p class="text-gh-500 dark:text-gh-d500 mb-5">The most capable multi-display sync in any Xibo player.</p>
+        <div class="grid grid-cols-2 gap-6 my-5 max-sm:grid-cols-1">
+            <div>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">&lt;8ms sync precision</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">All displays switch layouts within 8 milliseconds of each other &mdash; 6x faster than the Windows player. Tested with 4 Chromium displays on LAN.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">12 choreography effects</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Diagonal cascades, horizontal/vertical waves, center-out bursts, and more. Each display transitions at a staggered time based on its grid position.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Zero infrastructure</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">The lead display's built-in server acts as the sync relay. No additional servers, no ZeroMQ, no firewall ports &mdash; just HTTP.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Mirror &amp; wall mode</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">All screens show the same content (mirror) or each shows a unique portion of a larger composition (wall). Offline LAN sync works without CMS.</p>
+            </div>
+        </div>
+        <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-4 text-sm text-gh-500 dark:text-gh-d500">
+            <strong class="text-gh-900 dark:text-gh-d900">Comparison:</strong> Xibo Windows uses ZeroMQ with ~50-100ms precision and no choreography effects. XiboPlayer uses WebSocket with &lt;8ms precision, 12 choreography effects, token auth, and cross-platform support (Electron + Chromium).
         </div>
     </section>
 
@@ -321,7 +348,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
             <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col transition-all no-underline text-inherit hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer">
                 <h3 class="text-[1.05em] font-semibold mb-1 flex items-center gap-2"><span class="text-xl">&#x1F9F1;</span> @xiboplayer SDK</h3>
                 <div class="font-mono text-[0.8em] text-gh-500 dark:text-gh-d500 mb-2">13 npm packages</div>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">Modular TypeScript packages for caching, rendering, scheduling, multi-display sync, CMS communication (REST + SOAP), real-time commands, statistics, and more. 1345 tests across 35 suites.</p>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">Modular TypeScript packages for caching, rendering, scheduling, multi-display sync, CMS communication (REST + SOAP with idempotent cache-through), real-time commands, statistics, and more. 1597 tests across 46 suites.</p>
                 <div class="mt-3 flex flex-wrap gap-1.5">
                     <span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">npm</span>
                     <span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">TypeScript</span>

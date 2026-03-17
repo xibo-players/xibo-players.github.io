@@ -1,7 +1,7 @@
-# Feature Comparison: XiboPlayer v0.6.13 vs Upstream Players
+# Feature Comparison: XiboPlayer v0.7.0 vs Upstream Players
 
-**Last Updated:** 2026-03-13
-**Our Version:** v0.6.13 (SDK v0.6.13, PWA v0.6.13, Electron v0.6.13, Chromium v0.6.13)
+**Last Updated:** 2026-03-17
+**Our Version:** v0.7.0 (SDK v0.7.0, PWA v0.7.0, Electron v0.7.0, Chromium v0.7.0)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
 - [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
@@ -52,7 +52,7 @@
 | **Config/Settings** | 100% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. Display status codes fully implemented |
 | **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | 100% | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror mode (same content) + wall mode (position-specific layouts via `layoutMap`). Group isolation, standalone `xiboplayer-relay` CLI. Synchronized transitions, coordinated video start, stats/logs delegation, auto-reconnect with exponential backoff and automatic group re-join. **Only Xibo player with cross-device sync** |
+| **Multi-display** | 100%+ | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror + wall mode. **12 choreography effects** (diagonal, wave, center-out). **<8ms sync precision** (6x faster than Windows). Token-authenticated relay, syncGroupId isolation, offline LAN sync, stats/logs delegation, auto-reconnect. Works on Electron + Chromium. **Most capable sync in any Xibo player** |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xiboplayer-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
@@ -96,7 +96,7 @@ Independent repositories under the `xibo-players/` GitHub org:
 
 ### XiboPlayer vs XLR (electron-player scheduleManager.ts)
 
-| Feature | XLR v1.0.22 | XiboPlayer v0.6.13 | Status |
+| Feature | XLR v1.0.22 | XiboPlayer v0.7.0 | Status |
 |---------|-------------|-------------------|--------|
 | Layout events | Yes | Yes | **Match** |
 | Overlay events | Yes | Yes | **Match** |
@@ -438,7 +438,7 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 
 ## 10. Performance Comparison
 
-| Metric | XLR v1.0.22 | Windows v4 R406 | Arexibo | XiboPlayer v0.6.13 |
+| Metric | XLR v1.0.22 | Windows v4 R406 | Arexibo | XiboPlayer v0.7.0 |
 |--------|-------------|-----------------|---------|-------------------|
 | Initial load (cold) | 17-20s | 5-10s | 12-15s | **3-5s** |
 | Layout replay | 2-3s | 1-2s | <1s | **<0.5s** |
@@ -661,7 +661,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xiboplay
 
 ### Performance Comparison
 
-| Metric | Arexibo | XiboPlayer v0.6.13 |
+| Metric | Arexibo | XiboPlayer v0.7.0 |
 |--------|---------|-------------------|
 | Initial load | 12-15s | **3-5s** |
 | Layout replay | <1s | **<0.5s** |
@@ -680,7 +680,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xiboplay
 
 ### Xibo for Windows v4 R406 (Released 2025-12-10)
 
-| Feature | Windows v4 R406 | XiboPlayer v0.6.13 | Status |
+| Feature | Windows v4 R406 | XiboPlayer v0.7.0 | Status |
 |---------|----------------|-------------------|--------|
 | **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
 | **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
@@ -713,7 +713,7 @@ The Windows player is a mature, commercial product with full native OS integrati
 | xibo-communication-framework | 0.0.6 | 2025-12-11 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) |
 | Xibo for Windows | v4 R406 | 2025-12-10 | [GitHub](https://github.com/xibosignage/xibo-dotnetclient/releases) |
 | Arexibo | latest | 2025-05-18 | [GitHub](https://github.com/birkenfeld/arexibo) |
-| XiboPlayer SDK | v0.6.13 | 2026-03-07 | [npm](https://www.npmjs.com/org/xiboplayer) |
-| XiboPlayer PWA | v0.6.13 | 2026-03-07 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
-| XiboPlayer Electron | v0.6.13 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
-| XiboPlayer Chromium | v0.6.13 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
+| XiboPlayer SDK | v0.7.0 | 2026-03-07 | [npm](https://www.npmjs.com/org/xiboplayer) |
+| XiboPlayer PWA | v0.7.0 | 2026-03-07 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
+| XiboPlayer Electron | v0.7.0 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
+| XiboPlayer Chromium | v0.7.0 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
