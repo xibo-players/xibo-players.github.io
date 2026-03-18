@@ -1,6 +1,6 @@
 # Feature Comparison: XiboPlayer v0.7.0 vs Upstream Players
 
-**Last Updated:** 2026-03-17
+**Last Updated:** 2026-03-18
 **Our Version:** v0.7.0 (SDK v0.7.0, PWA v0.7.0, Electron v0.7.0, Chromium v0.7.0)
 **Repository:** Split into independent repos under `xibo-players/` GitHub org
 **Compared against:**
@@ -33,8 +33,10 @@
 - [12. Kiosk Environment](#12-kiosk-environment-xiboplayer-kiosk)
 - [13. Remaining Gaps](#13-remaining-gaps)
 - [14. Where XiboPlayer is Better](#14-where-xiboplayer-is-better-than-all-upstream-players)
-- [15. Arexibo Detailed Comparison](#15-arexibo-detailed-comparison)
-- [16. Windows Player Detailed Comparison](#16-windows-player-detailed-comparison)
+- [15. Upstream Audit Results](#15-upstream-audit-results-2026-03-18)
+- [16. What Competitors Have That We Do Not](#16-what-competitors-have-that-we-do-not)
+- [17. Arexibo Detailed Comparison](#17-arexibo-detailed-comparison)
+- [18. Windows Player Detailed Comparison](#18-windows-player-detailed-comparison)
 - [Version Reference](#version-reference)
 
 ---
@@ -52,7 +54,7 @@
 | **Config/Settings** | 100% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. Display status codes fully implemented |
 | **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
 | **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | 100%+ | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror + wall mode. **12 choreography effects** (diagonal, wave, center-out). **<8ms sync precision** (6x faster than Windows). Token-authenticated relay, syncGroupId isolation, offline LAN sync, stats/logs delegation, auto-reconnect. Works on Electron + Chromium. **Most capable sync in any Xibo player** |
+| **Multi-display** | 100%+ | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror + wall mode. **12 choreography effects** (diagonal, wave, center-out). **<8ms sync precision**. Token-authenticated relay, syncGroupId isolation, offline LAN sync, stats/logs delegation, auto-reconnect. Works on Electron + Chromium. **Windows player has zero sync code** (confirmed by source audit). **Only Xibo player with multi-display sync** |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
 | **Kiosk Environment** | New | xiboplayer-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
@@ -446,6 +448,8 @@ The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-pl
 | Memory after 10 cycles | +500MB (growing) | Stable | Stable | **Stable** (blob lifecycle tracking) |
 | Bundle size | ~2MB (with video.js) | ~50MB (CEF) | ~10MB (Rust binary) | **~500KB** (minified) |
 | Widget switch time | ~200ms (recreate) | ~100ms | ~100ms | **<50ms** (visibility toggle) |
+| Multi-display sync precision | N/A | N/A (zero sync code) | N/A | **<8ms** (WebSocket relay) |
+| Automated tests | **0** | **0** | **2** | **1412** (36 test files) |
 
 **XiboPlayer is the fastest and most memory-efficient player.**
 
@@ -575,7 +579,7 @@ All other upstream features are fully supported:
 27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
 28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
 29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
-30. **Multi-display sync** - BroadcastChannel (same-machine) + WebSocket relay (LAN). Mirror mode (all screens show the same content) or wall mode (each screen shows position-specific content via `layoutMap` in config). Synchronized transitions, coordinated video start, auto-reconnect with automatic group re-join, stats/logs delegation, and group isolation. Standalone `xiboplayer-relay` CLI for dedicated relay servers. The only Xibo player with cross-device sync
+30. **Multi-display sync** - BroadcastChannel (same-machine) + WebSocket relay (LAN). Mirror mode (all screens show the same content) or wall mode (each screen shows position-specific content via `layoutMap` in config). Synchronized transitions, coordinated video start, auto-reconnect with automatic group re-join, stats/logs delegation, and group isolation. Standalone `xiboplayer-relay` CLI for dedicated relay servers. **Windows player has zero multi-display sync code** (confirmed by source audit) — no sync manager, no relay, no choreography. The only Xibo player with any sync implementation
 31. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation; all controls disabled by default, enabled via `controls` config
 32. **Event stats** - Tracks touch interactions and webhook events with tags for engagement analytics
 33. **Layout interleaving** - Inserts default layout between scheduled layouts for smoother content cycling
@@ -598,10 +602,37 @@ All other upstream features are fully supported:
 48. **Missing media overlay** - timeline overlay highlights layouts with uncached media in red
 49. **Sub-playlist playCount** - widgets respect configured play count per cycle
 50. **Complete XMR implementation** - native XmrClient with generic action dispatch handles all 14 CMS actions; upstream framework only dispatches 5 (changeLayout, overlayLayout, revertToSchedule, purgeAll, triggerWebhook, dataUpdate, rekeyAction all silently dropped). Zero dependencies vs 68KB luxon + nanoevents
+51. **1412 automated tests** - 36 test files covering all SDK packages. Windows player has zero tests, XLR has zero tests, Arexibo has only 2 tests
 
 ---
 
-## 15. Arexibo Detailed Comparison
+## 15. Upstream Audit Results (2026-03-18)
+
+Code analysis of upstream repositories confirmed:
+
+- **Windows player (xibo-dotnetclient)**: zero multi-display sync code in the entire codebase. No sync manager, no relay, no choreography
+- **Windows player**: zero automated tests. No test project, no test runner, no CI test step
+- **XLR (xibo-layout-renderer)**: zero automated tests. The npm package ships with no test suite
+- **Arexibo**: 2 automated tests only (basic XMDS parsing)
+- **XiboPlayer**: 1412 tests across 36 test files, covering core, renderer, cache, schedule, xmds, xmr, stats, settings, sync, and crypto packages
+
+---
+
+## 16. What Competitors Have That We Do Not
+
+Features present in upstream players that XiboPlayer does not implement:
+
+1. **RS-232 serial port** — Windows and Arexibo support hardware serial commands for controlling displays, projectors, and matrix switchers. Not available in the browser sandbox
+2. **PowerPoint rendering** — Windows player renders .pptx natively via COM automation. Browser-based players cannot render PowerPoint
+3. **Geo-fenced scheduling (CMS-side coordinates)** — Windows player uses CMS-provided GPS coordinates for geo-fence evaluation. XiboPlayer implements geo-fencing via browser Geolocation API + Google API + IP fallback chain, which covers the same use case differently
+4. **Schedule criteria tags** — Windows player supports CMS tag-based schedule criteria filtering. XiboPlayer evaluates 5 metrics + weather + custom display properties but does not yet support tag-based criteria
+5. **Interrupt/share-of-voice hourly algorithm** — Windows player implements the CMS hourly share-of-voice distribution algorithm for interrupt layouts. XiboPlayer implements interrupt interleaving but uses a different distribution approach
+6. **AXE/SSP ad integration** — Windows player has hooks for Broadsign AXE and SSP ad server rotation. XiboPlayer has an `isSspEnabled` stub but no active ad server integration
+7. **Cycle playback with play count** — Windows player supports per-widget play count limits within sub-playlist cycle mode. XiboPlayer supports sub-playlist cycle playback and `playCount` but the exact per-cycle reset behaviour may differ
+
+---
+
+## 17. Arexibo Detailed Comparison
 
 ### Architecture: Native Rust + Qt vs Browser-Based
 
@@ -676,7 +707,7 @@ Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xiboplay
 
 ---
 
-## 16. Windows Player Detailed Comparison
+## 18. Windows Player Detailed Comparison
 
 ### Xibo for Windows v4 R406 (Released 2025-12-10)
 
