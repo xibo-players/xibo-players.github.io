@@ -1,0 +1,29 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: xibo-players
+Label: Xibo Players
+Suite: stable
+Codename: trixie
+Architectures: amd64 arm64 all
+Components: main
+Date: Fri, 20 Mar 2026 20:01:50 +0000
+MD5Sum:
+SHA1:
+SHA256:
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEIGJVTKKPl/NcYbpZ+wQZ5iSA84oFAmm9p68ACgkQ+wQZ5iSA
+84pxEw/7BJWy2SYjL6jL+sL+etnnxiAiPmZNxdxzemJ6kJx0chrgyCQ7H9lG+wGQ
+LXlB4GAc24mrrb6q0nrljUGhRFtXQ01bFTXNiMuZke9pVDn2lnXn8IObFbVDF/y5
+vdzY5sgoN2JqpX5wARYdOCmK/0y9i8Aj24ScW8wxSlEP918X1ZWSZku7kOnrLkzb
+3E3zdnPcgrM0S6BzdL/ERPaDeQTH3iQNwEtesHTXgwH8VkoJt3JGWl9lVSfCyCyo
+aKh67exjThb5mIMRugdM+hfnpcu+pUqU/IUxysf86ajbIenPFypeDhC1WG21SP9N
+BLIkoefJYf/n2R7bJf41FZShgUmBL7VTTzYGaBovxbZnUNEs+sPwsrCNjQIXmDKZ
+p1fIbiUupujcDchWrwGEvQ2Nq20gDn+I1m09WYVSPhAHzpOa6hPxWA9G8DB/lq8o
+iSffn0Wp4AdG5k8/21e2iUZL6i+jl0NmfDToXaXfiEbdIOkatlV4sbTgOjQEhAI3
+xI36pygUjSs5sX4046CNZFHSuGYIluIyKnPxRponosJD2x5WzNGhOB7Ug7FbeeSn
+unl7XSvECP5W5iwYUT7Q3PhiFUhCgvAPLbQKUSpbE89LsHB3ng1cqy1+0ExVgF9O
+mt19cHGS8v49ZaEXITsIhW4Ifqx8yJNZRB8a8WQutsAURz6kGVI=
+=vXBV
+-----END PGP SIGNATURE-----
