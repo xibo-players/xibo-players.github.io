@@ -2,3 +2,8 @@ Types: deb deb-src
 URIs: https://dl.xiboplayer.org/deb/ubuntu/24.04
 Suites: ./
 Signed-By: /usr/share/keyrings/xiboplayer.gpg
+
+Types: deb deb-src
+URIs: https://dl.xiboplayer.org/deb/debian/trixie
+Suites: ./
+Signed-By: /usr/share/keyrings/xiboplayer.gpg

@@ -40,6 +40,7 @@ permissions:
 env:
   FEDORA_VER: '43'
   UBUNTU_VER: '24.04'
+  DEBIAN_VER: 'trixie'
   # Skip .deb files larger than this (MB) — GitHub rejects >100MB
   FILE_SIZE_LIMIT_MB: '95'
 
@@ -216,15 +217,28 @@ jobs:
       # Files >95MB are skipped (GitHub's 100MB git file limit).
       - name: Update DEB repository
         run: |
-          REPO_BASE="deb/ubuntu/${UBUNTU_VER}"
+          # Distro tag → repo path and codename mappings
+          declare -A DISTRO_PATH=(
+            ["ubuntu2404"]="deb/ubuntu/${UBUNTU_VER}"
+            ["debiantrixie"]="deb/debian/${DEBIAN_VER}"
+          )
+          declare -A DISTRO_CODENAME=(
+            ["ubuntu2404"]="noble"
+            ["debiantrixie"]="trixie"
+          )
+          KNOWN_TAGS=("ubuntu2404" "debiantrixie")
+
           SIZE_LIMIT=$((FILE_SIZE_LIMIT_MB * 1048576))
 
-          for arch in amd64 arm64 all; do
-            mkdir -p "$REPO_BASE/$arch"
+          # Create directory structure for all distros
+          for tag in "${KNOWN_TAGS[@]}"; do
+            base="${DISTRO_PATH[$tag]}"
+            for arch in amd64 arm64 all; do
+              mkdir -p "$base/$arch"
+            done
+            # Remove old .deb files (will re-download current versions from releases)
+            find "$base" -name '*.deb' -delete
           done
-
-          # Remove old .deb files (will re-download current versions from releases)
-          find "$REPO_BASE" -name '*.deb' -delete
 
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
@@ -247,16 +261,35 @@ jobs:
                 continue
               fi
 
+              # Parse distro tag from filename prefix (format: TAG.originalname.deb)
+              distro_tag=""
+              clean_name="$name"
+              for tag in "${KNOWN_TAGS[@]}"; do
+                if [[ "$name" == "${tag}."* ]]; then
+                  distro_tag="$tag"
+                  clean_name="${name#${tag}.}"
+                  break
+                fi
+              done
+
+              # Unprefixed DEBs default to ubuntu2404 (legacy compatibility)
+              if [ -z "$distro_tag" ]; then
+                distro_tag="ubuntu2404"
+                clean_name="$name"
+              fi
+
+              REPO_BASE="${DISTRO_PATH[$distro_tag]}"
+
               # Detect architecture
               arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
               case "$arch" in
-                amd64) cp "$deb" "$REPO_BASE/amd64/"; echo "  amd64: $name (${size_mb}MB)" ;;
-                arm64) cp "$deb" "$REPO_BASE/arm64/"; echo "  arm64: $name (${size_mb}MB)" ;;
+                amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$distro_tag] amd64: $clean_name (${size_mb}MB)" ;;
+                arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$distro_tag] arm64: $clean_name (${size_mb}MB)" ;;
                 all)
-                  cp "$deb" "$REPO_BASE/amd64/"
-                  cp "$deb" "$REPO_BASE/arm64/"
-                  cp "$deb" "$REPO_BASE/all/"
-                  echo "  all: $name (${size_mb}MB)"
+                  cp "$deb" "$REPO_BASE/amd64/$clean_name"
+                  cp "$deb" "$REPO_BASE/arm64/$clean_name"
+                  cp "$deb" "$REPO_BASE/all/$clean_name"
+                  echo "  [$distro_tag] all: $clean_name (${size_mb}MB)"
                   ;;
                 *) echo "  SKIP $name (unknown arch: $arch)" ;;
               esac
@@ -271,8 +304,11 @@ jobs:
           done
 
           # Handle source DEB files (.dsc, .orig.tar.*, .debian.tar.*)
-          mkdir -p "$REPO_BASE/source"
-          rm -f "$REPO_BASE/source"/*.dsc "$REPO_BASE/source"/*.tar.*
+          for tag in "${KNOWN_TAGS[@]}"; do
+            base="${DISTRO_PATH[$tag]}"
+            mkdir -p "$base/source"
+            rm -f "$base/source"/*.dsc "$base/source"/*.tar.*
+          done
 
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
@@ -294,77 +330,96 @@ jobs:
                 continue
               fi
 
-              cp "$src_file" "$REPO_BASE/source/"
-              echo "  source: $name (${size_mb}MB)"
+              # Parse distro tag from filename prefix
+              distro_tag=""
+              clean_name="$name"
+              for tag in "${KNOWN_TAGS[@]}"; do
+                if [[ "$name" == "${tag}."* ]]; then
+                  distro_tag="$tag"
+                  clean_name="${name#${tag}.}"
+                  break
+                fi
+              done
+              if [ -z "$distro_tag" ]; then
+                distro_tag="ubuntu2404"
+                clean_name="$name"
+              fi
+
+              REPO_BASE="${DISTRO_PATH[$distro_tag]}"
+              cp "$src_file" "$REPO_BASE/source/$clean_name"
+              echo "  [$distro_tag] source: $clean_name (${size_mb}MB)"
             done
             echo "::endgroup::"
           done
 
-          # Rebuild Packages index for each arch
+          # Rebuild APT indices for each distro
           echo "Rebuilding APT indices..."
-          for arch in amd64 arm64 all; do
-            arch_dir="$REPO_BASE/$arch"
+          for tag in "${KNOWN_TAGS[@]}"; do
+            REPO_BASE="${DISTRO_PATH[$tag]}"
+            codename="${DISTRO_CODENAME[$tag]}"
+            echo "  Distro: $tag ($codename)"
+
+            for arch in amd64 arm64 all; do
+              arch_dir="$REPO_BASE/$arch"
+              shopt -s nullglob
+              deb_files=("$arch_dir"/*.deb)
+              shopt -u nullglob
+              if [ ${#deb_files[@]} -gt 0 ]; then
+                echo "    $arch: ${#deb_files[@]} packages"
+                (cd "$arch_dir" && dpkg-scanpackages . /dev/null > Packages && gzip -9c Packages > Packages.gz)
+              else
+                rm -f "$arch_dir/Packages" "$arch_dir/Packages.gz"
+              fi
+            done
+
+            # Rebuild Sources index
+            src_dir="$REPO_BASE/source"
             shopt -s nullglob
-            deb_files=("$arch_dir"/*.deb)
+            dsc_files=("$src_dir"/*.dsc)
             shopt -u nullglob
-            if [ ${#deb_files[@]} -gt 0 ]; then
-              echo "  $arch: ${#deb_files[@]} packages"
-              (cd "$arch_dir" && dpkg-scanpackages . /dev/null > Packages && gzip -9c Packages > Packages.gz)
+            if [ ${#dsc_files[@]} -gt 0 ]; then
+              echo "    source: ${#dsc_files[@]} source packages"
+              (cd "$src_dir" && dpkg-scansources . /dev/null > Sources && gzip -9c Sources > Sources.gz)
             else
-              # Empty arch — remove stale indices
-              rm -f "$arch_dir/Packages" "$arch_dir/Packages.gz"
+              rm -f "$src_dir/Sources" "$src_dir/Sources.gz"
             fi
+
+            # Generate Release file with checksums
+            (
+              cd "$REPO_BASE"
+              {
+                echo "Origin: xibo-players"
+                echo "Label: Xibo Players"
+                echo "Suite: stable"
+                echo "Codename: $codename"
+                echo "Architectures: amd64 arm64 all"
+                echo "Components: main"
+                echo "Date: $(date -Ru)"
+                echo "MD5Sum:"
+                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
+                  [ -f "$f" ] || continue
+                  echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+                done
+                echo "SHA1:"
+                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
+                  [ -f "$f" ] || continue
+                  echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+                done
+                echo "SHA256:"
+                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
+                  [ -f "$f" ] || continue
+                  echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
+                done
+              } > Release
+            )
           done
 
-          # Rebuild Sources index for source packages
-          src_dir="$REPO_BASE/source"
-          shopt -s nullglob
-          dsc_files=("$src_dir"/*.dsc)
-          shopt -u nullglob
-          if [ ${#dsc_files[@]} -gt 0 ]; then
-            echo "  source: ${#dsc_files[@]} source packages"
-            (cd "$src_dir" && dpkg-scansources . /dev/null > Sources && gzip -9c Sources > Sources.gz)
-          else
-            rm -f "$src_dir/Sources" "$src_dir/Sources.gz"
-          fi
-
-          # Generate Release file with checksums (subshell to avoid changing cwd)
-          (
-            cd "$REPO_BASE"
-            {
-              echo "Origin: xibo-players"
-              echo "Label: Xibo Players"
-              echo "Suite: stable"
-              echo "Codename: noble"
-              echo "Architectures: amd64 arm64 all"
-              echo "Components: main"
-              echo "Date: $(date -Ru)"
-              echo "MD5Sum:"
-              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
-                [ -f "$f" ] || continue
-                echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-              done
-              echo "SHA1:"
-              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
-                [ -f "$f" ] || continue
-                echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-              done
-              echo "SHA256:"
-              for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
-                [ -f "$f" ] || continue
-                echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-              done
-            } > Release
-          )
-
-      - name: GPG-sign DEB Release file
+      - name: GPG-sign DEB Release files
         if: env.DEB_GPG_KEY != ''
         env:
           DEB_GPG_KEY: ${{ secrets.DEB_GPG_KEY }}
           DEB_GPG_PASSPHRASE: ${{ secrets.DEB_GPG_PASSPHRASE }}
         run: |
-          RELEASE_FILE="deb/ubuntu/${UBUNTU_VER}/Release"
-
           # Configure GPG for non-interactive signing
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
@@ -378,13 +433,20 @@ jobs:
           echo "$DEB_GPG_KEY" | base64 -d | gpg --batch --pinentry-mode loopback \
             --passphrase "${DEB_GPG_PASSPHRASE}" --import
 
-          rm -f "${RELEASE_FILE}.gpg" "$(dirname ${RELEASE_FILE})/InRelease"
+          # Sign Release files for all distros
+          for RELEASE_FILE in "deb/ubuntu/${UBUNTU_VER}/Release" "deb/debian/${DEBIAN_VER}/Release"; do
+            if [ ! -f "$RELEASE_FILE" ]; then
+              echo "No Release file at $RELEASE_FILE, skipping"
+              continue
+            fi
 
-          gpg --armor --detach-sign --output "${RELEASE_FILE}.gpg" "${RELEASE_FILE}"
-          gpg --armor --clearsign --output "$(dirname ${RELEASE_FILE})/InRelease" "${RELEASE_FILE}"
+            rm -f "${RELEASE_FILE}.gpg" "$(dirname ${RELEASE_FILE})/InRelease"
+            gpg --armor --detach-sign --output "${RELEASE_FILE}.gpg" "${RELEASE_FILE}"
+            gpg --armor --clearsign --output "$(dirname ${RELEASE_FILE})/InRelease" "${RELEASE_FILE}"
+            echo "Signed: $RELEASE_FILE"
+          done
 
           rm -f /tmp/gpg-passphrase
-          echo "Signed: Release.gpg + InRelease"
 
       # ── Commit and push ─────────────────────────────────────────────
       - name: Push changes
