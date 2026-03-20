@@ -32,7 +32,7 @@ on:
 
 concurrency:
   group: update-repos
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
