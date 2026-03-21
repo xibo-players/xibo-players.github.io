@@ -1,0 +1,35 @@
+Package: xiboplayer-chromium
+Version: 0.7.2-1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Installed-Size: 62432
+Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./xiboplayer-chromium_0.7.2-1_all.deb
+Size: 8540504
+MD5sum: 18c262f9b99b0f671973367abe4cc967
+SHA1: 7432a4a78a5c702e332ea3108a2085235ec0001d
+SHA256: 33c33459c49371b8b681eae076f29ebb18f1464363cf29c0a269849000ff9d5f
+Section: misc
+Priority: optional
+Homepage: https://xiboplayer.org
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
+Package: xiboplayer-release
+Version: 1.0.2
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./xiboplayer-release_1.0.2_all.deb
+Size: 3812
+MD5sum: 22ec404e11c7ad9fbbe440075a1176ad
+SHA1: 93fdc23c92f1a29048ad6236e8e0e0f1de6995ea
+SHA256: 524ce22cbafe0e286a4a703c0edf8c268bac06b0f4119d22f06efacb3ae77b4e
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
