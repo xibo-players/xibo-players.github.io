@@ -132,30 +132,27 @@
         </div>
     </section>
 
-    <!-- Video Wall Sync highlight -->
+    <!-- Multi-Display Synchronization -->
     <section class="py-10 border-t border-gh-100 dark:border-gh-d100">
-        <h2 class="text-3xl font-semibold text-gh-900 dark:text-gh-d900 mb-2">&#x1F4FA; Video wall sync <span class="text-brand text-lg font-normal ml-2">Zero-config mDNS discovery</span></h2>
-        <p class="text-gh-500 dark:text-gh-d500 mb-5">The most capable multi-display sync in any Xibo player.</p>
+        <h2 class="text-3xl font-semibold text-gh-900 dark:text-gh-d900 mb-2">&#x1F3AC; Multi-display synchronization <span class="text-brand text-lg font-normal ml-2">Coordinate every screen in your venue</span></h2>
+        <p class="text-gh-500 dark:text-gh-d500 mb-5">Turn every screen in your space into a single coordinated experience. TVs, LED totems, video walls &mdash; all acting as one.</p>
         <div class="grid grid-cols-2 gap-6 my-5 max-sm:grid-cols-1">
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">&lt;8ms sync precision</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">All displays switch layouts within 8 milliseconds of each other &mdash; 6x faster than the Windows player. Tested with 4 Chromium displays on LAN.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Venue-wide coordination</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Imagine a retail store where every display transitions simultaneously, a hotel lobby where screens ripple content in a choreographed wave, or a stadium where dozens of screens play a unified message. Effects no single screen can achieve.</p>
             </div>
             <div>
                 <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">12 choreography effects</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">Diagonal cascades, horizontal/vertical waves, center-out bursts, and more. Each display transitions at a staggered time based on its grid position.</p>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Diagonal cascades, horizontal/vertical waves, center-out bursts, staggered reveals, and more. Each display transitions at a different time based on its position in the grid &mdash; creating dramatic visual stories across your screens.</p>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Zero infrastructure</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">The lead display's built-in server acts as the sync relay. No additional servers, no ZeroMQ, no firewall ports &mdash; just HTTP.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">&lt;8ms precision, zero infrastructure</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">All displays switch within 8 milliseconds of each other over your existing LAN. No sync boxes, no special hardware, no extra servers &mdash; just a WebSocket relay built into the lead display.</p>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Mirror &amp; wall mode</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">All screens show the same content (mirror) or each shows a unique portion of a larger composition (wall). Offline LAN sync works without CMS.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Any screen, any hardware</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Mix Raspberry Pi, Intel NUC, laptops, any screen size. Electron + Chromium on the same network. Mirror mode (all identical) or wall mode (each screen shows a unique portion).</p>
             </div>
-        </div>
-        <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-4 text-sm text-gh-500 dark:text-gh-d500">
-            <strong class="text-gh-900 dark:text-gh-d900">Comparison:</strong> Xibo Windows uses ZeroMQ with ~50-100ms precision and no choreography effects. XiboPlayer uses WebSocket with &lt;8ms precision, 12 choreography effects, token auth, and cross-platform support (Electron + Chromium).
         </div>
     </section>
 
