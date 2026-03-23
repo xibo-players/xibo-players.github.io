@@ -482,19 +482,24 @@ sudo apt install arexibo</pre>
         <p class="text-gh-500 dark:text-gh-d500 mb-5">View all packages available in the repository.</p>
 
         <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" data-tabs="browse">
-            <button class="active bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-rpm">RPM packages</button>
-            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-deb">DEB packages</button>
+            <button class="active bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-fedora">Fedora (RPM)</button>
+            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-ubuntu">Ubuntu (DEB)</button>
+            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-debian">Debian / Raspberry Pi</button>
         </div>
 
-        <div class="tab-content active" data-tab-content="browse-rpm">
+        <div class="tab-content active" data-tab-content="browse-fedora">
             <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="rpm-arch-filter"></div>
             <div id="rpm-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading RPM package list...</div>
         </div>
 
-        <div class="tab-content" data-tab-content="browse-deb">
-            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="deb-distro-filter"></div>
-            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="deb-arch-filter"></div>
-            <div id="deb-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading DEB package list...</div>
+        <div class="tab-content" data-tab-content="browse-ubuntu">
+            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="ubuntu-arch-filter"></div>
+            <div id="ubuntu-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading Ubuntu package list...</div>
+        </div>
+
+        <div class="tab-content" data-tab-content="browse-debian">
+            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="debian-arch-filter"></div>
+            <div id="debian-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading Debian package list...</div>
         </div>
 
     </section>

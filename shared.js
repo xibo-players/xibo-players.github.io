@@ -69,79 +69,75 @@ function initSite(T) {
         });
     }
 
-    // --- DEB packages ---
-    var debData = [];
-    var debArch = 'amd64';
-    var debDistro = 'all';
+    // --- DEB packages (separate Ubuntu / Debian tables) ---
+    var ubuntuData = [], debianData = [];
+    var ubuntuArch = 'amd64', debianArch = 'amd64';
 
-    function renderDebTable() {
-        var el = document.getElementById('deb-list');
-        var sorted = debData.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
-        var filtered = sorted.filter(function(p) {
-            var archMatch = !debArch || p.Architecture === debArch || p.Architecture === 'all';
-            var distroMatch = debDistro === 'all' || p._distro === debDistro;
-            return archMatch && distroMatch;
-        });
+    function renderDistroTable(data, arch, elId) {
+        var el = document.getElementById(elId);
+        if (!el) return;
+        var sorted = data.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
+        var filtered = sorted.filter(function(p) { return p.Architecture === arch || p.Architecture === 'all'; });
         if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
-        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thDistro + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
+        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
         filtered.forEach(function(p) {
             var bytes = parseInt(p.Size) || 0;
             var size = !bytes ? '\u2014' : bytes > 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(1) + ' KB';
             var homepage = p.Homepage || '#';
             var desc = (p.Description || '').split('\n')[0];
             var note = p._releaseOnly ? ' <span class="inline-block text-[0.7em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">GitHub Release</span>' : '';
-            var distroRaw = p._distro || '';
-            var distroLabel = distroRaw ? distroRaw.charAt(0).toUpperCase() + distroRaw.slice(1) : '\u2014';
             html += '<tr><td><a href="' + homepage + '">' + (p.Package || '?') + '</a>' + note + '</td>' +
                 '<td>' + (p.Version || '?') + '</td>' +
-                '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">' + distroLabel + '</span></td>' +
                 '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + (p.Architecture || '?') + '</span></td>' +
                 '<td>' + size + '</td><td>' + desc + '</td></tr>';
         });
         el.innerHTML = html + '</tbody></table>';
     }
 
-    function setupDebFilter() {
+    function setupDebFilters() {
         var archs = ['amd64', 'arm64'];
-        var distros = [{id: 'all', label: 'All'}, {id: 'ubuntu', label: 'Ubuntu 24.04'}, {id: 'debian', label: 'Debian / RPi'}];
-        var filterEl = document.getElementById('deb-arch-filter');
-        var distroEl = document.getElementById('deb-distro-filter');
+        var ubuntuFilterEl = document.getElementById('ubuntu-arch-filter');
+        var debianFilterEl = document.getElementById('debian-arch-filter');
 
-        function updateArch(arch) { debArch = arch; render(); }
-        function updateDistro(d) { debDistro = d; render(); }
-        function render() {
-            renderArchFilter(filterEl, archs, debArch, updateArch);
-            if (distroEl) renderArchFilter(distroEl, distros.map(function(d){return d.id}), debDistro, updateDistro, distros);
-            renderDebTable();
+        if (ubuntuFilterEl) {
+            function updateUbuntu(a) { ubuntuArch = a; renderArchFilter(ubuntuFilterEl, archs, ubuntuArch, updateUbuntu); renderDistroTable(ubuntuData, ubuntuArch, 'ubuntu-list'); }
+            renderArchFilter(ubuntuFilterEl, archs, ubuntuArch, updateUbuntu);
+            renderDistroTable(ubuntuData, ubuntuArch, 'ubuntu-list');
         }
-        render();
+        if (debianFilterEl) {
+            function updateDebian(a) { debianArch = a; renderArchFilter(debianFilterEl, archs, debianArch, updateDebian); renderDistroTable(debianData, debianArch, 'debian-list'); }
+            renderArchFilter(debianFilterEl, archs, debianArch, updateDebian);
+            renderDistroTable(debianData, debianArch, 'debian-list');
+        }
     }
 
     async function loadDebPackages() {
-        var el = document.getElementById('deb-list');
         try {
-            var urls = [
-                '/deb/ubuntu/24.04/all/Packages', '/deb/ubuntu/24.04/amd64/Packages', '/deb/ubuntu/24.04/arm64/Packages',
-                '/deb/debian/trixie/all/Packages', '/deb/debian/trixie/amd64/Packages', '/deb/debian/trixie/arm64/Packages'
+            var distros = [
+                { name: 'ubuntu', urls: ['/deb/ubuntu/24.04/all/Packages', '/deb/ubuntu/24.04/amd64/Packages', '/deb/ubuntu/24.04/arm64/Packages'] },
+                { name: 'debian', urls: ['/deb/debian/trixie/all/Packages', '/deb/debian/trixie/amd64/Packages', '/deb/debian/trixie/arm64/Packages'] }
             ];
-            var pkgs = new Map();
-            for (var i = 0; i < urls.length; i++) {
-                var resp = await fetch(urls[i]);
-                if (!resp.ok) continue;
-                var text = await resp.text();
-                if (!text.trim()) continue;
-                var distroMatch = urls[i].match(/\/deb\/([^/]+)\//);
-                var distro = distroMatch ? distroMatch[1] : 'unknown';
-                text.trim().split('\n\n').forEach(function(block) {
-                    var fields = {}, lastKey = '';
-                    block.split('\n').forEach(function(line) {
-                        if (line.startsWith(' ')) { if (lastKey) fields[lastKey] += '\n' + line; }
-                        else { var idx = line.indexOf(': '); if (idx > 0) { lastKey = line.substring(0, idx); fields[lastKey] = line.substring(idx + 2); } }
+            for (var d = 0; d < distros.length; d++) {
+                var pkgs = new Map();
+                var urls = distros[d].urls;
+                for (var i = 0; i < urls.length; i++) {
+                    var resp = await fetch(urls[i]);
+                    if (!resp.ok) continue;
+                    var text = await resp.text();
+                    if (!text.trim()) continue;
+                    text.trim().split('\n\n').forEach(function(block) {
+                        var fields = {}, lastKey = '';
+                        block.split('\n').forEach(function(line) {
+                            if (line.startsWith(' ')) { if (lastKey) fields[lastKey] += '\n' + line; }
+                            else { var idx = line.indexOf(': '); if (idx > 0) { lastKey = line.substring(0, idx); fields[lastKey] = line.substring(idx + 2); } }
+                        });
+                        var key = fields.Package + '-' + fields.Version + '-' + fields.Architecture;
+                        if (!pkgs.has(key)) pkgs.set(key, fields);
                     });
-                    fields._distro = distro;
-                    var key = fields.Package + '-' + fields.Version + '-' + fields.Architecture + '-' + distro;
-                    if (!pkgs.has(key)) pkgs.set(key, fields);
-                });
+                }
+                if (distros[d].name === 'ubuntu') ubuntuData = Array.from(pkgs.values());
+                else debianData = Array.from(pkgs.values());
+            }
             }
             // Also fetch DEBs from GitHub Releases (packages too large for apt repo)
             var ghRepos = [{ name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' }];
@@ -162,11 +158,12 @@ function initSite(T) {
                     });
                 } catch (e) { /* skip */ }
             }
-            debData = Array.from(pkgs.values());
-            if (debData.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noDebPackages + '</p>'; return; }
-            setupDebFilter();
+            setupDebFilters();
         } catch (e) {
-            el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.errorDebPackages + '</p>';
+            var ubEl = document.getElementById('ubuntu-list');
+            var dbEl = document.getElementById('debian-list');
+            if (ubEl) ubEl.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.errorDebPackages + '</p>';
+            if (dbEl) dbEl.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.errorDebPackages + '</p>';
         }
     }
 
