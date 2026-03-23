@@ -61,6 +61,7 @@ function initSite(T) {
         filterEl.innerHTML = '';
         archs.forEach(function(arch) {
             var btn = document.createElement('button');
+            btn.className = 'bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light';
             btn.textContent = arch;
             if (activeArch === arch) btn.classList.add('active');
             btn.onclick = function() { onSelect(arch); };
