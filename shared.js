@@ -138,7 +138,6 @@ function initSite(T) {
                 if (distros[d].name === 'ubuntu') ubuntuData = Array.from(pkgs.values());
                 else debianData = Array.from(pkgs.values());
             }
-            }
             // Also fetch DEBs from GitHub Releases (packages too large for apt repo)
             var ghRepos = [{ name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' }];
             for (var j = 0; j < ghRepos.length; j++) {
