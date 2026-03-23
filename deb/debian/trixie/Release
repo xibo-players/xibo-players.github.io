@@ -4,7 +4,19 @@ Suite: stable
 Codename: trixie
 Architectures: amd64 arm64 all
 Components: main
-Date: Mon, 23 Mar 2026 14:31:00 +0000
+Date: Mon, 23 Mar 2026 16:44:58 +0000
 MD5Sum:
+ e2e37e6225c43a5c74778f420d641431 731 amd64/Packages
+ 14bcd17b65ed82b39b116c9b3de9c350 731 arm64/Packages
+ 6ceb97626974f72b26fe1ea6acad71a1 497 amd64/Packages.gz
+ bf89fd56060280589660a2e6172b07e2 497 arm64/Packages.gz
 SHA1:
+ 868469d55c1e97f451c376cb472a04aa313a9333 731 amd64/Packages
+ 92629e9ef45dd33b7896eb30fdab5c33d49fad3a 731 arm64/Packages
+ f4b199971ab22bcd41c89330eca9356f940d8f6d 497 amd64/Packages.gz
+ b74ea5a74ec6cdd6b3cc24e49a6ebbc082baa97b 497 arm64/Packages.gz
 SHA256:
+ 2638ee3910c85e7ee1fbf985ce0a899cd57c435be64aade513064c304dbc9dab 731 amd64/Packages
+ 3c3dc060e7d217d482a89c7bf25905e7d5d3af80ccb10ae2886b2edf04232b9a 731 arm64/Packages
+ 05d2ee90be1fa9f9b301d25f96b64f956e409a62183ad5c412f5303e9eb3c809 497 amd64/Packages.gz
+ 45bd3a452e3547901df33317caa4081f3c054929270533cceb86ab84088dac87 497 arm64/Packages.gz
