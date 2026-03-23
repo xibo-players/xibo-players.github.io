@@ -57,12 +57,12 @@ function initSite(T) {
     });
 
     // --- Architecture filtering ---
-    function renderArchFilter(filterEl, archs, activeArch, onSelect) {
+    function renderArchFilter(filterEl, archs, activeArch, onSelect, labels) {
         filterEl.innerHTML = '';
-        archs.forEach(function(arch) {
+        archs.forEach(function(arch, i) {
             var btn = document.createElement('button');
             btn.className = 'bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light';
-            btn.textContent = arch;
+            btn.textContent = labels ? labels[i].label : arch;
             if (activeArch === arch) btn.classList.add('active');
             btn.onclick = function() { onSelect(arch); };
             filterEl.appendChild(btn);
@@ -72,11 +72,16 @@ function initSite(T) {
     // --- DEB packages ---
     var debData = [];
     var debArch = 'amd64';
+    var debDistro = 'all';
 
     function renderDebTable() {
         var el = document.getElementById('deb-list');
         var sorted = debData.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
-        var filtered = debArch ? sorted.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : sorted;
+        var filtered = sorted.filter(function(p) {
+            var archMatch = !debArch || p.Architecture === debArch || p.Architecture === 'all';
+            var distroMatch = debDistro === 'all' || p._distro === debDistro;
+            return archMatch && distroMatch;
+        });
         if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
         var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thDistro + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
         filtered.forEach(function(p) {
@@ -98,10 +103,18 @@ function initSite(T) {
 
     function setupDebFilter() {
         var archs = ['amd64', 'arm64'];
+        var distros = [{id: 'all', label: 'All'}, {id: 'ubuntu', label: 'Ubuntu 24.04'}, {id: 'debian', label: 'Debian / RPi'}];
         var filterEl = document.getElementById('deb-arch-filter');
-        function update(arch) { debArch = arch; renderArchFilter(filterEl, archs, debArch, update); renderDebTable(); }
-        renderArchFilter(filterEl, archs, debArch, update);
-        renderDebTable();
+        var distroEl = document.getElementById('deb-distro-filter');
+
+        function updateArch(arch) { debArch = arch; render(); }
+        function updateDistro(d) { debDistro = d; render(); }
+        function render() {
+            renderArchFilter(filterEl, archs, debArch, updateArch);
+            if (distroEl) renderArchFilter(distroEl, distros.map(function(d){return d.id}), debDistro, updateDistro, distros);
+            renderDebTable();
+        }
+        render();
     }
 
     async function loadDebPackages() {
