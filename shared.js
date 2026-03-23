@@ -78,15 +78,18 @@ function initSite(T) {
         var sorted = debData.slice().sort(function(a, b) { return (a.Package || '').localeCompare(b.Package || ''); });
         var filtered = debArch ? sorted.filter(function(p) { return p.Architecture === debArch || p.Architecture === 'all'; }) : sorted;
         if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
-        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
+        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thVersion + '</th><th>' + T.thDistro + '</th><th>' + T.thArch + '</th><th>' + T.thSize + '</th><th>' + T.thDescription + '</th></tr></thead><tbody>';
         filtered.forEach(function(p) {
             var bytes = parseInt(p.Size) || 0;
             var size = !bytes ? '\u2014' : bytes > 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(1) + ' KB';
             var homepage = p.Homepage || '#';
             var desc = (p.Description || '').split('\n')[0];
             var note = p._releaseOnly ? ' <span class="inline-block text-[0.7em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">GitHub Release</span>' : '';
+            var distroRaw = p._distro || '';
+            var distroLabel = distroRaw ? distroRaw.charAt(0).toUpperCase() + distroRaw.slice(1) : '\u2014';
             html += '<tr><td><a href="' + homepage + '">' + (p.Package || '?') + '</a>' + note + '</td>' +
                 '<td>' + (p.Version || '?') + '</td>' +
+                '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-gh-50 dark:bg-gh-d50 border border-gh-200 dark:border-gh-d200 text-gh-700 dark:text-gh-d700">' + distroLabel + '</span></td>' +
                 '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + (p.Architecture || '?') + '</span></td>' +
                 '<td>' + size + '</td><td>' + desc + '</td></tr>';
         });
@@ -104,20 +107,26 @@ function initSite(T) {
     async function loadDebPackages() {
         var el = document.getElementById('deb-list');
         try {
-            var urls = ['/deb/ubuntu/24.04/all/Packages', '/deb/ubuntu/24.04/amd64/Packages', '/deb/ubuntu/24.04/arm64/Packages'];
+            var urls = [
+                '/deb/ubuntu/24.04/all/Packages', '/deb/ubuntu/24.04/amd64/Packages', '/deb/ubuntu/24.04/arm64/Packages',
+                '/deb/debian/trixie/all/Packages', '/deb/debian/trixie/amd64/Packages', '/deb/debian/trixie/arm64/Packages'
+            ];
             var pkgs = new Map();
             for (var i = 0; i < urls.length; i++) {
                 var resp = await fetch(urls[i]);
                 if (!resp.ok) continue;
                 var text = await resp.text();
                 if (!text.trim()) continue;
+                var distroMatch = urls[i].match(/\/deb\/([^/]+)\//);
+                var distro = distroMatch ? distroMatch[1] : 'unknown';
                 text.trim().split('\n\n').forEach(function(block) {
                     var fields = {}, lastKey = '';
                     block.split('\n').forEach(function(line) {
                         if (line.startsWith(' ')) { if (lastKey) fields[lastKey] += '\n' + line; }
                         else { var idx = line.indexOf(': '); if (idx > 0) { lastKey = line.substring(0, idx); fields[lastKey] = line.substring(idx + 2); } }
                     });
-                    var key = fields.Package + '-' + fields.Version + '-' + fields.Architecture;
+                    fields._distro = distro;
+                    var key = fields.Package + '-' + fields.Version + '-' + fields.Architecture + '-' + distro;
                     if (!pkgs.has(key)) pkgs.set(key, fields);
                 });
             }
@@ -135,7 +144,7 @@ function initSite(T) {
                         if (!pkgs.has(key)) pkgs.set(key, {
                             Package: ghRepos[j].name, Version: ver, Architecture: arch, Size: String(deb.size),
                             Homepage: 'https://github.com/' + ghRepos[j].repo,
-                            Description: 'Electron-based Xibo player (install from GitHub Releases)', _releaseOnly: true
+                            Description: 'Electron-based Xibo player (install from GitHub Releases)', _releaseOnly: true, _distro: ''
                         });
                     });
                 } catch (e) { /* skip */ }
