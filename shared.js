@@ -138,8 +138,8 @@ function initSite(T) {
                 if (distros[d].name === 'ubuntu') ubuntuData = Array.from(pkgs.values());
                 else debianData = Array.from(pkgs.values());
             }
-            // Also fetch DEBs from GitHub Releases (packages too large for apt repo)
-            var ghRepos = [{ name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron' }];
+            // Also fetch DEBs from GitHub Releases (packages too large for apt repo, >95MB)
+            var ghRepos = [{ name: 'xiboplayer-electron', repo: 'xibo-players/xiboplayer-electron', desc: 'Electron-based Xibo player' }];
             for (var j = 0; j < ghRepos.length; j++) {
                 try {
                     var r = await fetch('https://api.github.com/repos/' + ghRepos[j].repo + '/releases/latest');
@@ -148,12 +148,16 @@ function initSite(T) {
                     (rel.assets || []).filter(function(a) { return a.name.endsWith('.deb'); }).forEach(function(deb) {
                         var arch = deb.name.includes('_amd64') ? 'amd64' : deb.name.includes('_arm64') ? 'arm64' : 'all';
                         var ver = (rel.tag_name || '').replace(/^v/, '');
-                        var key = ghRepos[j].name + '-' + ver + '-' + arch;
-                        if (!pkgs.has(key)) pkgs.set(key, {
+                        var isUbuntu = deb.name.startsWith('ubuntu');
+                        var isDebian = deb.name.startsWith('debian');
+                        var pkg = {
                             Package: ghRepos[j].name, Version: ver, Architecture: arch, Size: String(deb.size),
                             Homepage: 'https://github.com/' + ghRepos[j].repo,
-                            Description: 'Electron-based Xibo player (install from GitHub Releases)', _releaseOnly: true, _distro: ''
-                        });
+                            Description: ghRepos[j].desc + ' (install from GitHub Releases)', _releaseOnly: true
+                        };
+                        if (isUbuntu) ubuntuData.push(pkg);
+                        else if (isDebian) debianData.push(pkg);
+                        else { ubuntuData.push(pkg); debianData.push(pkg); }
                     });
                 } catch (e) { /* skip */ }
             }
