@@ -1,43 +1,18 @@
-# Feature Comparison: XiboPlayer v0.7.0 vs Upstream Players
-
-**Last Updated:** 2026-03-18
-**Our Version:** v0.7.0 (SDK v0.7.0, PWA v0.7.0, Electron v0.7.0, Chromium v0.7.0)
-**Repository:** Split into independent repos under `xibo-players/` GitHub org
-**Compared against:**
-- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.22 (npm, 2026-01-21) — rendering library used in Xibo's Electron/ChromeOS players
-- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.6 (npm, 2025-12-11) — upstream XMR WebSocket client (replaced by our native implementation)
-- [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R406 (C#/.NET + CEF, 2025-12-10) — the only actively maintained upstream player
-- [Arexibo](https://github.com/birkenfeld/arexibo) (Rust + Qt, last commit 2025-05-18 — dormant 9+ months)
-
-**Other upstream players (abandoned):**
-- [xibo-linux](https://github.com/xibosignage/xibo-linux) — C++ Snap player, last release 2021, last commit 2022
-- [xibo-pyclient](https://github.com/xibosignage/xibo-pyclient) — Python player, last activity 2025, no recent releases
-
+---
+title: Feature Comparison
+description: "Detailed feature comparison: XiboPlayer v0.7.7 vs upstream Xibo players."
 ---
 
-## Table of Contents
+# Feature Comparison: XiboPlayer v0.7.7 vs Upstream Players
 
-- [Executive Summary](#executive-summary)
-- [Repository Structure](#repository-structure)
-- [1. Schedule Management](#1-schedule-management)
-- [2. XMDS Communication](#2-xmds-communication)
-- [3. File/Cache Management](#3-filecache-management)
-- [4. Layout Renderer](#4-layout-renderer-xlr-v1022-vs-rendererlite)
-- [5. XMR Push Messaging](#5-xmr-push-messaging)
-- [6. Interactive Control](#6-interactive-control)
-- [7. Stats and Logging](#7-stats-and-logging)
-- [8. Config and Settings](#8-config-and-settings)
-- [9. Screenshot Capture](#9-screenshot-capture)
-- [10. Performance](#10-performance-comparison)
-- [11. Packaging and Distribution](#11-packaging-and-distribution)
-- [12. Kiosk Environment](#12-kiosk-environment-xiboplayer-kiosk)
-- [13. Remaining Gaps](#13-remaining-gaps)
-- [14. Where XiboPlayer is Better](#14-where-xiboplayer-is-better-than-all-upstream-players)
-- [15. Upstream Audit Results](#15-upstream-audit-results-2026-03-18)
-- [16. What Competitors Have That We Do Not](#16-what-competitors-have-that-we-do-not)
-- [17. Arexibo Detailed Comparison](#17-arexibo-detailed-comparison)
-- [18. Windows Player Detailed Comparison](#18-windows-player-detailed-comparison)
-- [Version Reference](#version-reference)
+**Last Updated:** 2026-03-26
+**Our Version:** v0.7.7 (SDK v0.7.7, PWA v0.7.7, Electron v0.7.7, Chromium v0.7.7)
+
+**Compared against:**
+- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.23 (npm, 2026-03-26) — rendering library used in Xibo's Electron/ChromeOS players
+- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.7 (npm, 2026-03-26) — upstream XMR client (replaced by our native implementation)
+- [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R407 (C#/.NET + CEF, 2026-03-26) — the only actively maintained upstream player
+- [Arexibo](https://github.com/xibo-players/arexibo) v0.3.2 (Rust + Qt, 2026-03-26) — PDF rendering, RPM/DEB packaging, duration fixes
 
 ---
 
@@ -45,580 +20,110 @@
 
 | Area | Parity | Notes |
 |------|--------|-------|
-| **Schedule Management** | 100% | Dayparting BETTER (ISO day-of-week, midnight crossing). Interrupts, conflict detection, interleaved defaults, weather criteria, scheduled commands |
-| **XMDS Communication** | 100% | SOAP + REST dual transport with auto-detection and **idempotent cache-through** — both transports converge on the same proxy mirror paths. CRC32 + ETag caching. XMDS signed URLs routed through cache-through proxy (no CORS). All 10 methods + GetWeather + tag config. Display status codes 1/2/3 fully reported |
-| **File Management** | 100% | Parallel 4-chunk downloads BETTER. Download resume. Service Worker progressive streaming |
-| **Renderer** | 100% | Performance BETTER. Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands. Ticker duration-per-item handled server-side (CMS calculates total) + client-side NUMITEMS/DURATION comment parsing — same result as upstream |
-| **XMR Push Messaging** | 100% | Native XmrClient with generic action dispatch — all 14 CMS actions work. Zero deps, 97% smaller bundle. Exponential backoff reconnect |
-| **Stats/Logging** | 100% | Proof-of-play + event stats + hour-boundary splitting + log batching 50/300 + fault dedup. Stats delegation via SyncManager for multi-display setups (same as XLR BroadcastChannel relay, plus cross-device WebSocket) |
-| **Config/Settings** | 100% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + tag config + OAuth2 auto-authorize. Display status codes fully implemented |
-| **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control (config-gated) |
-| **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback. Periodic + on-demand |
-| **Multi-display** | 100%+ | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror + wall mode. **12 choreography effects** (diagonal, wave, center-out). **<8ms sync precision**. Token-authenticated relay, syncGroupId isolation, offline LAN sync, stats/logs delegation, auto-reconnect. Works on Electron + Chromium. **Windows player has zero sync code** (confirmed by source audit). **Only Xibo player with multi-display sync** |
+| **Schedule Management** | 100% | Full dayparting, interrupts, conflict detection, interleaved defaults, weather criteria |
+| **XMDS Communication** | 100% | SOAP + REST dual transport with auto-detection and **idempotent cache-through** — both transports converge on the same proxy mirror paths. XMDS signed URLs routed through cache-through proxy (no CORS). CRC32 + ETag caching. Display status codes fully reported |
+| **File Management** | 100% | Parallel 4-chunk downloads, download resume, Service Worker progressive streaming, transport-agnostic ContentStore |
+| **Renderer** | 100% | Canvas regions, audio overlay, image scale/align, exit transitions, drawers, sub-playlists, XIC handlers, shell commands, ticker duration via NUMITEMS/DURATION parsing |
+| **XMR Push Messaging** | 100% | Native XmrClient with generic action dispatch — all 14 CMS actions. Zero deps, 97% smaller bundle. Exponential backoff reconnect |
+| **Stats/Logging** | 100% | Proof-of-play + event stats + hour-boundary splitting + log batching. Stats delegation via SyncManager for multi-display setups |
+| **Config/Settings** | 100% | Centralized state + DisplaySettings class + Wake Lock + offline fallback + persistent durations. Display status codes fully implemented |
+| **Interactive Control** | 100% | Full IC server + XIC event handlers + touch/keyboard actions + playback control |
+| **Screenshot Capture** | 100% | Native getDisplayMedia + html2canvas fallback |
+| **Multi-display** | 100%+ | BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror mode + wall mode. **12 choreography effects**, **<8ms sync precision**, token auth, syncGroupId isolation, offline LAN sync, stats delegation. Works on Electron + Chromium. **Most capable sync implementation in any Xibo player.** |
 | **Packaging** | New | RPM/DEB via GitHub Actions, Electron wrapper, Chromium kiosk |
-| **Kiosk Environment** | New | xiboplayer-kiosk: GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
+| **Kiosk Environment** | New | GNOME Kiosk session, health monitoring, first-boot wizard, bootable images |
 
-**Overall: 100% feature parity across all areas. XiboPlayer adds significantly better performance and unique capabilities (REST transport, protocol auto-detect, progressive streaming, persistent durations, canvas regions, cross-platform, RPM/DEB packaging, multi-display sync (mirror + wall mode), playback control, complete kiosk OS)**
-
----
-
-## Repository Structure
-
-Independent repositories under the `xibo-players/` GitHub org:
-
-| Repo | Purpose | Delivery |
-|------|---------|----------|
-| `xiboplayer` | SDK + PWA (all @xiboplayer/* packages) | npm registry |
-| `xiboplayer-electron` | Electron wrapper (serves PWA via Express) | RPM/DEB via gh-pages |
-| `xiboplayer-chromium` | Chromium kiosk launcher | RPM/DEB via gh-pages |
-| `xiboplayer-chrome` | Chrome extension | Future |
-
-### SDK Packages
-
-```
-@xiboplayer/core       - PlayerCore orchestration (platform-independent)
-@xiboplayer/renderer   - RendererLite (standalone XLF renderer)
-@xiboplayer/cache      - CacheManager + DownloadManager (shared with SW)
-@xiboplayer/schedule   - ScheduleManager + InterruptScheduler
-@xiboplayer/xmds       - XmdsClient (SOAP) + RestClient (REST)
-@xiboplayer/xmr        - Native XmrClient + XmrWrapper (all 14 CMS actions, zero deps)
-@xiboplayer/stats      - StatsCollector + LogReporter (IndexedDB)
-@xiboplayer/settings   - DisplaySettings (EventEmitter)
-@xiboplayer/sw         - Service Worker helpers
-@xiboplayer/crypto     - RSA key pair generation (Web Crypto API)
-@xiboplayer/utils      - Shared logger, EventEmitter, fetchWithRetry, Config
-@xiboplayer/proxy      - CORS proxy for local development
-@xiboplayer/sync       - Multi-display synchronization (lead/follower)
-@xiboplayer/docs       - Documentation and API reference
-```
+**Overall: 100% feature parity across all areas. Unique capabilities: REST transport, protocol auto-detect, persistent durations, canvas regions, download resume, multi-display sync (mirror + wall mode), playback control, complete kiosk OS**
 
 ---
 
-## 1. Schedule Management
+## Performance Comparison
 
-### XiboPlayer vs XLR (electron-player scheduleManager.ts)
-
-| Feature | XLR v1.0.22 | XiboPlayer v0.7.0 | Status |
-|---------|-------------|-------------------|--------|
-| Layout events | Yes | Yes | **Match** |
-| Overlay events | Yes | Yes | **Match** |
-| Priority handling | Yes | Yes | **Match** |
-| Date/time filtering | Yes | Yes | **Match** |
-| Default layout fallback | Yes | Yes | **Match** |
-| maxPlaysPerHour | Yes | Yes + even distribution | **Ours BETTER** — spreads plays evenly across the hour instead of front-loading them |
-| Campaign scheduling | Yes | Yes (explicit campaign objects) | **Ours BETTER** — first-class campaign objects enable campaign-level stats and priority management |
-| Interrupt/shareOfVoice | Yes | Yes (full port of XLR algorithm) | **Match** |
-| Dayparting (weekly recurrence) | TODO | Full | **Ours BETTER** — supports ISO day-of-week and schedules that cross midnight (e.g. 22:00–02:00) |
-| Action events | Parsed | Yes (handleTrigger + action dispatch) | **Match** |
-| DataConnector events | Parsed | Yes (DataConnectorManager with polling) | **Match** |
-| Command events | Parsed | Yes (executeCommand + scheduled commands) | **Match** |
-| Scheduled command auto-execution | No | Yes (auto-execute at scheduled time) | **Ours BETTER** — commands fire at their scheduled time without CMS push |
-| Dependants tracking | Yes | Yes | **Match** |
-| Geo-fencing criteria | TODO | Yes (haversine + browser + Google API + IP fallback) | **Ours BETTER** |
-| Weather criteria | TODO | Yes (GetWeather + criteria evaluation) | **Ours BETTER** — fetches weather data from CMS and evaluates schedule criteria based on conditions |
-| Schedule conflict detection | No | Yes (identifies overlapping entries) | **Ours BETTER** — flags conflicts in timeline overlay for operators |
-| Interleaved default layouts | No | Yes (getInterleavedLayouts) | **Ours BETTER** — inserts default layout between scheduled layouts for smoother cycling |
-
----
-
-## 2. XMDS Communication
-
-### Transport Layer (Unique Feature)
-
-| Transport | XLR | Windows | Arexibo | XiboPlayer | Notes |
-|-----------|-----|---------|---------|------------|-------|
-| **SOAP/XML** | Yes | Yes | Yes | Yes (XmdsClient) | Traditional protocol, all CMS versions |
-| **REST/JSON** | No | No | No | **Yes (RestClient)** | 30% smaller payloads, ETag caching, standard HTTP |
-| **ETag 304 caching** | No | No | No | **Yes** | Skip unchanged responses at HTTP layer |
-| **Dual transport** | No | No | No | **Yes** | SOAP or REST, auto-selected during CMS setup |
-| **Idempotent cache-through** | No | No | No | **Yes** | Both REST and XMDS downloads converge on same proxy mirror paths — ContentStore is transport-agnostic |
-| **XMDS download caching** | No | N/A | N/A | **Yes** | XMDS signed URLs rewritten to local proxy paths; `X-Cms-Download-Url` header enables cache-through for XMDS-only CMSes |
-
-The REST transport (`@xiboplayer/xmds` RestClient) is exclusive to our player. It uses JSON payloads via a custom CMS REST API (`/player/api/v2/*` endpoints), with ETag-based HTTP caching that returns 304 Not Modified for unchanged data, reducing bandwidth further than SOAP CRC32 alone.
-
-**Idempotent cache-through (v0.6.5):** Both transports converge on the same proxy mirror paths (`/player/api/v2/{layouts,media,dependencies}/...`), making the ContentStore transport-agnostic. XMDS signed URLs are rewritten to local proxy paths at two levels: (1) `XmdsClient.parseRequiredFilesResponse()` rewrites `file.path` and stores the original as `file.cmsDownloadUrl`, (2) the Service Worker's `RequestHandler._handleXmdsFile()` catches any remaining cross-origin `xmds.php` URLs. The proxy's `cacheThrough()` accepts an `X-Cms-Download-Url` header to fetch from the original XMDS URL on cache miss, enabling XMDS-only CMSes to use the full cache-through pipeline.
-
-### SOAP/REST API Coverage
-
-| Method | XLR | Windows | Arexibo | Our SOAP | Our REST | Status |
-|--------|-----|---------|---------|----------|----------|--------|
-| RegisterDisplay | Yes | Yes | Yes | Yes | Yes | **Match** |
-| RequiredFiles | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| Schedule | Yes | Yes | Yes | Yes | Yes (XML) | **Match** |
-| GetResource | No | Yes | Yes | Yes | Yes | **Ours BETTER** — XLR lacks GetResource, requiring server-side rendering for all widgets |
-| MediaInventory | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| NotifyStatus | Yes | Yes | Yes | Yes (enriched) | Yes (enriched) | **Ours BETTER** — includes disk usage, timezone, and MAC address for remote diagnostics |
-| SubmitLog | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| SubmitStats | Yes | Yes | Yes | Yes | Yes (JSON) | **Match** |
-| SubmitScreenShot | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot submit screenshots to CMS |
-| GetWeather | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo lack weather data; we fetch and evaluate schedule criteria |
-| ReportFaults | No | Yes | No | Yes | Yes (JSON) | **Ours BETTER** — XLR and Arexibo cannot report faults; we submit with dedup cooldown |
-| BlackList | Yes | Yes | No | Yes | No (REST N/A) | **Match** via SOAP |
-
-### Communication Features
-
-| Feature | XLR | Windows | XiboPlayer | Status |
-|---------|-----|---------|------------|--------|
-| SOAP Fault parsing | Typed classes | Built-in | Namespace-aware querySelector | XLR slightly richer |
-| CRC32 skip optimization | Yes (checkRf/checkSchedule) | Yes | Yes | **Match** |
-| ETag 304 caching | No | No | Yes (REST only) | **Ours BETTER** — skips unchanged responses at HTTP layer, saving bandwidth on every poll |
-| licenceResult in RegisterDisplay | Yes | Yes | Yes (v7 spec) | **Match** |
-| Retry with backoff | Axios built-in | Built-in | fetchWithRetry (configurable) | **Match** |
-| Purge list parsing | Yes | Yes | Yes | **Match** |
-| Electron CORS proxy | No | N/A | Yes (@xiboplayer/proxy) | **Ours BETTER** — enables local Electron to talk to CMS without CORS issues |
-| Offline fallback | No | File system | IndexedDB (schedule + settings + requiredFiles) | **Ours BETTER** — player continues showing content when CMS is unreachable |
-| Geolocation fallback chain | No | Yes (.NET Location) | Yes (browser → Google API → IP) | **Ours BETTER** vs XLR — three-tier fallback ensures location is available even without GPS |
-| CMS tag config parsing | No | Yes | Yes (geoApiKey\|value from RegisterDisplay) | **Match** vs Windows — both parse display tag configuration for per-display settings |
-| Licence result handling | No | Yes | Yes | **Match** vs Windows — both properly handle CMS licence status in RegisterDisplay response |
-| Storage estimate in status | No | No | Yes (navigator.storage.estimate) | **Ours BETTER** — CMS admins can see remaining disk space remotely |
-| Timezone in status | No | No | Yes (Intl.DateTimeFormat) | **Ours BETTER** — CMS can display and account for the player's local timezone |
-| MAC address reporting | No | Yes | Yes (Wake-on-LAN support) | **Ours BETTER** vs XLR — enables remote Wake-on-LAN from CMS |
-
----
-
-## 3. File/Cache Management
-
-| Feature | XLR | Windows | XiboPlayer | Status |
-|---------|-----|---------|------------|--------|
-| MD5 validation | Yes | Yes | Yes (spark-md5) | **Match** |
-| Hash check before download | Yes | Yes | Yes | **Match** |
-| Download retry | Axios | Built-in | fetchWithRetry + exponential backoff | **Ours BETTER** — configurable retry count and delay, graceful degradation on flaky networks |
-| File integrity | Size check | Full | Size + Content-Type + auto-delete | **Ours BETTER** — validates MIME type and auto-removes corrupted files on detection |
-| Parallel downloads | No | No | 4 concurrent chunks | **Ours BETTER** — 4x faster large file downloads by splitting into concurrent HTTP Range requests |
-| Dynamic chunk sizing | No | No | Yes (based on device RAM) | **Ours BETTER** — adapts chunk size to available memory, prevents OOM on low-end devices |
-| Bad cache detection | No | No | Yes (auto-delete corrupted) | **Ours BETTER** — detects size mismatches and auto-re-downloads without manual intervention |
-| Queue barriers | No | No | Yes (offline resilience) | **Ours BETTER** — pauses download queue when offline, resumes with backoff when connectivity returns |
-| Font CSS URL rewriting | Yes | Yes | Yes | **Match** |
-| Widget HTML caching | Yes | Yes | Yes (SW static cache) | **Match** |
-| Progressive streaming | No | No | Yes (Service Worker Range requests) | **Ours BETTER** — videos start playing while still downloading via SW Range request support |
-| **XMDS download caching** | No | No | Yes (cache-through proxy) | **Ours BETTER** — XMDS signed URLs rewritten to local proxy paths, eliminating CORS and enabling ContentStore caching for all XMDS content |
-| **Transport-agnostic cache** | No | No | Yes (idempotent mirror paths) | **Ours BETTER** — files cached via XMDS are served identically to REST-cached files; second collection serves from cache regardless of transport |
-| Storage backend | SQLite | SQLite | ContentStore (filesystem via proxy) | Platform difference |
-| Offline-first | No | Partial | Full (SW + Cache API + IndexedDB) | **Ours BETTER** — entire app works offline including schedule, settings, and media from cache |
-| Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
-
----
-
-## 4. Layout Renderer (XLR v1.0.22 vs RendererLite)
-
-### Overall: 100% parity, better performance
-
-### Layout Parsing
-
-| Feature | XLR v1.0.22 | RendererLite | Status |
-|---------|-------------|--------------|--------|
-| Layout dimensions | Yes | Yes | **Match** |
-| Background color | Yes | Yes | **Match** |
-| Background image (scaling) | Yes | Yes (cover, centered) | **Match** |
-| Region extraction | Yes | Yes | **Match** |
-| Widget extraction | Yes | Yes | **Match** |
-| Layout scale factor | min(sw/xw, sh/xh) | min(sw/xw, sh/xh) | **Match** |
-| Centered positioning | Yes (offset) | Yes (offset) | **Match** |
-| Region scaling | Yes | Yes | **Match** |
-| ResizeObserver rescale | No | Yes | **Ours BETTER** — layout automatically re-scales when window is resized (e.g. rotation, multi-monitor) |
-| Layout duration from XLF | Yes | Yes (with auto-calc fallback) | **Match** |
-
-### Widget Types
-
-| Type | XLR v1.0.22 | RendererLite | Status |
-|------|-------------|--------------|--------|
-| image | Full (scaling, alignment) | Full (scaleType + align + valign) | **Match** |
-| video | video.js | Native HTML5 + HLS detection | **Match** |
-| audio | Full | Native audio + gradient visualization | **Ours BETTER** — shows visual gradient + icon instead of blank screen during audio playback |
-| text | iframe | iframe (blob or SW cache URL) | **Match** |
-| clock | getResource | getWidgetHtml | **Match** |
-| global/embedded | Full | iframe | **Match** |
-| pdf | No | PDF.js (lazy-loaded) | **Ours BETTER** — renders PDF natively in-browser; XLR and Windows have no PDF support |
-| webpage | iframe | iframe | **Match** |
-| ticker | Duration-per-item | iframe + NUMITEMS/DURATION comment parsing | **Match** — CMS calculates total duration server-side; client parses HTML comments for dynamic item counts |
-| dataset | Yes | Via getWidgetHtml | **Match** (server-rendered) |
-| HLS streaming | Yes | Yes (native + hls.js dynamic import) | **Match** |
-| shellcommand | Yes | Yes (Electron IPC / Chromium HTTP) | **Match** (gated by `allowShellCommands` config) |
-
-### Transitions
-
-| Feature | XLR v1.0.22 | RendererLite | Status |
-|---------|-------------|--------------|--------|
-| Fade In/Out | Yes | Yes | **Match** |
-| Fly In/Out | Yes | Yes | **Match** |
-| Compass directions (8) | Yes | Yes (N/NE/E/SE/S/SW/W/NW) | **Match** |
-| Region exit transitions | Yes | Yes (CSS animation on region removal) | **Match** |
-| Configurable duration | Yes | Yes | **Match** |
-| Web Animations API | Yes | Yes | **Match** |
-
-### Interactivity
-
-| Feature | XLR v1.0.22 | RendererLite | Status |
-|---------|-------------|--------------|--------|
-| IC server (postMessage) | Yes | Yes | **Match** |
-| Webhook triggers | Yes | Yes | **Match** |
-| Duration control (expire/extend/set) | Yes | Yes | **Match** |
-| Data connector realtime | Yes | Yes (DataConnectorManager) | **Match** |
-| Touch/click actions | Yes | Yes (attachTouchAction) | **Match** |
-| Keyboard actions | Yes | Yes (setupKeyboardListener) | **Match** |
-| Navigate to layout | Yes | Yes (via IC trigger -> handleTrigger -> changeLayout) | **Match** |
-| Navigate to widget | Yes | Yes (navigateToWidget method) | **Match** |
-| Previous/next widget | Yes | Yes (nextWidget/previousWidget) | **Match** |
-| Widget duration webhooks | Yes | Yes (widgetAction event → HTTP POST) | **Match** |
-| Audio overlay on parent media | Yes | Yes (attached `<audio>` element lifecycle) | **Match** |
-| Playback control (keyboard) | No | Yes (←/→/Space/PgUp/PgDn/R, config-gated) | **Ours BETTER** — keyboard shortcuts for next/prev layout, pause/resume, and revert to schedule; disabled by default, enabled via `controls` config |
-| Timeline click-to-skip | No | Yes (click layout in timeline overlay, config-gated) | **Ours BETTER** — click any layout in the debug timeline to jump to it instantly; requires `controls.keyboard.debugOverlays: true` |
-| Drawer regions | Yes | Yes (hidden, revealed via navigateToWidget) | **Match** |
-| Canvas regions | Yes | Yes | **Match** |
-| Sub-playlist cycle playback | Yes | Yes (round-robin/random per group, playCount enforced) | **Match** |
-
-### Element Reuse and Performance
-
-| Feature | XLR v1.0.22 | RendererLite | Status |
-|---------|-------------|--------------|--------|
-| Pre-create elements | currEl/nxtEl (2 elements) | widgetElements Map (all widgets) | **Ours BETTER** — pre-creates DOM for every widget at layout start, so switches are instant |
-| Visibility toggling | Yes | Yes | **Match** |
-| Layout replay detection | Implicit | Explicit isSameLayout | **Ours BETTER** — skips teardown/rebuild when replaying the same layout, achieving <0.5s replay |
-| Blob URL lifecycle | Manual | Tracked per layout (Set) | **Ours BETTER** — revokes all blob URLs per layout, preventing memory leaks over long sessions |
-| Parallel media prefetch | No | Promise.all() for all media | **Ours BETTER** — fetches all media URLs in parallel before rendering, eliminating loading gaps |
-| Video restart on replay | Requires recreation | currentTime=0 + play() | **Ours BETTER** — reuses existing video elements instead of destroying and recreating them |
-
-### Events
-
-| Event | XLR v1.0.22 | RendererLite | Status |
-|-------|-------------|--------------|--------|
-| layoutStart | Yes | Yes | **Match** |
-| layoutEnd | Yes | Yes | **Match** |
-| widgetStart | Yes | Yes (with mediaId, type, duration) | **Match** |
-| widgetEnd | Yes | Yes | **Match** |
-| overlayStart | Yes | Yes | **Match** |
-| overlayEnd | Yes | Yes | **Match** |
-| overlayWidgetStart | No | Yes | **Ours BETTER** — enables per-widget stats tracking inside overlays |
-| overlayWidgetEnd | No | Yes | **Ours BETTER** — paired with overlayWidgetStart for complete proof-of-play |
-| widgetAction | No | Yes (duration events for proof of play) | **Ours BETTER** — SDK emits widget duration events for precise event-based stats |
-| action-trigger | Yes | Yes (touch/keyboard source info) | **Match** |
-| error (structured) | Console only | Event with type + context | **Ours BETTER** — emits structured error events that can be caught and reported to CMS |
-| isPaused() | No | Yes (renderer state query) | **Ours BETTER** — shells can query and toggle pause state for playback control |
-| layoutChange | Yes | No (handled by PlayerCore) | Design difference |
-
-### Overlays
-
-| Feature | XLR v1.0.22 | RendererLite | Status |
-|---------|-------------|--------------|--------|
-| Overlay rendering | Yes | Yes | **Match** |
-| Multiple concurrent overlays | Yes | Yes (activeOverlays Map) | **Match** |
-| Priority-based z-index | Fixed 999 | 1000 + priority | **Ours BETTER** — higher-priority overlays correctly stack above lower-priority ones |
-| Interrupt detection | Yes | Yes | **Match** |
-| Share-of-voice interleaving | Yes | Yes | **Match** |
-| Overlay widget cycling | Yes | Yes (startOverlayRegion) | **Match** |
-
----
-
-## 5. XMR Push Messaging
-
-### Architecture
-
-| Aspect | xibo-xmr (server) | xibo-communication-framework v0.0.6 | @xiboplayer/xmr |
-|--------|-------------------|--------------------------------------|-----------------|
-| Type | PHP/ReactPHP relay | JS WebSocket client library | Native XmrClient — complete XMR protocol implementation |
-| Protocol | ZeroMQ + WebSocket | WebSocket | WebSocket |
-| Action dispatch | N/A (relay) | Hardcoded if-else (5 of 14 actions) | Generic `emit(action, message)` — all actions work automatically |
-| Dependencies | ReactPHP, ZeroMQ | luxon (68KB), nanoevents | None (zero external deps) |
-| npm | N/A | @xibosignage/xibo-communication-framework | @xiboplayer/xmr |
-
-### Client-Side Comparison
-
-| Feature | xibo-communication-framework | @xiboplayer/xmr | Status |
-|---------|------------------------------|------------------|--------|
-| WebSocket connection | Yes | Yes (native XmrClient) | **Match** |
-| Heartbeat ("H") detection | Yes | Yes | **Match** |
-| collectNow | Hardcoded handler | Generic dispatch -> PlayerCore.collectNow() | **Match** |
-| screenShot / screenshot | Hardcoded handler | Generic dispatch -> PlayerCore.captureScreenshot() | **Match** |
-| licenceCheck | Hardcoded handler | Generic dispatch (no-op for Linux/PWA) | **Match** |
-| changeLayout | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.changeLayout() | **Ours BETTER** — upstream silently drops this action |
-| overlayLayout | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.overlayLayout() | **Ours BETTER** — upstream silently drops this action |
-| revertToSchedule | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.revertToSchedule() | **Ours BETTER** — upstream silently drops this action |
-| purgeAll | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.purgeAll() | **Ours BETTER** — upstream silently drops this action |
-| commandAction | Hardcoded for 3 subtypes only | Generic dispatch (full message with commandCode) | **Ours BETTER** — upstream only handles showStatusWindow, forceUpdateChromeOS, currentGeoLocation; all other command codes silently dropped |
-| triggerWebhook | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.triggerWebhook() | **Ours BETTER** — upstream silently drops this action |
-| dataUpdate | **Missing** — `console.error('unknown action')` | Generic dispatch -> PlayerCore.refreshDataConnectors() | **Ours BETTER** — upstream silently drops this action |
-| criteriaUpdate | Hardcoded handler | Generic dispatch (re-collect) | **Match** |
-| currentGeoLocation | Only via commandAction subtypes | Generic dispatch (dual-path: CMS push + browser Geolocation API) | **Ours BETTER** — dedicated handler with coordinate detection |
-| rekey | **Missing** — `console.error('unknown action')` | Generic dispatch -> RSA key rotation (Web Crypto) | **Ours BETTER** — upstream silently drops this action |
-| Future CMS actions | Requires library update | Work automatically (generic dispatch) | **Ours BETTER** — zero maintenance for new actions |
-| JSON message parsing | Yes | Yes | **Match** |
-| TTL/expiry checking | luxon DateTime (68KB dep) | Native Date.parse() (0KB) | **Ours BETTER** — same check, no dependency |
-| Channel subscription | Yes | Yes (init message on connect) | **Match** |
-| isActive() health check | Yes (15 min) | Yes (15 min) | **Match** |
-| Reconnection | 60s fixed interval | 60s health check + exponential backoff | **Ours BETTER** — reconnects faster initially, backs off to avoid flooding a struggling server |
-| Connection close handling | Yes | Yes (with intentional shutdown flag) | **Match** |
-| Bundle size | ~70KB (luxon + nanoevents + framework) | ~2KB (native, zero deps) | **Ours BETTER** — 97% smaller |
-
-**Summary:** The upstream `xibo-communication-framework@0.0.6` only dispatches 5 of ~14 CMS actions via a hardcoded if-else chain. The remaining 9 actions (`changeLayout`, `overlayLayout`, `revertToSchedule`, `purgeAll`, `triggerWebhook`, `dataUpdate`, `rekeyAction`, and most `commandAction` subtypes) fall through to `console.error('unknown action')` and are silently lost. Our native `XmrClient` uses generic action dispatch — `emit(message.action, message)` — so every current and future CMS action works automatically without code changes.
-
----
-
-## 6. Interactive Control
-
-### What It Does
-The `xibo-interactive-control` library (`bundle.min.js`) provides a widget-to-player communication bridge using `postMessage`. Widgets in iframes send requests; the player's IC server handles them.
-
-### Feature Comparison
-
-| Feature | Upstream IC | Our IC Server | Status |
-|---------|-------------|---------------|--------|
-| postMessage listener | Yes | Yes | **Match** |
-| /info endpoint | Yes | Yes | **Match** |
-| /trigger endpoint | Yes | Yes -> handleTrigger() | **Match** |
-| /duration/expire | Yes | Yes | **Match** |
-| /duration/extend | Yes | Yes | **Match** |
-| /duration/set | Yes | Yes | **Match** |
-| /fault endpoint | Yes | Yes -> LogReporter.reportFault() | **Match** |
-| /realtime data | Yes | Yes -> DataConnectorManager.getData() | **Match** |
-| Navigate to layout action | Yes | Yes (changeLayout) | **Match** |
-| Navigate to widget action | Yes | Yes (navigateToWidget) | **Match** |
-| Previous/next widget | Yes | Yes (nextWidget/previousWidget) | **Match** |
-| Touch/click triggers | Yes | Yes (attachTouchAction) | **Match** |
-| Keyboard triggers | Yes | Yes (setupKeyboardListener) | **Match** |
-| Data connector support | Yes | Yes (DataConnectorManager) | **Match** |
-| Playback control (next/prev/pause) | No | Yes (keyboard + timeline click-to-skip, config-gated) | **Ours BETTER** — operators can navigate layouts and pause playback; all controls disabled by default for kiosk security |
-
----
-
-## 7. Stats and Logging
-
-| Feature | XLR | Windows | XiboPlayer | Status |
-|---------|-----|---------|------------|--------|
-| Layout proof-of-play | Yes | Yes | Yes (StatsCollector) | **Match** |
-| Widget proof-of-play | Via media events | Yes | Explicit start/end tracking | **Ours BETTER** — tracks exact widget display duration, not just media play events |
-| Event stats (touch, webhook) | No | Yes | Yes (recordEvent with tags) | **Ours BETTER** — tracks user interactions and webhook events for engagement analytics |
-| Stats submission (XMDS) | Yes | Yes | Yes (XML or JSON) | **Match** |
-| Stats aggregation | Yes | Yes | Yes (hourly grouping) | **Match** |
-| Hour-boundary splitting | No | Yes | Yes (_splitAtHourBoundaries) | **Match** — splits stats spanning multiple hours into per-hour records for correct CMS aggregation |
-| enableStat per layout/widget | Yes | Yes | Yes (respects enableStat attribute) | **Match** |
-| Log database | Yes | Yes | IndexedDB (persistent) | **Match** |
-| Log submission to CMS | Yes | Yes | Yes (XML or JSON) | **Match** |
-| Log batching (50/300) | Yes | Yes | Yes (auto-detect: 50 normal, 300 backlog) | **Match** |
-| Fault reporting | faultsDB | Yes | Yes (dedup with 5-min cooldown) | **Match** |
-| Replay-safe tracking | No | No | Yes (auto-end previous on replay) | **Ours BETTER** — auto-ends the previous layout's stats when replaying, preventing double-counting |
-| Quota-exceeded cleanup | No | No | Yes (auto-delete oldest 100) | **Ours BETTER** — auto-prunes old stats when IndexedDB is full instead of silently failing |
-| BroadcastChannel stats | Yes | No | Yes (SyncManager stats delegation via BC + WebSocket) | **Match** — followers delegate stats to lead via the same transport used for layout sync |
-
----
-
-## 8. Config and Settings
-
-| Feature | XLR | Windows | XiboPlayer | Status |
-|---------|-----|---------|------------|--------|
-| Hardware key | machine-id | machine-id | FNV-1a hash + "pwa-" prefix | **Ours BETTER** — prefix makes it immediately identifiable as a PWA player in CMS display list |
-| CMS settings parsing | Full set | Full set | Full set (DisplaySettings class) | **Match** |
-| Download windows | No | Yes | Yes | **Ours BETTER** vs XLR — respects CMS-configured download time windows to avoid bandwidth during peak hours |
-| Screenshot interval | No | Yes | Yes (periodic + on-demand) | **Ours BETTER** vs XLR — supports both timed periodic captures and on-demand XMR triggers |
-| DisplaySettings class | Inline | Built-in | Dedicated + EventEmitter | **Ours BETTER** — settings changes emit events so all components react instantly without polling |
-| Centralized state | State class | Built-in | PlayerState (EventEmitter) | **Match** |
-| Display status machine | 0/2/3 codes | Full | Full (1=running, 2=downloading, 3=error) | **Match** |
-| Wake Lock API | No | N/A (native app) | Yes (Screen Wake Lock) | **Ours BETTER** — prevents OS from dimming/sleeping the screen in kiosk mode |
-| Offline fallback | No | File system | IndexedDB auto-cache | **Ours BETTER** — automatically caches schedule and settings so player boots even without CMS |
-| Persistent storage | OS-managed | OS-managed | navigator.storage.persist() | **Ours BETTER** — browser cannot evict cached media under storage pressure |
-| Log level from CMS | No | Yes | Yes (applyCmsLogLevel) | **Match** |
-| CMS tag config parsing | No | Yes | Yes (geoApiKey\|value) | **Match** vs Windows — per-display configuration via CMS display tags |
-| Playback control | No | No | Yes (keyboard + click-to-skip, config-gated) | **Ours BETTER** — next/prev/pause/skip via keyboard or timeline click; disabled by default, enabled per-group in `controls` config |
-| Timeline debug overlay | No | No | Yes (T-key toggle, config-gated) | **Ours BETTER** — clickable timeline with conflict indicators; requires `controls.keyboard.debugOverlays: true` (independent of log level) |
-| Auto-authorize via API | No | No | Yes (OAuth2 client_credentials) | **Ours BETTER** — new displays self-authorize via CMS REST API, no manual CMS intervention needed |
-
----
-
-## 9. Screenshot Capture
-
-| Feature | Windows | XLR/Electron | XiboPlayer | Status |
-|---------|---------|-------------|------------|--------|
-| Capture API | GDI+ CopyFromScreen | webContents.capturePage() | getDisplayMedia + html2canvas | Platform-appropriate |
-| Video capture | Native pixel copy | Chromium compositor | Native (getDisplayMedia) or canvas overlay | **Match** |
-| Format | JPEG (default) | JPEG 75 | JPEG 80 | **Match** |
-| Trigger: XMR | Yes | Yes | Yes | **Match** |
-| Trigger: Periodic | Yes (registration cycle) | No | Yes (configurable interval) | **Ours BETTER** vs XLR — XLR has no periodic screenshots at all |
-| Fallback on failure | No | Placeholder PNG | html2canvas DOM render | **Ours BETTER** — renders actual DOM to canvas when getDisplayMedia is unavailable, not a placeholder |
-| Kiosk auto-grant | N/A (native) | N/A (Electron) | `--auto-select-desktop-capture-source` | Config required |
-| Submission | SOAP | SOAP | SOAP or REST | **Match** |
-
----
-
-## 10. Performance Comparison
-
-| Metric | XLR v1.0.22 | Windows v4 R406 | Arexibo | XiboPlayer v0.7.0 |
+| Metric | XLR v1.0.23 | Windows v4 R407 | Arexibo v0.3.2 | XiboPlayer v0.7.7 |
 |--------|-------------|-----------------|---------|-------------------|
 | Initial load (cold) | 17-20s | 5-10s | 12-15s | **3-5s** |
 | Layout replay | 2-3s | 1-2s | <1s | **<0.5s** |
 | 1GB file download | ~5 min | ~5 min | ~5 min | **1-2 min** (4 parallel chunks) |
-| Memory after 10 cycles | +500MB (growing) | Stable | Stable | **Stable** (blob lifecycle tracking) |
+| Memory after 10 cycles | +500MB (growing) | Stable | Stable | **Stable** (PSS-tracked, blob lifecycle + renderer recycling) |
 | Bundle size | ~2MB (with video.js) | ~50MB (CEF) | ~10MB (Rust binary) | **~500KB** (minified) |
 | Widget switch time | ~200ms (recreate) | ~100ms | ~100ms | **<50ms** (visibility toggle) |
 | Multi-display sync precision | N/A | N/A (zero sync code) | N/A | **<8ms** (WebSocket relay) |
-| Automated tests | **0** | **0** | **2** | **1412** (36 test files) |
-
-**XiboPlayer is the fastest and most memory-efficient player.**
-
-The key performance advantages come from:
-1. **Parallel chunk downloads** (4 concurrent, dynamic sizing based on RAM)
-2. **Element reuse** (pre-create all widget DOM elements, toggle visibility)
-3. **Parallel media prefetch** (Promise.all for all media URLs before render)
-4. **Service Worker streaming** (Range request support, no full-file blocking)
-5. **Blob URL lifecycle tracking** (revoke per-layout, no accumulation)
-6. **Queue barriers with exponential backoff** (offline resilience without data loss)
+| Choreography effects | N/A | None (zero sync code) | N/A | **12 effects** (diagonal, wave, center-out, etc.) |
+| Automated tests | **0** | **0** | **2** | **1629** (49 test files) |
 
 ---
 
-## 11. Packaging and Distribution
+## Electron vs Chromium (v0.7.7 overnight profiling)
 
-### Platform Packaging
+Both players run the same PWA. Profiled over 8 hours playing identical content on the same machine (Fedora 43, Wayland, Intel GPU).
 
-| Platform | XLR/Electron | Windows | Arexibo | XiboPlayer |
-|----------|-------------|---------|---------|------------|
-| **RPM (Fedora/RHEL)** | No | No | No | **Yes** (Electron + Chromium) |
-| **DEB (Debian/Ubuntu)** | No | No | No | **Yes** (Electron) |
-| **MSI (Windows)** | No | Yes | No | No |
-| **PWA (any browser)** | No | No | No | **Yes** |
-| **npm package** | npm (renderer only) | No | No | **Yes** (full SDK, 13 public packages) |
-| **Auto-update repo** | No | Built-in | No | **Yes** (gh-pages dnf/apt repo) |
-| **CI/CD builds** | Manual | Manual | None | **GitHub Actions** (tag → build → publish) |
-| **npm provenance** | No | No | No | **Yes** (SLSA attestation) |
+| Metric | Electron 41 (Chrome 146) | Chromium 146 |
+|--------|-------------------------|--------------|
+| GPU PSS (real memory) | 150 MB (stable) | 100 MB (stable) |
+| Renderer PSS | 700 MB (recycled) | 1,000 MB (growing) |
+| Total CPU | 7% | 4-10% |
+| Intel GPU usage | 5.5% | 5.5% |
+| DRM render engine time | 1,200s | 44s |
+| Process count | 9 | 15 |
+| Wayland GPU accel | Yes (`--no-zygote` fix) | Yes (native) |
+| Offline playback | Yes (content store) | Yes (content store) |
+| Renderer recycling | Yes (new PIDs hourly) | No (long-lived, grows) |
 
-The RPM/DEB packages are built automatically on git tag push via GitHub Actions, with repository metadata regenerated via `repository_dispatch`. Users add the dnf/apt repo and get automatic updates.
-
----
-
-## 12. Kiosk Environment (xiboplayer-kiosk)
-
-xiboplayer-kiosk is a **complete kiosk operating environment** — not a player itself, but the infrastructure layer that turns any Linux machine into a dedicated signage display. It uses the `alternatives` system to delegate playback to whichever player is installed (xiboplayer-electron priority 30, xiboplayer-chromium priority 20, arexibo priority 10).
-
-### Kiosk Feature Comparison
-
-| Feature | xiboplayer-kiosk | Arexibo (standalone) | Windows Player | Status |
-|---------|-----------|---------------------|----------------|--------|
-| **Session manager** | GNOME Kiosk (Wayland compositor, locked-down) | None (runs within existing desktop) | Windows Shell Replacement / Assigned Access | **Ours BETTER** — dedicated Wayland compositor with no app switching, no desktop shell |
-| **Player-agnostic** | Yes (alternatives system) | No (is itself the player) | No (proprietary player only) | **Ours BETTER** — swap players without reconfiguring the kiosk |
-| **First-boot wizard** | Zenity GUI (CMS URL, key, display name) | CLI config or manual settings.json | Player UI registration | **Ours BETTER** — non-technical staff can register displays without terminal access |
-| **Health monitoring** | 10s polling loop, exit code parsing, auto-restart | Built into Rust process | Windows Service watchdog | **Ours BETTER** — distinguishes "not authorized" (exit 2) from real errors, offers reconfigure dialog |
-| **Notifications** | Dunst overlay (persistent, color-coded by severity) | stdout logging only | System tray icon | **Ours BETTER** — on-screen notifications visible from across the room |
-| **Keyboard shortcuts** | keyd (kernel-level, Ctrl+I status, Ctrl+R reconfigure) | None | None | **Ours BETTER** — works even without a desktop environment since keyd operates at kernel level |
-| **Auto-login** | GDM autologin to kiosk session | Manual setup required | Windows auto-logon (manual) | **Ours BETTER** — zero-touch boot to signage |
-| **Screen management** | gsettings + logind (blanking, idle, screensaver, power) | Manual xset commands | Windows power settings | **Ours BETTER** — comprehensive, covers Wayland (gsettings) and systemd (logind) |
-| **Resource limits** | systemd cgroup (1.5G memory cap, burst limits) | None | Windows resource management | **Ours BETTER** — prevents runaway memory from crashing the kiosk |
-| **Cursor hiding** | unclutter (3s timeout) | Qt fullscreen (built-in) | Player hides cursor | **Match** |
-| **Bootable images** | ISO, raw (x86_64 + aarch64), QCOW2 | None | N/A (Windows OEM) | **Ours BETTER** — flash and boot, no OS install or config needed |
-| **Kickstart/PXE deploy** | Full kickstart for automated network install | No | MDT/SCCM | **Ours BETTER** — automated mass deployment via PXE boot |
-| **Architectures** | x86_64 + aarch64 (Raspberry Pi 4/5) | x86_64 + aarch64 | x86_64 only | **Ours BETTER** — runs on Raspberry Pi and ARM boards |
-| **Audio setup** | wpctl 90% default | Manual | Manual | **Ours BETTER** — audio works out of the box for signage with sound |
-| **Passwordless reboot** | opendoas (no sudo needed) | Manual | UAC prompt | **Ours BETTER** — kiosk user can reboot/shutdown without admin credentials |
-
-### Bootable Image Formats
-
-Pre-built images include everything: Fedora 43 + xiboplayer-kiosk + xiboplayer-electron + arexibo + keyd + VLC + ffmpeg + GStreamer + VA-API drivers + WireGuard + avahi/mDNS + Wi-Fi support.
-
-| Image | Use case |
-|-------|----------|
-| ISO installer (x86_64) | Flash USB, boot any PC — fully automated install |
-| Raw disk (x86_64) | Write to SSD for Intel NUCs, embedded PCs |
-| Raw disk (aarch64) | Flash SD card for Raspberry Pi 4/5 |
-| QCOW2 (x86_64) | Ready-to-boot VM for QEMU, Proxmox, GNOME Boxes |
-
-### How Player Selection Works
-
-```
-/usr/bin/xiboplayer → alternatives system
-  ├── xiboplayer-electron (priority 30, default)
-  ├── xiboplayer-chromium (priority 20)
-  └── arexibo (priority 10)
-
-# Switch player:
-sudo alternatives --set xiboplayer /usr/bin/xiboplayer-electron
-sudo alternatives --set xiboplayer /usr/bin/xiboplayer-chromium
-sudo alternatives --set xiboplayer /usr/bin/arexibo
-```
+**Key findings:**
+- **`--no-zygote`** fix in Electron resolves 4-year-old Wayland GPU bug ([electron#50455](https://github.com/electron/electron/issues/50455)). GPU CPU dropped from 66% to 8%, memory leak eliminated.
+- **Chromium** uses less total GPU work (44s vs 1,200s DRM time) thanks to native Wayland DRM sync.
+- **Electron** recycles renderers preventing unbounded memory growth; Chromium's main renderer grows from 300 to 900 MB over 8h then stabilizes.
+- Both players survive CMS outages — cached layouts keep playing.
 
 ---
 
-## 13. Remaining Gaps
+## Where XiboPlayer is Better
 
-### Not Applicable (Hardware)
+1. **Dual transport (SOAP + REST) with idempotent cache** — only player with native JSON/REST communication and transport-agnostic caching (files cached via XMDS or REST are served identically)
+2. **ETag caching** — HTTP 304 for unchanged responses
+3. **4x faster downloads** — parallel 4-chunk downloads with dynamic sizing
+4. **Progressive streaming** — Service Worker Range request support
+5. **Instant layout replay** — element reuse (<0.5s)
+6. **Better memory management** — per-layout blob URL lifecycle tracking
+7. **PDF multi-page cycling** — PDF.js with timed page transitions (XLR and Windows lack this)
+8. **Better dayparting** — daily/weekly/monthly recurrence with ISO day-of-week
+9. **Cross-platform** — any device with a modern browser
+10. **Zero installation** — PWA: just open a URL
+11. **Offline resilience** — IndexedDB auto-fallback + queue barriers
+12. **RPM/DEB packaging** — native Linux packages with auto-update repos
+13. **Bootable images** — ISO, raw, QCOW2 for x86_64 and aarch64
+14. **Player-agnostic kiosk** — alternatives system for swapping players
+15. **Multi-display sync with choreography** — BroadcastChannel (same-machine) + WebSocket relay (LAN). Mirror mode or wall mode with `layoutMap`. **<8ms sync precision**. **12 choreography effects** for dramatic cascading transitions (diagonal, wave, center-out). Token-authenticated relay, syncGroupId isolation, offline LAN sync, stats delegation. Standalone `xiboplayer-relay` CLI. Works on both Electron and Chromium. **Windows player has zero multi-display sync code** (confirmed by source audit); XLR and Arexibo have none either. [Full guide](/features/multi-display)
+16. **Playback control** — keyboard shortcuts and timeline click-to-skip (disabled by default, enabled via `controls` config)
+17. **CMS Management API** — 77-method REST client for full CMS v4 API
+18. **SSL cert relaxation** — opt-in relaxSslCerts for media streams with self-signed certificates
+19. **Configurable log levels** — config.json logLevel for runtime log control
+20. **Complete XMR implementation** — native XmrClient with generic action dispatch handles all 14 CMS actions; upstream framework only dispatches 5 (the rest are silently dropped). Zero dependencies vs 68KB luxon
+21. **XMDS download caching** — XMDS signed URLs rewritten to local proxy mirror paths, eliminating CORS failures and enabling ContentStore caching for all XMDS content (layouts, media, fonts, bundles). `X-Cms-Download-Url` header enables XMDS-only CMSes to use the full cache-through pipeline
 
-1. **RS232 serial port** — not available in the browser sandbox. Arexibo and Windows support this natively. This is a hardware limitation, not a software gap — serial port control is only used in industrial signage with physical serial-connected displays.
+22. **1629 automated tests** — 49 test files covering all SDK packages. Windows player has zero tests, XLR has zero tests, Arexibo has only 2 tests. XiboPlayer is the only Xibo player with a meaningful test suite
 
-### Fully Implemented (no gaps)
+23. **Wayland hardware GPU acceleration** — `--no-zygote` workaround for Electron's GPU process flag propagation bug. GPU CPU: 66% to 8%, memory leak eliminated. Filed upstream as [electron#50455](https://github.com/electron/electron/issues/50455)
 
-All other upstream features are fully supported:
-- **Display status codes** — codes 1 (running), 2 (downloading), 3 (error) reported to CMS
-- **Multi-display sync** — BroadcastChannel (same-machine) + WebSocket relay (cross-device LAN). Mirror + wall mode, group isolation, standalone relay CLI, stats delegation, auto-reconnect with group re-join
-- **Shell commands** — Electron IPC + Chromium HTTP endpoint, gated by `allowShellCommands` config, 30s timeout
+24. **Offline-first playback** — Content store serves cached layouts and media during CMS outages. Download manager race conditions fixed (commit-before-response, key format unification)
 
----
-
-## 14. Where XiboPlayer is Better Than All Upstream Players
-
-1. **Dual transport (SOAP + REST)** - Only player with native JSON/REST communication
-2. **ETag caching** - HTTP 304 for unchanged responses (REST transport)
-3. **4x faster downloads** - Parallel 4-chunk downloads with dynamic sizing
-4. **Progressive streaming** - Service Worker Range request support for large media
-5. **Instant layout replay** - Element reuse with isSameLayout detection (<0.5s)
-6. **Better memory management** - Per-layout blob URL lifecycle tracking, no leaks
-7. **Better cache integrity** - Auto-detection and cleanup of corrupted entries
-8. **Better dayparting** - Full weekly recurrence with ISO day-of-week and midnight crossing
-9. **Better overlay system** - Priority-based z-index (1000 + priority)
-10. **PDF support** - PDF.js lazy-loaded (XLR and Windows lack this)
-11. **Audio visualization** - Gradient background + icon display for audio widgets
-12. **Better error events** - Structured events with type, context, and source info
-13. **Better settings** - Dedicated DisplaySettings class with EventEmitter
-14. **Platform-independent core** - PlayerCore works across PWA, Electron, mobile
-15. **Cross-platform** - Runs on any device with a modern browser
-16. **Zero installation** - Just open a URL
-17. **Offline resilience** - IndexedDB auto-fallback + queue barriers + exponential backoff
-18. **Wake Lock API** - Prevents screen sleep in kiosk mode
-19. **Persistent storage** - navigator.storage.persist() prevents cache eviction
-20. **Screenshot fallback** - html2canvas when native capture is unavailable
-21. **RPM/DEB packaging** - Native Linux package management with auto-update repos
-22. **npm provenance** - SLSA attestation for supply chain security
-23. **MAC address reporting** - Wake-on-LAN support in status messages
-24. **Timeline debug overlay** - Config-gated schedule visualization with click-to-skip (requires `controls.keyboard.debugOverlays: true`)
-25. **Documentation server** - Searchable API reference and SDK docs
-26. **Complete kiosk OS** - xiboplayer-kiosk with GNOME Kiosk, health monitoring, first-boot wizard, keyboard shortcuts
-27. **Bootable images** - ISO, raw, QCOW2 for x86_64 and aarch64 — flash and boot, zero config
-28. **Player-agnostic kiosk** - alternatives system lets you swap between Electron, Chromium, or Arexibo without reconfiguring
-29. **Raspberry Pi support** - aarch64 bootable images for Pi 4/5
-30. **Multi-display sync** - BroadcastChannel (same-machine) + WebSocket relay (LAN). Mirror mode (all screens show the same content) or wall mode (each screen shows position-specific content via `layoutMap` in config). Synchronized transitions, coordinated video start, auto-reconnect with automatic group re-join, stats/logs delegation, and group isolation. Standalone `xiboplayer-relay` CLI for dedicated relay servers. **Windows player has zero multi-display sync code** (confirmed by source audit) — no sync manager, no relay, no choreography. The only Xibo player with any sync implementation
-31. **Playback control** - Keyboard shortcuts (←/→/Space/R) and timeline click-to-skip for manual layout navigation; all controls disabled by default, enabled via `controls` config
-32. **Event stats** - Tracks touch interactions and webhook events with tags for engagement analytics
-33. **Layout interleaving** - Inserts default layout between scheduled layouts for smoother content cycling
-34. **Weather criteria** - Evaluates weather-based schedule criteria from CMS GetWeather data
-35. **Geolocation fallback chain** - browser → Google API → IP lookup ensures location availability
-36. **Schedule conflict detection** - identifies and flags overlapping schedule entries in timeline overlay
-37. **Hour-boundary stat splitting** - Splits proof-of-play stats at hour marks for correct CMS aggregation
-38. **Idempotent cache-through** - Both REST and XMDS transports converge on the same proxy mirror paths, making the ContentStore transport-agnostic. Files cached via XMDS are served identically to REST-cached files
-39. **XMDS download caching** - XMDS signed URLs rewritten to local proxy paths, eliminating CORS failures and enabling ContentStore caching for all XMDS content types (layouts, media, fonts, bundles)
-38. **Image scale/align** - full scaleType, align, and valign support matching XLR
-39. **Region exit transitions** - animated transitions when leaving regions
-40. **Drawer regions** - hidden regions revealed via navigateToWidget with auto-hide
-41. **Sub-playlist cycle playback** - round-robin or random widget selection per group per layout cycle
-42. **Auto-authorize via API** - OAuth2 `client_credentials` flow for zero-touch display provisioning
-43. **Canvas regions** - full canvas region support alongside standard regions
-44. **Protocol auto-detection** - probes REST API at startup, falls back to SOAP automatically
-45. **Persistent layout durations** - durations cached in IndexedDB, correct timeline on restart
-46. **XIC event handlers** - renderer fires XIC interactive control events for widget interactions
-47. **Download resume** - incomplete chunked downloads resume from last successful chunk
-48. **Missing media overlay** - timeline overlay highlights layouts with uncached media in red
-49. **Sub-playlist playCount** - widgets respect configured play count per cycle
-50. **Complete XMR implementation** - native XmrClient with generic action dispatch handles all 14 CMS actions; upstream framework only dispatches 5 (changeLayout, overlayLayout, revertToSchedule, purgeAll, triggerWebhook, dataUpdate, rekeyAction all silently dropped). Zero dependencies vs 68KB luxon + nanoevents
-51. **1412 automated tests** - 36 test files covering all SDK packages. Windows player has zero tests, XLR has zero tests, Arexibo has only 2 tests
+25. **PSS-based memory monitoring** — Proportional Set Size tracking distinguishes real memory cost from shared page inflation. Per-process type detection (gpu/renderer/browser/server) with 48h overnight profiling
 
 ---
 
-## 15. Upstream Audit Results (2026-03-18)
+## Upstream Audit Results (2026-03-18)
 
 Code analysis of upstream repositories confirmed:
 
-- **Windows player (xibo-dotnetclient)**: zero multi-display sync code in the entire codebase. No sync manager, no relay, no choreography
+- **Windows player**: zero multi-display sync code in the entire codebase. No sync manager, no relay, no choreography. The `~50-100ms` figure previously cited was theoretical — there is no implementation at all
 - **Windows player**: zero automated tests. No test project, no test runner, no CI test step
 - **XLR (xibo-layout-renderer)**: zero automated tests. The npm package ships with no test suite
 - **Arexibo**: 2 automated tests only (basic XMDS parsing)
-- **XiboPlayer**: 1412 tests across 36 test files, covering core, renderer, cache, schedule, xmds, xmr, stats, settings, sync, and crypto packages
+- **XiboPlayer**: 1625 tests across 49 test files, covering core, renderer, cache, schedule, xmds, xmr, stats, settings, sync, and crypto packages
 
 ---
 
-## 16. What Competitors Have That We Do Not
+## What Competitors Have That We Do Not
 
 Features present in upstream players that XiboPlayer does not implement:
 
@@ -630,121 +135,4 @@ Features present in upstream players that XiboPlayer does not implement:
 6. **AXE/SSP ad integration** — Windows player has hooks for Broadsign AXE and SSP ad server rotation. XiboPlayer has an `isSspEnabled` stub but no active ad server integration
 7. **Cycle playback with play count** — Windows player supports per-widget play count limits within sub-playlist cycle mode. XiboPlayer supports sub-playlist cycle playback and `playCount` but the exact per-cycle reset behaviour may differ
 
----
-
-## 17. Arexibo Detailed Comparison
-
-### Architecture: Native Rust + Qt vs Browser-Based
-
-| Aspect | Arexibo | XiboPlayer |
-|--------|---------|------------|
-| **Language** | Rust + C++ (Qt GUI) | JavaScript/TypeScript |
-| **Rendering** | XLF -> HTML translation at download time | Dynamic runtime XLF rendering |
-| **Concurrency** | Multi-threaded (backend, GUI, XMR threads) | Single-threaded (async/await, Web Workers) |
-| **Storage** | Disk files + `content.json` inventory | Cache API + IndexedDB |
-| **Media serving** | Local HTTP server (tiny_http, port 9696) | Browser-native + Service Worker |
-| **XMR** | ZeroMQ + RSA encryption (collectNow only) | WebSocket (native XmrClient, all 14 actions) |
-| **Platform** | Linux only (Qt/Rust deps, RPi5 supported) | Any browser (cross-platform) |
-| **Last update** | 2025-05-18 (dormant 9+ months) | Active development |
-| **Packaging** | Manual build | RPM/DEB auto-built via CI |
-
-### Feature Parity: 100% protocol, different capabilities
-
-| Category | Arexibo | XiboPlayer | Winner |
-|----------|---------|------------|--------|
-| **XMDS** | All v5 methods, proxy, cert override | All v5 + REST + BlackList + CRC32 + ETag | **XiboPlayer** |
-| **XMR** | ZeroMQ + RSA encryption | WebSocket + RSA encryption (13 handlers) | Tie (different transport, both encrypted) |
-| **Schedule** | Full dayparts, campaigns | Full dayparts, campaigns, interrupts, actions, weather, interleaving | **XiboPlayer** |
-| **Rendering** | XLF -> HTML (7 media types) | Dynamic runtime (12+ types including PDF, HLS, audio overlay) | **XiboPlayer** |
-| **Cache** | Disk + MD5, sequential | Cache API + parallel 4x chunks + streaming | **XiboPlayer** (4x faster) |
-| **Commands** | Shell, HTTP, RS232 serial | HTTP only (browser sandbox) | Arexibo |
-| **Kiosk** | systemd + GNOME Kiosk + health monitor | xiboplayer-kiosk: GNOME Kiosk + health monitor + bootable images | **XiboPlayer** (with xiboplayer-kiosk) |
-| **Performance** | Multi-threaded, native code | Parallel downloads, element reuse | **XiboPlayer** (measured faster) |
-| **Transitions** | CSS (4 types, 8 directions) | Web Animations API (same) | Tie |
-| **Logging** | CMS submission, memory-limited queue | CMS submission + IndexedDB + fault dedup | **XiboPlayer** |
-| **Offline** | `--allow-offline` flag | IndexedDB auto-fallback | **XiboPlayer** |
-| **Packaging** | Manual build from source | RPM/DEB + PWA + npm | **XiboPlayer** |
-
-### Arexibo-Only Features (XiboPlayer Cannot Replicate)
-
-1. **RS232 Serial Port** - Full serial config (baud, parity, handshake), hex encoding, response reading
-2. **Shell command regex validation** — Arexibo validates shell command output against regex patterns; XiboPlayer executes commands but does not validate output
-3. **ZeroMQ transport** - Direct ZeroMQ for XMR (vs WebSocket relay); both use RSA encryption
-4. **XLF Translation Cache** - Pre-generates HTML at download time, version-tracked invalidation. Note: this is an architectural necessity for Arexibo (Rust/Qt cannot render XLF natively), not a performance advantage — XiboPlayer's runtime rendering is faster because it parses XLF directly into DOM elements (<10ms), supports dynamic adaptation (ResizeObserver, orientation changes), and avoids stale cache risks
-
-Note: Arexibo's kiosk mode (GNOME Kiosk + systemd) is now superseded by xiboplayer-kiosk, which provides the same functionality plus health monitoring, first-boot wizard, keyboard shortcuts, bootable images, and player-agnostic alternatives system. Arexibo can run inside xiboplayer-kiosk.
-
-### XiboPlayer-Only Advantages Over Arexibo
-
-1. **4-10x faster downloads** - Parallel chunks vs sequential
-2. **REST transport** - JSON payloads + ETag caching
-3. **Cross-platform** - Any device with a browser
-4. **Zero installation** - Just open a URL
-5. **Better element reuse** - Pre-create + visibility toggle (Arexibo-inspired but refined)
-6. **Better cache integrity** - Auto-detection and deletion of corrupted entries
-7. **Full Chrome DevTools** - No `--inspect` flag needed
-8. **Auto offline fallback** - IndexedDB cache without explicit flag
-9. **Wake Lock API** - Native browser sleep prevention
-10. **Screenshot capture** - getDisplayMedia + html2canvas (Arexibo has none)
-11. **RPM/DEB packages** - Native package management (Arexibo requires manual build)
-12. **Runtime XLF rendering** - Direct XLF-to-DOM parsing (<10ms) vs Arexibo's pre-generated HTML cache — supports dynamic resize, no stale cache, no translation step
-13. **Active development** - Arexibo dormant since May 2025
-
-### Performance Comparison
-
-| Metric | Arexibo | XiboPlayer v0.7.0 |
-|--------|---------|-------------------|
-| Initial load | 12-15s | **3-5s** |
-| Layout replay | <1s | **<0.5s** |
-| 1GB download | ~5 min | **1-2 min** |
-| Memory (10 cycles) | Stable | **Stable** |
-| Bundle size | ~10MB | **~500KB** |
-
-### Recommendation
-
-- **Use Arexibo** for: Linux-only kiosks requiring serial port control or encrypted XMR via ZeroMQ (note: project appears dormant)
-- **Use XiboPlayer** for: Everything else — cross-platform, shell commands, multi-display sync (mirror + wall mode), rapid setup, REST API, RPM/DEB packaging, active development
-
----
-
-## 18. Windows Player Detailed Comparison
-
-### Xibo for Windows v4 R406 (Released 2025-12-10)
-
-| Feature | Windows v4 R406 | XiboPlayer v0.7.0 | Status |
-|---------|----------------|-------------------|--------|
-| **Rendering** | CEF (Chromium 141) | RendererLite (native JS) | Different approach |
-| **XMR** | ZeroMQ -> WebSocket (CMS 4.4+) | WebSocket (always) | Ours simpler |
-| **Webcam/Mic** | Yes (new in R406) | No (browser permissions) | Windows better |
-| **Weather criteria** | Fixed in R406 | Yes (GetWeather + criteria evaluation) | **Match** |
-| **Platform** | Windows 10+ only | Any browser | **Ours BETTER** — runs on Linux, macOS, ChromeOS, any device with a modern browser |
-| **Kiosk** | Native Windows kiosk | xiboplayer-kiosk: GNOME Kiosk + health monitor + bootable images | **Ours BETTER** — dedicated Wayland compositor, health monitoring, first-boot wizard, bootable images |
-| **Installation** | MSI installer | Zero (open URL) or RPM/DEB | **Ours BETTER** — PWA needs no install at all; RPM/DEB auto-update from repo |
-| **CEF update** | Chromium 141 | Browser's own engine | Tie |
-| **Shell commands** | Yes | Yes (Electron IPC / Chromium HTTP) | **Match** |
-| **Serial port** | Yes | No (browser sandbox) | Windows better |
-| **REST API** | No | Yes | **Ours BETTER** — 30% smaller payloads and ETag caching reduce bandwidth and latency |
-| **Parallel downloads** | No | Yes (4 chunks) | **Ours BETTER** — 4x faster large file downloads via concurrent HTTP Range requests |
-| **Offline fallback** | File system | IndexedDB | Both work |
-| **Screenshot** | GDI+ pixel copy | getDisplayMedia / html2canvas | Both work |
-| **Stats/Logging** | Built-in | StatsCollector + LogReporter | **Match** |
-| **Linux support** | No | Yes (RPM/DEB + PWA) | **Ours BETTER** — native Linux packages with dnf/apt repos, Windows player is Windows-only |
-
-### Key Differences
-
-The Windows player is a mature, commercial product with full native OS integration (serial ports, kiosk mode, webcam). XiboPlayer now matches shell command support (Electron IPC + Chromium HTTP) and adds cross-platform reach, zero installation, REST API support, RPM/DEB packaging, multi-display sync, and significantly faster media downloads.
-
----
-
-## Version Reference
-
-| Component | Version | Released | Source |
-|-----------|---------|----------|--------|
-| xibo-layout-renderer | 1.0.22 | 2026-01-21 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) |
-| xibo-communication-framework | 0.0.6 | 2025-12-11 | [npm](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) |
-| Xibo for Windows | v4 R406 | 2025-12-10 | [GitHub](https://github.com/xibosignage/xibo-dotnetclient/releases) |
-| Arexibo | latest | 2025-05-18 | [GitHub](https://github.com/birkenfeld/arexibo) |
-| XiboPlayer SDK | v0.7.0 | 2026-03-07 | [npm](https://www.npmjs.com/org/xiboplayer) |
-| XiboPlayer PWA | v0.7.0 | 2026-03-07 | [npm](https://www.npmjs.com/package/@xiboplayer/pwa) |
-| XiboPlayer Electron | v0.7.0 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-electron/releases) |
-| XiboPlayer Chromium | v0.7.0 | 2026-03-07 | [GitHub](https://github.com/xibo-players/xiboplayer-chromium/releases) |
+For the complete detailed comparison with per-feature tables, see the [full comparison document on GitHub](https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md).
