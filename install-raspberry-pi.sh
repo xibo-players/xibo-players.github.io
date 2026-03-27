@@ -12,8 +12,10 @@ echo "Installing Xibo Player..."
 # Detect distro
 CODENAME=$(. /etc/os-release 2>/dev/null && printf '%s' "${VERSION_CODENAME:-noble}")
 case "$CODENAME" in
+  trixie)   SUITE="debian/trixie" ;;
   bookworm) SUITE="debian/12" ;;
-  *)        SUITE="ubuntu/24.04" ;;
+  noble)    SUITE="ubuntu/24.04" ;;
+  *)        SUITE="debian/trixie" ;;
 esac
 echo "Detected: $CODENAME → using APT suite $SUITE"
 
@@ -25,7 +27,8 @@ curl -fsSL https://dl.xiboplayer.org/deb/GPG-KEY.asc \
 cat <<EOF | sudo tee /etc/apt/sources.list.d/xiboplayer.sources
 Types: deb
 URIs: https://dl.xiboplayer.org/deb/${SUITE}
-Suites: ./
+Suites: stable
+Components: main
 Signed-By: /usr/share/keyrings/xiboplayer.gpg
 EOF
 
