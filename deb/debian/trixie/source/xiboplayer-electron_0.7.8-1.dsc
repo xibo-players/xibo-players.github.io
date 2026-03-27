@@ -10,11 +10,11 @@ Build-Depends: debhelper (>= 12), nodejs, npm
 Package-List:
  xiboplayer-electron deb misc optional arch=any
 Checksums-Sha1:
- dba5f50f4a04dd29f598761d0c99a4a92ca62f29 768616 xiboplayer-electron_0.7.8.orig.tar.gz
- 7ca168da0795bd8a01799f25e6e0a99883b2a8ad 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
+ 0a1616f019a13b713f3901548e1756a28775dfde 768439 xiboplayer-electron_0.7.8.orig.tar.gz
+ 4f7cc849d00945164ffd409422b8ece8b672cb8f 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
 Checksums-Sha256:
- cf53d8988cf9b24dff22c0e597e45a6140bb70eaa2c1d7803ee1dba7a45d0295 768616 xiboplayer-electron_0.7.8.orig.tar.gz
- 8e3a9014cda694219d8704edb3b0ad8571b88813c9ad612f8b57dbe46d779c25 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
+ a9b3d5e93a6d0f01069ab7da4b62c47a3097f19924ccedeffe6001311e37f588 768439 xiboplayer-electron_0.7.8.orig.tar.gz
+ 17c8493e16a648558d4ab6d33ef71cc3c3f3f5a331f9c664bbd0737620e40575 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
 Files:
- 27e7e0e5eb1ebb0a4dcaa218ba71bb81 768616 xiboplayer-electron_0.7.8.orig.tar.gz
- 5c4bffdc984416d374ca7db5156e0543 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
+ 48a9d187e41ba4527d30770babbf42a6 768439 xiboplayer-electron_0.7.8.orig.tar.gz
+ baf89152597420cc57d4898c9181db91 816 xiboplayer-electron_0.7.8-1.debian.tar.xz
