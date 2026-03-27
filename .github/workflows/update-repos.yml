@@ -38,7 +38,7 @@ permissions:
   contents: write
 
 env:
-  FEDORA_VER: '43'
+  FEDORA_VERS: '43 44'
   UBUNTU_VER: '24.04'
   DEBIAN_VER: 'trixie'
   # Skip .deb files larger than this (MB) — GitHub rejects >100MB
@@ -112,6 +112,11 @@ jobs:
       # ── RPM: generate repodata with baseurl → GitHub Releases ──────
       - name: Generate per-repo RPM repodata
         run: |
+          KNOWN_FC_TAGS=()
+          for v in $FEDORA_VERS; do
+            KNOWN_FC_TAGS+=("fc${v}")
+          done
+
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
             [ -f "$pkg_dir/.tag" ] || continue
@@ -119,7 +124,7 @@ jobs:
             repo=$(cat "$pkg_dir/.repo")
             baseurl="https://github.com/$repo/releases/download/$tag"
 
-            # Check if this repo has RPMs (exclude SRPMs for binary processing)
+            # Check if this repo has RPMs
             shopt -s nullglob
             rpms=("$pkg_dir"*.rpm)
             shopt -u nullglob
@@ -127,52 +132,71 @@ jobs:
 
             echo "::group::RPM: $pkg (baseurl: $baseurl)"
 
-            # Create temp arch dirs
-            for arch in x86_64 aarch64 noarch; do
-              mkdir -p /tmp/rpm-repo/$pkg/$arch
+            # Create temp dirs per Fedora version and arch
+            for v in $FEDORA_VERS; do
+              for arch in x86_64 aarch64 noarch SRPMS; do
+                mkdir -p /tmp/rpm-repo/$pkg/$v/$arch
+              done
             done
 
-            # Distribute RPMs by arch (skip SRPMs — handled separately)
             for rpm in "${rpms[@]}"; do
               name=$(basename "$rpm")
-              # Skip GPG key files and SRPMs
+              # Skip GPG key files
               [[ "$name" == RPM-GPG-KEY-* ]] && continue
-              [[ "$name" == *.src.rpm ]] && continue
-              case "$name" in
-                *.x86_64.rpm)  cp "$rpm" /tmp/rpm-repo/$pkg/x86_64/ ;;
-                *.aarch64.rpm) cp "$rpm" /tmp/rpm-repo/$pkg/aarch64/ ;;
-                *.noarch.rpm)
-                  cp "$rpm" /tmp/rpm-repo/$pkg/x86_64/
-                  cp "$rpm" /tmp/rpm-repo/$pkg/aarch64/
-                  cp "$rpm" /tmp/rpm-repo/$pkg/noarch/
-                  ;;
-              esac
-            done
 
-            # Distribute SRPMs
-            for rpm in "${rpms[@]}"; do
-              name=$(basename "$rpm")
-              [[ "$name" == *.src.rpm ]] || continue
-              mkdir -p /tmp/rpm-repo/$pkg/SRPMS
-              cp "$rpm" /tmp/rpm-repo/$pkg/SRPMS/
-            done
+              # Parse Fedora tag from filename prefix (format: fcVER.originalname.rpm)
+              fc_ver=""
+              clean_name="$name"
+              for fctag in "${KNOWN_FC_TAGS[@]}"; do
+                if [[ "$name" == "${fctag}."* ]]; then
+                  fc_ver="${fctag#fc}"
+                  clean_name="${name#${fctag}.}"
+                  break
+                fi
+              done
 
-            # Generate repodata per arch (binary + SRPMS)
-            for arch in x86_64 aarch64 noarch SRPMS; do
-              if ls /tmp/rpm-repo/$pkg/$arch/*.rpm &>/dev/null 2>&1; then
-                echo "  createrepo_c $arch"
-                createrepo_c --baseurl "$baseurl" /tmp/rpm-repo/$pkg/$arch/
+              # Unprefixed RPMs default to first Fedora version (legacy compatibility)
+              if [ -z "$fc_ver" ]; then
+                fc_ver="${FEDORA_VERS%% *}"
+                clean_name="$name"
+              fi
+
+              # Distribute by arch
+              if [[ "$clean_name" == *.src.rpm ]]; then
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/SRPMS/$clean_name"
+                echo "  [fc${fc_ver}] SRPMS: $clean_name"
+              elif [[ "$clean_name" == *.x86_64.rpm ]]; then
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
+                echo "  [fc${fc_ver}] x86_64: $clean_name"
+              elif [[ "$clean_name" == *.aarch64.rpm ]]; then
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
+                echo "  [fc${fc_ver}] aarch64: $clean_name"
+              elif [[ "$clean_name" == *.noarch.rpm ]]; then
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/noarch/$clean_name"
+                echo "  [fc${fc_ver}] noarch: $clean_name"
               fi
             done
 
-            # Save repodata to _repos structure (no RPM binaries stored)
-            for arch in x86_64 aarch64 noarch SRPMS; do
-              target="_repos/$pkg/rpm/fedora/${FEDORA_VER}/$arch"
-              rm -rf "$target"
-              if [ -d "/tmp/rpm-repo/$pkg/$arch/repodata" ]; then
-                mkdir -p "$target"
-                cp -r /tmp/rpm-repo/$pkg/$arch/repodata "$target/"
-              fi
+            # Generate repodata per (Fedora version, arch)
+            for v in $FEDORA_VERS; do
+              for arch in x86_64 aarch64 noarch SRPMS; do
+                if ls /tmp/rpm-repo/$pkg/$v/$arch/*.rpm &>/dev/null 2>&1; then
+                  echo "  createrepo_c fc${v}/$arch"
+                  createrepo_c --baseurl "$baseurl" /tmp/rpm-repo/$pkg/$v/$arch/
+                fi
+              done
+
+              # Save repodata to _repos structure
+              for arch in x86_64 aarch64 noarch SRPMS; do
+                target="_repos/$pkg/rpm/fedora/${v}/$arch"
+                rm -rf "$target"
+                if [ -d "/tmp/rpm-repo/$pkg/$v/$arch/repodata" ]; then
+                  mkdir -p "$target"
+                  cp -r /tmp/rpm-repo/$pkg/$v/$arch/repodata "$target/"
+                fi
+              done
             done
 
             # Copy GPG public key
@@ -188,24 +212,27 @@ jobs:
         run: |
           WORKDIR="$(pwd)"
 
-          for arch in x86_64 aarch64 noarch SRPMS; do
-            output="rpm/fedora/${FEDORA_VER}/$arch"
-            mkdir -p "$output"
+          for v in $FEDORA_VERS; do
+            echo "Merging Fedora $v repos..."
+            for arch in x86_64 aarch64 noarch SRPMS; do
+              output="rpm/fedora/${v}/$arch"
+              mkdir -p "$output"
 
-            # Collect all per-repo repodata dirs for this arch
-            repos=()
-            for repo_dir in _repos/*/rpm/fedora/${FEDORA_VER}/$arch; do
-              if [ -d "$repo_dir/repodata" ]; then
-                repos+=("--repo" "${WORKDIR}/$repo_dir")
+              # Collect all per-repo repodata dirs for this arch
+              repos=()
+              for repo_dir in _repos/*/rpm/fedora/${v}/$arch; do
+                if [ -d "$repo_dir/repodata" ]; then
+                  repos+=("--repo" "${WORKDIR}/$repo_dir")
+                fi
+              done
+
+              repo_count=$(( ${#repos[@]} / 2 ))
+              if [ $repo_count -gt 0 ]; then
+                echo "  Merging $arch: $repo_count repo(s)"
+                rm -rf "$output/repodata"
+                mergerepo_c "${repos[@]}" -o "${WORKDIR}/$output"
               fi
             done
-
-            repo_count=$(( ${#repos[@]} / 2 ))
-            if [ $repo_count -gt 0 ]; then
-              echo "Merging $arch: $repo_count repo(s)"
-              rm -rf "$output/repodata"
-              mergerepo_c "${repos[@]}" -o "${WORKDIR}/$output"
-            fi
           done
 
           echo "RPM repodata files:"
