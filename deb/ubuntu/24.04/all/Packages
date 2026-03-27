@@ -22,10 +22,10 @@ Version: 1.0.2
 Architecture: all
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Filename: ./xiboplayer-release_1.0.2_all.deb
-Size: 3812
-MD5sum: 22ec404e11c7ad9fbbe440075a1176ad
-SHA1: 93fdc23c92f1a29048ad6236e8e0e0f1de6995ea
-SHA256: 524ce22cbafe0e286a4a703c0edf8c268bac06b0f4119d22f06efacb3ae77b4e
+Size: 3832
+MD5sum: b2700060e0cdd6285ede6ff339bb6f94
+SHA1: cd2cd3e964b920a39b503cccf1ed98eca8163bf1
+SHA256: 5f110e508aebff4b738641752baf0119dd38514097527e2e823d7b68010fcc5a
 Section: misc
 Priority: optional
 Homepage: https://dl.xiboplayer.org
