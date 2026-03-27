@@ -1,6 +1,6 @@
 Name:           xiboplayer-release
-Version:        43
-Release:        5
+Version:        %{_version}
+Release:        1
 Summary:        Xibo Players repository configuration
 License:        MIT
 URL:            https://dl.xiboplayer.org
