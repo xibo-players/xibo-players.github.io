@@ -1,13 +1,13 @@
 Package: arexibo
-Version: 0.3.1-5
+Version: 0.3.3-1
 Architecture: amd64
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
-Filename: ./arexibo_0.3.1-5_amd64.deb
-Size: 5950260
-MD5sum: a52cfe54b6db5619d5d0beee9cf74920
-SHA1: fa4be2c5cb99db5981599f43d092ac9ee716e043
-SHA256: df1641bd64e4621fe40c9fc73971cbe5f88701173ebad889fdddb005a93fc425
+Filename: ./arexibo_0.3.3-1_amd64.deb
+Size: 5949176
+MD5sum: 7244a9c77f40b795e561c86777b488b7
+SHA1: b60eaa63e248070dedf88dbf442112e86b76adfb
+SHA256: 302540d75bf0a15e2f2fa4c2efde2e7a954734cba580588f90ae27df7fa71fed
 Section: misc
 Priority: optional
 Homepage: https://github.com/linuxnow/arexibo
@@ -17,20 +17,20 @@ Description: Rust-based digital signage player for Xibo CMS
  designed for kiosk and digital signage deployments on Linux.
 
 Package: xiboplayer-chromium
-Version: 0.7.1-1
+Version: 0.7.7-1
 Architecture: all
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
-Installed-Size: 62432
-Depends: chromium | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Installed-Size: 60856
+Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./xiboplayer-chromium_0.7.1-1_all.deb
-Size: 8540562
-MD5sum: 36d2f78541d909aab288b289b36de36d
-SHA1: 590559a12db07eda0a40546b140e6c02ed15b800
-SHA256: 3557233bcff4d4e051983d3bcfe6f1efc5486cb307a52135c7732faebc98e10b
+Filename: ./xiboplayer-chromium_0.7.7-1_all.deb
+Size: 8393320
+MD5sum: 66222581adb4a25149290e6a3e6b545f
+SHA1: d5cb594a2af5052cd6f59f8293415bb50878a6c5
+SHA256: 67a68d22f88a2e422ba6cbd323cfca2c545db9fa90cf0915d176c4756b35a2b6
 Section: misc
 Priority: optional
-Homepage: https://xiboplayer.org
+Homepage: https://www.xiboplayer.org
 Description: Self-contained Xibo digital signage player (Chromium kiosk)
  Bundles the PWA player locally and serves it via a Node.js server,
  then launches Chromium in kiosk mode. Only the CMS base URL is needed.

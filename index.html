@@ -132,30 +132,27 @@
         </div>
     </section>
 
-    <!-- Video Wall Sync highlight -->
+    <!-- Multi-Display Synchronization -->
     <section class="py-10 border-t border-gh-100 dark:border-gh-d100">
-        <h2 class="text-3xl font-semibold text-gh-900 dark:text-gh-d900 mb-2">&#x1F4FA; Video wall sync <span class="text-brand text-lg font-normal ml-2">New in v0.7.0</span></h2>
-        <p class="text-gh-500 dark:text-gh-d500 mb-5">The most capable multi-display sync in any Xibo player.</p>
+        <h2 class="text-3xl font-semibold text-gh-900 dark:text-gh-d900 mb-2">&#x1F3AC; Multi-display synchronization <span class="text-brand text-lg font-normal ml-2">Coordinate every screen in your venue</span></h2>
+        <p class="text-gh-500 dark:text-gh-d500 mb-5">Turn every screen in your space into a single coordinated experience. TVs, LED totems, video walls &mdash; all acting as one.</p>
         <div class="grid grid-cols-2 gap-6 my-5 max-sm:grid-cols-1">
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">&lt;8ms sync precision</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">All displays switch layouts within 8 milliseconds of each other &mdash; 6x faster than the Windows player. Tested with 4 Chromium displays on LAN.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Venue-wide coordination</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Imagine a retail store where every display transitions simultaneously, a hotel lobby where screens ripple content in a choreographed wave, or a stadium where dozens of screens play a unified message. Effects no single screen can achieve.</p>
             </div>
             <div>
                 <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">12 choreography effects</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">Diagonal cascades, horizontal/vertical waves, center-out bursts, and more. Each display transitions at a staggered time based on its grid position.</p>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Diagonal cascades, horizontal/vertical waves, center-out bursts, staggered reveals, and more. Each display transitions at a different time based on its position in the grid &mdash; creating dramatic visual stories across your screens.</p>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Zero infrastructure</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">The lead display's built-in server acts as the sync relay. No additional servers, no ZeroMQ, no firewall ports &mdash; just HTTP.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">&lt;8ms precision, zero infrastructure</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">All displays switch within 8 milliseconds of each other over your existing LAN. No sync boxes, no special hardware, no extra servers &mdash; just a WebSocket relay built into the lead display.</p>
             </div>
             <div>
-                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Mirror &amp; wall mode</h3>
-                <p class="text-gh-500 dark:text-gh-d500 text-sm">All screens show the same content (mirror) or each shows a unique portion of a larger composition (wall). Offline LAN sync works without CMS.</p>
+                <h3 class="text-lg font-semibold text-gh-900 dark:text-gh-d900 mb-2">Any screen, any hardware</h3>
+                <p class="text-gh-500 dark:text-gh-d500 text-sm">Mix Raspberry Pi, Intel NUC, laptops, any screen size. Electron + Chromium on the same network. Mirror mode (all identical) or wall mode (each screen shows a unique portion).</p>
             </div>
-        </div>
-        <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-4 text-sm text-gh-500 dark:text-gh-d500">
-            <strong class="text-gh-900 dark:text-gh-d900">Comparison:</strong> Xibo Windows uses ZeroMQ with ~50-100ms precision and no choreography effects. XiboPlayer uses WebSocket with &lt;8ms precision, 12 choreography effects, token auth, and cross-platform support (Electron + Chromium).
         </div>
     </section>
 
@@ -247,6 +244,7 @@
                 <div class="deploy-os-tabs flex mb-0">
                     <button class="deploy-os-tab active py-2.5 px-6 border border-gh-200 dark:border-gh-d200 border-b-0 rounded-t-lg bg-card dark:bg-card-dark text-gh-900 dark:text-gh-d900 cursor-pointer font-semibold" data-os="fedora">Fedora (DNF)</button>
                     <button class="deploy-os-tab py-2.5 px-6 border border-gh-200 dark:border-gh-d200 border-b-0 rounded-t-lg bg-transparent text-gh-900 dark:text-gh-d900 cursor-pointer opacity-60" data-os="ubuntu">Ubuntu (APT)</button>
+                    <button class="deploy-os-tab py-2.5 px-6 border border-gh-200 dark:border-gh-d200 border-b-0 rounded-t-lg bg-transparent text-gh-900 dark:text-gh-d900 cursor-pointer opacity-60" data-os="debian">Debian / Raspberry Pi</button>
                 </div>
                 <div class="deploy-os-content p-6 border border-gh-200 dark:border-gh-d200 rounded-[0_10px_10px_10px] bg-card dark:bg-card-dark" data-os-content="fedora">
                     <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 rounded-lg overflow-x-auto text-[0.85rem] m-0"><code><span class="c"># Add the repository</span>
@@ -264,6 +262,16 @@ sudo systemctl set-default graphical.target</code></pre>
 curl -fsSL https://dl.xiboplayer.org/deb/DEB-GPG-KEY-xiboplayer | \
   sudo gpg --dearmor -o /etc/apt/keyrings/xiboplayer.gpg
 echo "deb https://dl.xiboplayer.org/deb/ubuntu/24.04 ./" | \
+  sudo tee /etc/apt/sources.list.d/xiboplayer.list
+
+<span class="c"># Install kiosk</span>
+sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
+                </div>
+                <div class="deploy-os-content hidden p-6 border border-gh-200 dark:border-gh-d200 rounded-[0_10px_10px_10px] bg-card dark:bg-card-dark" data-os-content="debian">
+                    <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 rounded-lg overflow-x-auto text-[0.85rem] m-0"><code><span class="c"># Add the repository and GPG key</span>
+curl -fsSL https://dl.xiboplayer.org/deb/DEB-GPG-KEY-xiboplayer | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/xiboplayer.gpg
+echo "deb https://dl.xiboplayer.org/deb/debian/trixie ./" | \
   sudo tee /etc/apt/sources.list.d/xiboplayer.list
 
 <span class="c"># Install kiosk</span>
@@ -336,7 +344,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         <p class="text-gh-500 dark:text-gh-d500 mb-5">The engine and building blocks behind every player. Most users don't need these — they're for custom integrations and self-hosted deployments.</p>
 
         <div class="grid grid-cols-2 gap-4 my-5 max-sm:grid-cols-1">
-            <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col transition-all no-underline text-inherit hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer-pwa">
+            <a class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg p-5 flex flex-col transition-all no-underline text-inherit hover:border-brand hover:dark:border-brand-light hover:shadow-[0_2px_12px_rgba(21,101,192,0.1)]" href="https://github.com/xibo-players/xiboplayer">
                 <h3 class="text-[1.05em] font-semibold mb-1 flex items-center gap-2"><span class="text-xl">&#x1F4F1;</span> PWA Engine</h3>
                 <div class="font-mono text-[0.8em] text-gh-500 dark:text-gh-d500 mb-2">@xiboplayer/pwa</div>
                 <p class="text-gh-500 dark:text-gh-d500 text-sm flex-1">The rendering engine that powers all players. Can also run standalone in any browser — deploy it on your own server and point a browser at it. Handles video, images, audio, PDF, tickers, web pages, HLS, and multi-display sync.</p>
@@ -371,6 +379,7 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
         <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" data-tabs="setup">
             <button class="active bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="fedora">Fedora (DNF)</button>
             <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="ubuntu">Ubuntu (APT)</button>
+            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="debian">Debian / Raspberry Pi</button>
         </div>
 
         <div class="tab-content active" data-tab-content="fedora">
@@ -434,6 +443,34 @@ sudo apt install xiboplayer-chromium
 sudo apt install arexibo</pre>
             </div>
         </div>
+
+        <div class="tab-content" data-tab-content="debian">
+            <div class="bg-info-bg dark:bg-info-dbg border border-info-border dark:border-info-dborder rounded-lg py-4 px-5 my-4 text-sm text-info-color dark:text-info-dcolor">
+                Debian Trixie packages for Raspberry Pi and other ARM/x86 devices. Available: <strong>xiboplayer-kiosk</strong>, <strong>xiboplayer-chromium</strong>, <strong>xiboplayer-electron</strong>, <strong>arexibo</strong>.
+            </div>
+            <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg my-4 overflow-hidden">
+                <div class="flex items-center justify-between py-3 px-4 bg-gh-50 dark:bg-gh-d50 border-b border-gh-200 dark:border-gh-d200">
+                    <h3 class="text-[0.95em] font-semibold">1. Add the repository</h3>
+                    <button class="copy-btn bg-transparent border border-gh-200 dark:border-gh-d200 rounded-md py-1 px-2.5 text-[0.8em] cursor-pointer text-gh-500 dark:text-gh-d500 transition-colors hover:text-brand hover:dark:text-brand-light hover:border-brand hover:dark:border-brand-light" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0"><span class="c"># Add the GPG key and repository</span>
+curl -fsSL https://dl.xiboplayer.org/deb/DEB-GPG-KEY-xiboplayer | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/xiboplayer.gpg
+echo "deb [signed-by=/etc/apt/keyrings/xiboplayer.gpg] https://dl.xiboplayer.org/deb/debian/trixie ./" | \
+  sudo tee /etc/apt/sources.list.d/xiboplayer.list</pre>
+            </div>
+            <div class="bg-card dark:bg-card-dark border border-gh-200 dark:border-gh-d200 rounded-lg my-4 overflow-hidden">
+                <div class="flex items-center justify-between py-3 px-4 bg-gh-50 dark:bg-gh-d50 border-b border-gh-200 dark:border-gh-d200">
+                    <h3 class="text-[0.95em] font-semibold">2. Install packages</h3>
+                    <button class="copy-btn bg-transparent border border-gh-200 dark:border-gh-d200 rounded-md py-1 px-2.5 text-[0.8em] cursor-pointer text-gh-500 dark:text-gh-d500 transition-colors hover:text-brand hover:dark:text-brand-light hover:border-brand hover:dark:border-brand-light" onclick="copyCode(this)">Copy</button>
+                </div>
+                <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0"><span class="c"># Update and install one or more packages</span>
+sudo apt update
+sudo apt install xiboplayer-kiosk
+sudo apt install xiboplayer-chromium
+sudo apt install arexibo</pre>
+            </div>
+        </div>
     </section>
 
     <!-- Browse -->
@@ -442,18 +479,24 @@ sudo apt install arexibo</pre>
         <p class="text-gh-500 dark:text-gh-d500 mb-5">View all packages available in the repository.</p>
 
         <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" data-tabs="browse">
-            <button class="active bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-rpm">RPM packages</button>
-            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-deb">DEB packages</button>
+            <button class="active bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-fedora">Fedora (RPM)</button>
+            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-ubuntu">Ubuntu (DEB)</button>
+            <button class="bg-transparent border-0 py-2 px-4 text-sm font-medium text-gh-500 dark:text-gh-d500 cursor-pointer border-b-2 border-transparent transition-colors hover:text-gh-900 hover:dark:text-gh-d900 [&.active]:text-brand [&.active]:dark:text-brand-light [&.active]:border-brand [&.active]:dark:border-brand-light" data-tab="browse-debian">Debian / Raspberry Pi</button>
         </div>
 
-        <div class="tab-content active" data-tab-content="browse-rpm">
+        <div class="tab-content active" data-tab-content="browse-fedora">
             <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="rpm-arch-filter"></div>
             <div id="rpm-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading RPM package list...</div>
         </div>
 
-        <div class="tab-content" data-tab-content="browse-deb">
-            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="deb-arch-filter"></div>
-            <div id="deb-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading DEB package list...</div>
+        <div class="tab-content" data-tab-content="browse-ubuntu">
+            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="ubuntu-arch-filter"></div>
+            <div id="ubuntu-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading Ubuntu package list...</div>
+        </div>
+
+        <div class="tab-content" data-tab-content="browse-debian">
+            <div class="tab-bar flex mb-4 border-b border-gh-200 dark:border-gh-d200" id="debian-arch-filter"></div>
+            <div id="debian-list" class="text-gh-500 dark:text-gh-d500 italic py-5">Loading Debian package list...</div>
         </div>
 
     </section>
@@ -486,6 +529,7 @@ initSite({
     imagesFallback: 'Images are available from <a href="https://github.com/xibo-players/xiboplayer-kiosk/releases">GitHub Releases</a>.',
     thPackage: 'Package',
     thVersion: 'Version',
+    thDistro: 'Distro',
     thArch: 'Arch',
     thSize: 'Size',
     thDescription: 'Description',

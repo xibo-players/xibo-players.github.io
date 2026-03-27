@@ -1,0 +1,53 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: xibo-players
+Label: Xibo Players
+Suite: stable
+Codename: trixie
+Architectures: amd64 arm64 all
+Components: main
+Date: Thu, 26 Mar 2026 00:20:45 +0000
+MD5Sum:
+ 341bfd0066f7bb19335232f138c86522 772 all/Packages
+ 41507a65c48a0a3a96f28a12d0a9bdd1 1503 amd64/Packages
+ 4c0fd70d08565c543f87a0d2e52e0502 1503 arm64/Packages
+ 7a116875c35b1d2f415b5ba208ffc0e1 551 all/Packages.gz
+ 7e11b1b88d505aabfeff5e715b90b291 863 amd64/Packages.gz
+ ab6a2d6266ed7482d6d6d94b379d7706 864 arm64/Packages.gz
+ 01954036c3183e568920090b8dee4bf3 2447 source/Sources
+ b385365cc0af5c9f543250df2e6d4e3c 959 source/Sources.gz
+SHA1:
+ 075a3e040b2da286fec7ec4f22e223f10b997e41 772 all/Packages
+ 3bf643a3430ac35866073413f3a44e2f6ac3be98 1503 amd64/Packages
+ 3c6313b50ebb2a77abb34fe354bc1f96ac60c0cb 1503 arm64/Packages
+ a0d945d6dc18524f59043c6cb780410e409a0444 551 all/Packages.gz
+ edacdc4a0462b4becaeca042c027c7cb2ab242f3 863 amd64/Packages.gz
+ 9dc6aa0734230500696b2dcf4cc4c27ac2336b5c 864 arm64/Packages.gz
+ 5cc99c2c39b2184a04bdc1361cb6b490effac9e0 2447 source/Sources
+ f6918b6db12be61e0fab9e17ec3b9857c2021b29 959 source/Sources.gz
+SHA256:
+ c4bf8c4063e7ee6e730359be4c26008d13245d4ddef0314e6ac739401a0a38bc 772 all/Packages
+ 98f61949199d4188e5440a306775a12d7cb799b0cae0996ff8badc575bfdf9c8 1503 amd64/Packages
+ f0b14c9878d7f9eb1251f1b20383734e8ee35f6c1f66040f169a1c968ee90c9a 1503 arm64/Packages
+ 9f3351bc16d0c73f5d32b7619d9e79211c98d303d5a1002dff04d6d4b0278e79 551 all/Packages.gz
+ e25bf5cb058936543e6dc27a537431e73f73c024e247a95e35622841b7949880 863 amd64/Packages.gz
+ 2c4dcc1046fa1eb693459243c5a5ed377c520f54d7f92eee549d6cd888d05a6e 864 arm64/Packages.gz
+ ac3e31069692eee02630264337c62cd882145abe741e5926c6a3af76344f11bf 2447 source/Sources
+ 354830a98e70d459de412ec0fb4dbec7608cae6ee08cf9a435fa7bb8d5b7db5a 959 source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEIGJVTKKPl/NcYbpZ+wQZ5iSA84oFAmnEe94ACgkQ+wQZ5iSA
+84pZnA//SjskL1R4IpEpXlilb/E2gq0J1quBcpbQlv7yWnMf4JBRFBXDOIiYTyb+
+SbQxdvalgIga2bgStAVgJzo2U+pzneRCZdIuRhkrP6/9QqxJQxWcfIPyHuSnwO1l
+rBefPI9+a0VXgZ/Dj0//1roCU3VblhuS/sr4oOOfgvDqLiyv7tc/N2N5qeRONHnG
+ABf+GgoQR9tF7h5QMyqtQulRmZ/fuT2pciKhnVXTvLVejj8oXuszcHuDRAqci68b
+gurQuefWUkitHzgtMT9NWHHGmH4wNzIKIcUfQBPWuCAFvOML+I6yqtasxgQ9fH4V
+OUPe0W93Cs62uUGvFpI+iHPQQcuheqHbNGXEQzK9YyvIhTdJzXGLYEkvrUdPOhzu
+dGdNMawzsgf5pXq1vpBTkz3diph6slVqVzwVh0pqbJvEXBuEeqxwmoml6l51lDl3
+rOI4VpobUlWlR/W/BWC9kPW/Lugq4/Sb6JrKZfK1s0I2w8uxjsUy9BdPzrahMbIL
+H9P25C8OFqFZmAJFTGm9429H0y1Z0Dc5/UD1K9288mwwgxOn8lppcP+9noUDZ513
+q6Jt/EZf8GoGzwM8SS0rpv4pyg6lw824pZl2n2wVHaLGMetQeKx+bWVoTY687jFk
+Oh38CZ3G/D09F7E7OrGjhw+/H/fQNEdXJK7e/6JTN6X9Hwa9yeE=
+=lfYo
+-----END PGP SIGNATURE-----
