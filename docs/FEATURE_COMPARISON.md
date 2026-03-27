@@ -55,7 +55,7 @@ description: "Detailed feature comparison: XiboPlayer v0.7.7 vs upstream Xibo pl
 
 ## Electron vs Chromium (v0.7.7 overnight profiling)
 
-Both players run the same PWA. Profiled over 8 hours playing identical content on the same machine (Fedora 43, Wayland, Intel GPU).
+Both players run the same PWA. Profiled over 8 hours playing identical content on the same machine (Fedora 44, Wayland, Intel GPU).
 
 | Metric | Electron 41 (Chrome 146) | Chromium 146 |
 |--------|-------------------------|--------------|
