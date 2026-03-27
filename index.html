@@ -247,7 +247,11 @@
                     <button class="deploy-os-tab py-2.5 px-6 border border-gh-200 dark:border-gh-d200 border-b-0 rounded-t-lg bg-transparent text-gh-900 dark:text-gh-d900 cursor-pointer opacity-60" data-os="debian">Debian / Raspberry Pi</button>
                 </div>
                 <div class="deploy-os-content p-6 border border-gh-200 dark:border-gh-d200 rounded-[0_10px_10px_10px] bg-card dark:bg-card-dark" data-os-content="fedora">
-                    <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 rounded-lg overflow-x-auto text-[0.85rem] m-0"><code><span class="c"># Add the repository</span>
+                    <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 rounded-lg overflow-x-auto text-[0.85rem] m-0"><code><span class="c"># Add the repository (Fedora 43)</span>
+sudo dnf install \
+  https://github.com/xibo-players/xibo-players.github.io/releases/download/v44-1/xiboplayer-release-43-1.noarch.rpm
+
+<span class="c"># Add the repository (Fedora 44)</span>
 sudo dnf install \
   https://github.com/xibo-players/xibo-players.github.io/releases/download/v44-1/xiboplayer-release-44-1.noarch.rpm
 
@@ -391,7 +395,11 @@ sudo apt update &amp;&amp; sudo apt install xiboplayer-kiosk</code></pre>
                     <h3 class="text-[0.95em] font-semibold">1. Add the repository</h3>
                     <button class="copy-btn bg-transparent border border-gh-200 dark:border-gh-d200 rounded-md py-1 px-2.5 text-[0.8em] cursor-pointer text-gh-500 dark:text-gh-d500 transition-colors hover:text-brand hover:dark:text-brand-light hover:border-brand hover:dark:border-brand-light" onclick="copyCode(this)">Copy</button>
                 </div>
-                <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0" id="dnf-add"><span class="c"># Install the xiboplayer repository and GPG key</span>
+                <pre class="bg-pre-bg dark:bg-pre-dbg text-pre-fg dark:text-pre-dfg p-4 overflow-x-auto text-[13px] leading-relaxed m-0" id="dnf-add"><span class="c"># Fedora 43</span>
+sudo dnf install \
+  https://github.com/xibo-players/xibo-players.github.io/releases/download/v44-1/xiboplayer-release-43-1.noarch.rpm
+
+<span class="c"># Fedora 44</span>
 sudo dnf install \
   https://github.com/xibo-players/xibo-players.github.io/releases/download/v44-1/xiboplayer-release-44-1.noarch.rpm</pre>
             </div>

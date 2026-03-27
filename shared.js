@@ -179,11 +179,12 @@ function initSite(T) {
         var sorted = rpmData.slice().sort(function(a, b) { return (a.name || '').localeCompare(b.name || ''); });
         var filtered = rpmArch ? sorted.filter(function(p) { return p.arch === rpmArch || p.arch === 'noarch'; }) : sorted;
         if (filtered.length === 0) { el.innerHTML = '<p class="text-gh-500 dark:text-gh-d500">' + T.noPackagesArch + '</p>'; return; }
-        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thFile + '</th><th>' + T.thSize + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
+        var html = '<table class="browse-table"><thead><tr><th>' + T.thPackage + '</th><th>' + T.thFile + '</th><th>' + T.thSize + '</th><th>' + T.thDistro + '</th><th>' + T.thArch + '</th><th>' + T.thRelease + '</th></tr></thead><tbody>';
         filtered.forEach(function(r) {
             html += '<tr><td><a href="https://github.com/' + r.repo + '">' + r.name + '</a></td>' +
                 '<td><a href="' + r.url + '">' + r.file + '</a></td>' +
-                '<td>' + r.size + '</td><td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + r.arch + '</span></td>' +
+                '<td>' + r.size + '</td><td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + (r.distro || '') + '</span></td>' +
+                '<td><span class="inline-block text-[0.78em] font-medium py-0.5 px-2 rounded-xl bg-arch-bg dark:bg-arch-dbg border border-arch-border dark:border-arch-dborder text-arch-color dark:text-arch-dcolor">' + r.arch + '</span></td>' +
                 '<td><a href="' + r.releaseUrl + '">' + r.tag + '</a></td></tr>';
         });
         el.innerHTML = html + '</tbody></table>';
@@ -210,11 +211,14 @@ function initSite(T) {
                 var resp = await fetch('https://api.github.com/repos/' + repos[i].repo + '/releases/latest');
                 if (!resp.ok) continue;
                 var release = await resp.json();
-                (release.assets || []).filter(function(a) { return a.name.endsWith('.rpm'); }).forEach(function(rpm) {
+                (release.assets || []).filter(function(a) { return a.name.endsWith('.rpm') && !a.name.endsWith('.src.rpm'); }).forEach(function(rpm) {
+                    // Skip prefixed duplicates (fc43.name.rpm) — use clean names only
+                    if (/^fc\d+\./.test(rpm.name)) return;
                     var arch = rpm.name.includes('.x86_64.') ? 'x86_64' : rpm.name.includes('.aarch64.') ? 'aarch64' : rpm.name.includes('.noarch.') ? 'noarch' : '?';
                     var rpmSize = rpm.size > 1048576 ? (rpm.size / 1048576).toFixed(1) + ' MB' : (rpm.size / 1024).toFixed(0) + ' KB';
+                    var distro = (rpm.name.match(/\.fc(\d+)\./) || [])[1];
                     var verRel = rpm.name.replace(/\.[^.]+\.rpm$/, '').replace(/\.fc\d+$/, '').replace(/^.*?-(\d)/, '$1');
-                    rpmData.push({ name: repos[i].name, repo: repos[i].repo, file: rpm.name, url: rpm.browser_download_url, size: rpmSize, arch: arch, tag: verRel, releaseUrl: release.html_url });
+                    rpmData.push({ name: repos[i].name, repo: repos[i].repo, file: rpm.name, url: rpm.browser_download_url, size: rpmSize, arch: arch, tag: verRel, distro: distro ? 'fc' + distro : '', releaseUrl: release.html_url });
                 });
             } catch (e) { /* skip */ }
         }
