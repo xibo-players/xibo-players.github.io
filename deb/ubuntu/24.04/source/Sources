@@ -2,7 +2,7 @@ Format: 3.0 (quilt)
 Package: xiboplayer-chromium
 Binary: xiboplayer-chromium
 Architecture: all
-Version: 0.7.8-1
+Version: 0.7.9-1
 Priority: optional
 Section: unknown
 Maintainer: Pau Aliagas <linuxnow@gmail.com>
@@ -13,17 +13,17 @@ Package-List:
  xiboplayer-chromium deb misc optional arch=all
 Directory: .
 Checksums-Sha1:
- bd3e0b42a632691c31f80d8dcf0ce4049c71e33f 921 xiboplayer-chromium_0.7.8-1.dsc
- b8471918fe8f88322046e8e50765f6ac6321b05e 95946 xiboplayer-chromium_0.7.8.orig.tar.gz
- c89d1ad853906b8add2a036eec4063dfeefd30eb 808 xiboplayer-chromium_0.7.8-1.debian.tar.xz
+ 9a39520de556872d4a4bb7e85a251dc03f2871e5 921 xiboplayer-chromium_0.7.9-1.dsc
+ 8f433eff3275f43de2efceb5e6b9888ad0e8f005 98131 xiboplayer-chromium_0.7.9.orig.tar.gz
+ ce7b9ae57843df8b10a173d62d87289fee7d9ede 808 xiboplayer-chromium_0.7.9-1.debian.tar.xz
 Checksums-Sha256:
- b790843ea49baceb087e261cc3972fea9545c4a28bf65426e386c6d248f1d2e8 921 xiboplayer-chromium_0.7.8-1.dsc
- 8f7c7932bc3376aa92d659f6c2aa1a51ae20b1bb24a5b487422e0432e88a670b 95946 xiboplayer-chromium_0.7.8.orig.tar.gz
- 4bc2dea4f0e091b0eb4fb2a114b8e8fc68f2d87c0a8adffaec5fc13a6bc66b2d 808 xiboplayer-chromium_0.7.8-1.debian.tar.xz
+ 86055f88db0f81858960a70d328ec90a75b5b24017957db4a942e750524822e0 921 xiboplayer-chromium_0.7.9-1.dsc
+ fb42878a6c2cf142dec236b95046b3fac20e5252b917881b735546ebe1674232 98131 xiboplayer-chromium_0.7.9.orig.tar.gz
+ 5449f4a64283fb0b04b952df522d8df66a0c53de2ed26c97b3b0bfa7d47fcea9 808 xiboplayer-chromium_0.7.9-1.debian.tar.xz
 Files:
- 9e16ee9fce4d3cd684f8f25f87e17c8c 921 xiboplayer-chromium_0.7.8-1.dsc
- 5e9d1b73ec872ee041306d7d26946212 95946 xiboplayer-chromium_0.7.8.orig.tar.gz
- 854a291449cb664c7118ec7f888d5542 808 xiboplayer-chromium_0.7.8-1.debian.tar.xz
+ adc7ee84aaef51b975ed02adc4649261 921 xiboplayer-chromium_0.7.9-1.dsc
+ 1b7e31fd7227339389a8d5c924ce9cdd 98131 xiboplayer-chromium_0.7.9.orig.tar.gz
+ 548939c5ec0c8aaf1941d96d4c84be24 808 xiboplayer-chromium_0.7.9-1.debian.tar.xz
 
 Format: 3.0 (quilt)
 Package: xiboplayer-electron
