@@ -1,16 +1,16 @@
 Package: arexibo
-Version: 0.3.3-1
+Version: 0.3.3-2
 Architecture: arm64
 Maintainer: Pau Aliagas <pau@linuxnow.com>
 Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
-Filename: ./arexibo_0.3.3-1_arm64.deb
-Size: 5709404
-MD5sum: 7bbb9bf0b448b9ad0f46057f52f40a2c
-SHA1: 96f234edeeed1e8a83d6b19f19b9f85cddf2e543
-SHA256: 362c134deb125b686d78a9f08492ea66b39a4d7a2691eb7bb4b327bedbf0766e
+Filename: ./arexibo_0.3.3-2_arm64.deb
+Size: 5709406
+MD5sum: 41f3fc88ef96f8f7d329d77718e01b41
+SHA1: 3d60433ac79c9cb4150480c873e194bc3999f988
+SHA256: 997e78a609a4efc8add67c1459deabdcaf06809f71a2b34b9888ff89768a07bb
 Section: misc
 Priority: optional
-Homepage: https://github.com/linuxnow/arexibo
+Homepage: https://github.com/birkenfeld/arexibo
 Description: Rust-based digital signage player for Xibo CMS
  Arexibo is a Rust-based digital signage player compatible with Xibo CMS.
  It provides a lightweight alternative to the official Xibo player,
