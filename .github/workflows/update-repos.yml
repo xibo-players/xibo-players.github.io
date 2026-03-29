@@ -161,21 +161,21 @@ jobs:
                 clean_name="$name"
               fi
 
-              # Distribute by arch
+              # Distribute by arch — keep original name (with fc* prefix) to match GitHub Release asset
               if [[ "$clean_name" == *.src.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/SRPMS/$clean_name"
-                echo "  [fc${fc_ver}] SRPMS: $clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/SRPMS/$name"
+                echo "  [fc${fc_ver}] SRPMS: $name"
               elif [[ "$clean_name" == *.x86_64.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
-                echo "  [fc${fc_ver}] x86_64: $clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$name"
+                echo "  [fc${fc_ver}] x86_64: $name"
               elif [[ "$clean_name" == *.aarch64.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
-                echo "  [fc${fc_ver}] aarch64: $clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$name"
+                echo "  [fc${fc_ver}] aarch64: $name"
               elif [[ "$clean_name" == *.noarch.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/noarch/$clean_name"
-                echo "  [fc${fc_ver}] noarch: $clean_name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$name"
+                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/noarch/$name"
+                echo "  [fc${fc_ver}] noarch: $name"
               fi
             done
 
