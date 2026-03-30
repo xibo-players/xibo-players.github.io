@@ -505,5 +505,5 @@ jobs:
 
           echo ""
           echo "All repositories uploaded to R2:"
-          echo "  DEB: https://images.xiboplayer.org/deb/"
-          echo "  RPM: https://images.xiboplayer.org/rpm/"
+          echo "  DEB: https://dl.xiboplayer.org/deb/"
+          echo "  RPM: https://dl.xiboplayer.org/rpm/"
