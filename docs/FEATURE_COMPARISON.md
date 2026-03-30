@@ -135,4 +135,4 @@ Features present in upstream players that XiboPlayer does not implement:
 6. **AXE/SSP ad integration** — Windows player has hooks for Broadsign AXE and SSP ad server rotation. XiboPlayer has an `isSspEnabled` stub but no active ad server integration
 7. **Cycle playback with play count** — Windows player supports per-widget play count limits within sub-playlist cycle mode. XiboPlayer supports sub-playlist cycle playback and `playCount` but the exact per-cycle reset behaviour may differ
 
-For the complete detailed comparison with per-feature tables, see the [full comparison document on GitHub](https://github.com/xibo-players/xibo-players.github.io/blob/main/docs/FEATURE_COMPARISON.md).
+For the complete detailed comparison, visit [xiboplayer.org/features/comparison](https://www.xiboplayer.org/features/comparison).
