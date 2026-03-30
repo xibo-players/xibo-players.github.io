@@ -8,6 +8,7 @@ BuildArch:      noarch
 
 Source0:        xiboplayer.repo
 Source1:        RPM-GPG-KEY-xiboplayer
+Source2:        copr-keyd.repo
 
 %description
 This package contains the Xibo Players repository configuration
@@ -19,12 +20,17 @@ install -d %{buildroot}%{_sysconfdir}/pki/rpm-gpg
 
 install -pm 0644 %{SOURCE0} %{buildroot}%{_sysconfdir}/yum.repos.d/xiboplayer.repo
 install -pm 0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
+install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/yum.repos.d/copr-keyd.repo
 
 %files
 %{_sysconfdir}/yum.repos.d/xiboplayer.repo
+%{_sysconfdir}/yum.repos.d/copr-keyd.repo
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
 
 %changelog
+* Mon Mar 30 2026 Pau Aliagas <linuxnow@gmail.com> - 44-2
+- Include keyd COPR repo so dnf can resolve keyd dependency
+
 * Tue Feb 25 2026 Pau Aliagas <linuxnow@gmail.com> - 43-5
 - GPG-sign RPM in CI workflow
 
