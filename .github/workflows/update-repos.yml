@@ -503,6 +503,12 @@ jobs:
             aws s3 cp rpm/xibo-players.repo "$BUCKET/rpm/xibo-players.repo" \
               --endpoint-url "$R2_ENDPOINT"
 
+          # Upload static files (install script, index redirect)
+          for f in install-raspberry-pi.sh index.html; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "$BUCKET/$f" --endpoint-url "$R2_ENDPOINT"
+          done
+
           echo ""
           echo "All repositories uploaded to R2:"
           echo "  DEB: https://dl.xiboplayer.org/deb/"
