@@ -295,10 +295,19 @@ jobs:
                 fi
               done
 
-              # Unprefixed DEBs default to ubuntu2404 (legacy compatibility)
+              # Unprefixed DEBs go to ALL distros (e.g. xiboplayer-release)
               if [ -z "$distro_tag" ]; then
-                distro_tag="ubuntu2404"
                 clean_name="$name"
+                arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
+                for tag in "${KNOWN_TAGS[@]}"; do
+                  REPO_BASE="${DISTRO_PATH[$tag]}"
+                  case "$arch" in
+                    amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$tag] amd64: $clean_name (${size_mb}MB)" ;;
+                    arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$tag] arm64: $clean_name (${size_mb}MB)" ;;
+                    all)   cp "$deb" "$REPO_BASE/all/$clean_name";   echo "  [$tag] all: $clean_name (${size_mb}MB)" ;;
+                  esac
+                done
+                continue
               fi
 
               REPO_BASE="${DISTRO_PATH[$distro_tag]}"
