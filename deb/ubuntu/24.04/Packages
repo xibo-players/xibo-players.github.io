@@ -1,0 +1,237 @@
+Package: arexibo
+Version: 0.3.3-2
+Architecture: arm64
+Maintainer: Pau Aliagas <pau@linuxnow.com>
+Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
+Filename: ./arm64/arexibo_0.3.3-2_arm64.deb
+Size: 5709406
+MD5sum: 41f3fc88ef96f8f7d329d77718e01b41
+SHA1: 3d60433ac79c9cb4150480c873e194bc3999f988
+SHA256: 997e78a609a4efc8add67c1459deabdcaf06809f71a2b34b9888ff89768a07bb
+Section: misc
+Priority: optional
+Homepage: https://github.com/birkenfeld/arexibo
+Description: Rust-based digital signage player for Xibo CMS
+ Arexibo is a Rust-based digital signage player compatible with Xibo CMS.
+ It provides a lightweight alternative to the official Xibo player,
+ designed for kiosk and digital signage deployments on Linux.
+
+Package: arexibo
+Version: 0.3.3-2
+Architecture: amd64
+Maintainer: Pau Aliagas <pau@linuxnow.com>
+Depends: libqt6webenginecore6, libqt6webenginewidgets6, libdbus-1-3, libzmq5
+Filename: ./amd64/arexibo_0.3.3-2_amd64.deb
+Size: 5949178
+MD5sum: 91e0303bb3658bc523651e8791eee6b3
+SHA1: 7a180fa61258d5b8ea5a881c010b0e0cf348028e
+SHA256: 64bee128a84a542a7ba441bb714daad8c11b1dc2bdd0ecad5021f6ded8f61bfb
+Section: misc
+Priority: optional
+Homepage: https://github.com/birkenfeld/arexibo
+Description: Rust-based digital signage player for Xibo CMS
+ Arexibo is a Rust-based digital signage player compatible with Xibo CMS.
+ It provides a lightweight alternative to the official Xibo player,
+ designed for kiosk and digital signage deployments on Linux.
+
+Package: xiboplayer-chromium
+Version: 0.7.9-1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Installed-Size: 60880
+Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./arm64/xiboplayer-chromium_0.7.9-1_all.deb
+Size: 8390020
+MD5sum: a07e4f2bd22cfd44c39a66424fce469c
+SHA1: c0ced8e98f997fdf3350d20d8c28c2d880c9bde0
+SHA256: 075207904191c47b644af659221f6c6a8a3f0ad5409d10f0420915bed7cd928d
+Section: misc
+Priority: optional
+Homepage: https://www.xiboplayer.org
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
+Package: xiboplayer-chromium
+Version: 0.7.9-1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Installed-Size: 60880
+Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./amd64/xiboplayer-chromium_0.7.9-1_all.deb
+Size: 8390020
+MD5sum: a07e4f2bd22cfd44c39a66424fce469c
+SHA1: c0ced8e98f997fdf3350d20d8c28c2d880c9bde0
+SHA256: 075207904191c47b644af659221f6c6a8a3f0ad5409d10f0420915bed7cd928d
+Section: misc
+Priority: optional
+Homepage: https://www.xiboplayer.org
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
+Package: xiboplayer-chromium
+Version: 0.7.9-1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Installed-Size: 60880
+Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
+Recommends: x11-xserver-utils, xdotool
+Filename: ./all/xiboplayer-chromium_0.7.9-1_all.deb
+Size: 8390020
+MD5sum: a07e4f2bd22cfd44c39a66424fce469c
+SHA1: c0ced8e98f997fdf3350d20d8c28c2d880c9bde0
+SHA256: 075207904191c47b644af659221f6c6a8a3f0ad5409d10f0420915bed7cd928d
+Section: misc
+Priority: optional
+Homepage: https://www.xiboplayer.org
+Description: Self-contained Xibo digital signage player (Chromium kiosk)
+ Bundles the PWA player locally and serves it via a Node.js server,
+ then launches Chromium in kiosk mode. Only the CMS base URL is needed.
+
+Package: xiboplayer-release
+Version: 1.0.0
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./arm64/xiboplayer-release_1.0.0_all.deb
+Size: 3808
+MD5sum: dc1bb4f1ef454ac7347d0e4896cea304
+SHA1: a8fb7ae335436802a8e1cd19045b94f84bd59466
+SHA256: 7c8ab2619b50ac74bbf16e1c180adfdf3a96e1e336c40a3a187f5e39f6b24690
+Section: misc
+Priority: optional
+Homepage: https://dnf.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.0
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./amd64/xiboplayer-release_1.0.0_all.deb
+Size: 3808
+MD5sum: dc1bb4f1ef454ac7347d0e4896cea304
+SHA1: a8fb7ae335436802a8e1cd19045b94f84bd59466
+SHA256: 7c8ab2619b50ac74bbf16e1c180adfdf3a96e1e336c40a3a187f5e39f6b24690
+Section: misc
+Priority: optional
+Homepage: https://dnf.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.0
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./all/xiboplayer-release_1.0.0_all.deb
+Size: 3808
+MD5sum: dc1bb4f1ef454ac7347d0e4896cea304
+SHA1: a8fb7ae335436802a8e1cd19045b94f84bd59466
+SHA256: 7c8ab2619b50ac74bbf16e1c180adfdf3a96e1e336c40a3a187f5e39f6b24690
+Section: misc
+Priority: optional
+Homepage: https://dnf.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./arm64/xiboplayer-release_1.0.1_all.deb
+Size: 3808
+MD5sum: fcbde33bcf82f62adc0383645b6842c9
+SHA1: 253b15fd476ffcbecfcd71670b9493aad2ce8966
+SHA256: 5fd72e25d6e957ba6d84ff61f39348898e7f4603a06ee80326778ab2c3baa860
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./amd64/xiboplayer-release_1.0.1_all.deb
+Size: 3808
+MD5sum: fcbde33bcf82f62adc0383645b6842c9
+SHA1: 253b15fd476ffcbecfcd71670b9493aad2ce8966
+SHA256: 5fd72e25d6e957ba6d84ff61f39348898e7f4603a06ee80326778ab2c3baa860
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.1
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./all/xiboplayer-release_1.0.1_all.deb
+Size: 3808
+MD5sum: fcbde33bcf82f62adc0383645b6842c9
+SHA1: 253b15fd476ffcbecfcd71670b9493aad2ce8966
+SHA256: 5fd72e25d6e957ba6d84ff61f39348898e7f4603a06ee80326778ab2c3baa860
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.2
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./arm64/xiboplayer-release_1.0.2_all.deb
+Size: 3832
+MD5sum: b2700060e0cdd6285ede6ff339bb6f94
+SHA1: cd2cd3e964b920a39b503cccf1ed98eca8163bf1
+SHA256: 5f110e508aebff4b738641752baf0119dd38514097527e2e823d7b68010fcc5a
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.2
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./amd64/xiboplayer-release_1.0.2_all.deb
+Size: 3832
+MD5sum: b2700060e0cdd6285ede6ff339bb6f94
+SHA1: cd2cd3e964b920a39b503cccf1ed98eca8163bf1
+SHA256: 5f110e508aebff4b738641752baf0119dd38514097527e2e823d7b68010fcc5a
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+
+Package: xiboplayer-release
+Version: 1.0.2
+Architecture: all
+Maintainer: Pau Aliagas <linuxnow@gmail.com>
+Filename: ./all/xiboplayer-release_1.0.2_all.deb
+Size: 3832
+MD5sum: b2700060e0cdd6285ede6ff339bb6f94
+SHA1: cd2cd3e964b920a39b503cccf1ed98eca8163bf1
+SHA256: 5f110e508aebff4b738641752baf0119dd38514097527e2e823d7b68010fcc5a
+Section: misc
+Priority: optional
+Homepage: https://dl.xiboplayer.org
+Description: Xibo Players repository configuration
+ This package contains the Xibo Players APT repository configuration
+ and the GPG key used to sign packages.
+

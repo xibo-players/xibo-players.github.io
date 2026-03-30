@@ -386,54 +386,33 @@ jobs:
             codename="${DISTRO_CODENAME[$tag]}"
             echo "  Distro: $tag ($codename)"
 
+            # Generate single root-level Packages index (flat repo format)
+            # dpkg-scanpackages recurses into arch subdirs and sets correct Filename: paths
+            (cd "$REPO_BASE" && dpkg-scanpackages --multiversion . /dev/null > Packages 2>/dev/null && gzip -9c Packages > Packages.gz)
+            pkg_count=$(grep -c '^Package:' "$REPO_BASE/Packages" 2>/dev/null || echo 0)
+            echo "    $pkg_count packages in root Packages index"
+
+            # Remove old per-arch Packages files (no longer needed)
             for arch in amd64 arm64 all; do
-              arch_dir="$REPO_BASE/$arch"
-              shopt -s nullglob
-              deb_files=("$arch_dir"/*.deb)
-              shopt -u nullglob
-              if [ ${#deb_files[@]} -gt 0 ]; then
-                echo "    $arch: ${#deb_files[@]} packages"
-                (cd "$arch_dir" && dpkg-scanpackages . /dev/null > Packages && gzip -9c Packages > Packages.gz)
-              else
-                rm -f "$arch_dir/Packages" "$arch_dir/Packages.gz"
-              fi
+              rm -f "$REPO_BASE/$arch/Packages" "$REPO_BASE/$arch/Packages.gz"
             done
 
-            # Rebuild Sources index
-            src_dir="$REPO_BASE/source"
-            shopt -s nullglob
-            dsc_files=("$src_dir"/*.dsc)
-            shopt -u nullglob
-            if [ ${#dsc_files[@]} -gt 0 ]; then
-              echo "    source: ${#dsc_files[@]} source packages"
-              (cd "$src_dir" && dpkg-scansources . /dev/null > Sources && gzip -9c Sources > Sources.gz)
-            else
-              rm -f "$src_dir/Sources" "$src_dir/Sources.gz"
-            fi
-
-            # Generate Release file with checksums
+            # Generate Release file with checksums (flat repo — no Components, no Architectures)
             (
               cd "$REPO_BASE"
               {
                 echo "Origin: xibo-players"
                 echo "Label: Xibo Players"
-                echo "Suite: stable"
+                echo "Suite: ./"
                 echo "Codename: $codename"
-                echo "Architectures: amd64 arm64 all"
-                # No Components line — this is a flat repo with arch/ subdirectories
                 echo "Date: $(date -Ru)"
                 echo "MD5Sum:"
-                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
+                for f in Packages Packages.gz; do
                   [ -f "$f" ] || continue
                   echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
                 done
-                echo "SHA1:"
-                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
-                  [ -f "$f" ] || continue
-                  echo " $(sha1sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
-                done
                 echo "SHA256:"
-                for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
+                for f in Packages Packages.gz; do
                   [ -f "$f" ] || continue
                   echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
                 done
