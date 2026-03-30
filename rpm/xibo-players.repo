@@ -1,6 +1,6 @@
 [xibo-players]
 name=Xibo Players
 enabled=1
-baseurl=https://dl.xiboplayer.org/rpm/fedora/$releasever/$basearch/
+baseurl=https://images.xiboplayer.org/rpm/fedora/$releasever/$basearch/
 gpgcheck=1
-gpgkey=https://dl.xiboplayer.org/rpm/RPM-GPG-KEY
+gpgkey=https://images.xiboplayer.org/rpm/RPM-GPG-KEY

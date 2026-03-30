@@ -454,67 +454,56 @@ jobs:
 
           rm -f /tmp/gpg-passphrase
 
-      # ── Upload DEB repo to Cloudflare R2 ─────────────────────────────
-      - name: Upload DEB repository to R2
+      # ── Upload everything to Cloudflare R2 ───────────────────────────
+      - name: Upload repositories to R2
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
         run: |
-          # Install AWS CLI for R2 uploads
           dnf install -y awscli2 2>/dev/null || dnf install -y awscli 2>/dev/null || pip install awscli
 
-          echo "Uploading DEB repository to R2..."
+          BUCKET="s3://xiboplayer-images"
+
+          # Upload DEB repos
+          echo "=== Uploading DEB repositories ==="
           for suite in "deb/ubuntu/${UBUNTU_VER}" "deb/debian/${DEBIAN_VER}"; do
             [ -d "$suite" ] || continue
-            echo "=== $suite ==="
-            # Upload all files in the suite directory recursively
-            aws s3 sync "$suite/" "s3://xiboplayer-images/$suite/" \
-              --endpoint-url "$R2_ENDPOINT" \
-              --delete \
-              --no-progress
-            echo "  Done: $suite"
+            echo "  $suite"
+            aws s3 sync "$suite/" "$BUCKET/$suite/" \
+              --endpoint-url "$R2_ENDPOINT" --delete --no-progress
           done
 
-          # Upload GPG keys
+          # Upload DEB GPG keys
           for key in deb/GPG-KEY.asc deb/DEB-GPG-KEY-*.asc; do
             [ -f "$key" ] || continue
-            aws s3 cp "$key" "s3://xiboplayer-images/$key" \
-              --endpoint-url "$R2_ENDPOINT"
-            echo "Uploaded: $key"
+            aws s3 cp "$key" "$BUCKET/$key" --endpoint-url "$R2_ENDPOINT"
           done
+
+          # Upload RPM repos
+          echo "=== Uploading RPM repositories ==="
+          for v in $FEDORA_VERS; do
+            for arch in x86_64 aarch64 noarch SRPMS; do
+              dir="rpm/fedora/${v}/$arch"
+              [ -d "$dir/repodata" ] || continue
+              echo "  $dir"
+              aws s3 sync "$dir/" "$BUCKET/$dir/" \
+                --endpoint-url "$R2_ENDPOINT" --delete --no-progress
+            done
+          done
+
+          # Upload RPM GPG keys
+          for key in rpm/RPM-GPG-KEY rpm/RPM-GPG-KEY-*; do
+            [ -f "$key" ] || continue
+            aws s3 cp "$key" "$BUCKET/$key" --endpoint-url "$R2_ENDPOINT"
+          done
+
+          # Upload RPM .repo file
+          [ -f rpm/xibo-players.repo ] && \
+            aws s3 cp rpm/xibo-players.repo "$BUCKET/rpm/xibo-players.repo" \
+              --endpoint-url "$R2_ENDPOINT"
 
           echo ""
-          echo "DEB repository available at:"
-          echo "  https://images.xiboplayer.org/deb/debian/${DEBIAN_VER}/"
-          echo "  https://images.xiboplayer.org/deb/ubuntu/${UBUNTU_VER}/"
-
-      # ── Commit RPM metadata to git (stays on GitHub Pages) ──────────
-      - name: Push RPM changes to git
-        run: |
-          cd "$GITHUB_WORKSPACE"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Only stage RPM metadata — DEBs are on R2 now
-          git add rpm/ _repos/
-
-          if git diff --cached --quiet; then
-            echo "No RPM changes to commit"
-            exit 0
-          fi
-
-          TRIGGER="${{ github.event.client_payload.package || 'manual' }}"
-          git commit -m "Update repositories (trigger: ${TRIGGER})"
-
-          for attempt in 1 2 3; do
-            if git push; then
-              echo "Push succeeded (attempt $attempt)"
-              exit 0
-            fi
-            echo "Push failed (attempt $attempt), rebasing onto remote..."
-            git fetch origin main
-            git rebase origin/main
-          done
-          echo "Push failed after 3 attempts"
-          exit 1
+          echo "All repositories uploaded to R2:"
+          echo "  DEB: https://images.xiboplayer.org/deb/"
+          echo "  RPM: https://images.xiboplayer.org/rpm/"
