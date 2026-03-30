@@ -70,9 +70,9 @@ Both players run the same PWA. Profiled in production kiosk fullscreen mode play
 | Offline playback | Yes (content store) | Yes (content store) |
 
 **Key findings:**
-- **CPU parity** — both players at 4-8% in production fullscreen mode. GPU rasterization flags (`--enable-gpu-rasterization`, `CanvasOopRasterization`) reduced Chromium from 91% to 5%.
-- **No memory leaks** — both show 0% PSS growth over extended runs. Chromium's renderer churn (new PIDs every ~30 min from iframe content) doesn't leak — each renderer stays bounded.
-- **GPU auto-detection** — on hybrid GPU systems (Optimus), the player selects the display GPU automatically. NVIDIA render-only GPUs are skipped (can't share buffers on Wayland).
+- **CPU parity** — both players at 4-8% in production fullscreen mode with GPU-accelerated rasterization and compositing.
+- **Continuous automated monitoring** — CPU per process type (main, GPU, renderer, network), PSS memory, file descriptors, GPU DRM render time and iGPU utilization are tracked every 60 seconds. Zero memory growth confirmed over extended production runs.
+- **GPU auto-detection** — on hybrid GPU systems (Optimus), the player selects the display GPU automatically. Render-only GPUs are skipped when they can't share framebuffers on Wayland.
 - Both players survive CMS outages — cached layouts keep playing offline.
 
 ---
