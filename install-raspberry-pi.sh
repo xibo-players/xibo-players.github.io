@@ -21,14 +21,14 @@ echo "Detected: $CODENAME → using APT suite $SUITE"
 
 # Install GPG key
 curl -fsSL https://dl.xiboplayer.org/deb/GPG-KEY.asc \
-  | sudo gpg --dearmor -o /usr/share/keyrings/xiboplayer.gpg
+  | sudo tee /usr/share/keyrings/xiboplayer.asc > /dev/null
 
 # Add APT source
 cat <<EOF | sudo tee /etc/apt/sources.list.d/xiboplayer.sources
 Types: deb
 URIs: https://dl.xiboplayer.org/deb/${SUITE}
 Suites: ./
-Signed-By: /usr/share/keyrings/xiboplayer.gpg
+Signed-By: /usr/share/keyrings/xiboplayer.asc
 EOF
 
 sudo apt-get update
