@@ -6,39 +6,38 @@ Label: Xibo Players
 Suite: stable
 Codename: trixie
 Architectures: amd64 arm64 all
-Components: main
-Date: Mon, 30 Mar 2026 01:15:29 +0000
+Date: Mon, 30 Mar 2026 09:51:46 +0000
 MD5Sum:
  547a79e8694588de576d947d5d54835d 772 all/Packages
  9c84ba58373a2bf9674df466378b0c8e 1505 amd64/Packages
  f367705aaea3f7db4ac675e4127a1126 1505 arm64/Packages
- d97f9f0ad0a3fdf46866a19d8a4a8b3c 551 all/Packages.gz
- 22165865f8bb42aef51dc22bf892029d 871 amd64/Packages.gz
- a3715ade370f4d91e6f3e2b921445388 866 arm64/Packages.gz
+ 06ce18d9d2da7ab005bc851de6d5259f 551 all/Packages.gz
+ 92df2901874d9cd46dae1923a05c9e7f 871 amd64/Packages.gz
+ 3c1f8685a8736f1578e80732122c2ca3 866 arm64/Packages.gz
  66cd6bf2a393ee10620e583683f20613 2447 source/Sources
- 37bb0ea4c798af6576275d03cdaa728e 964 source/Sources.gz
+ 460f76c78c622aceef07940337ad8be9 964 source/Sources.gz
 SHA1:
  00d7479f86cd3ee21ee76b0257af66a8210fc3cf 772 all/Packages
  712a785ee70e9a998b7303e313aadee7b61ac979 1505 amd64/Packages
  0c665d3af232407ae3e295319e021e541ae834cb 1505 arm64/Packages
- 4b28143912496cc6eec68106fee9d2863dbfc6ed 551 all/Packages.gz
- 18fcb275b4f38a623471f4e714295e1a44cbbda5 871 amd64/Packages.gz
- c83ba0f7ff41e3e785f05c7bc935d2b3cc8c9b15 866 arm64/Packages.gz
+ f8e02cc869a7d94c0f6f8adc356db0027e7d059a 551 all/Packages.gz
+ 185618ce0d98dc00a0fb828b291fc8e948aa4c25 871 amd64/Packages.gz
+ 7d09d35c73bf529d41da19ca42f2f793066ded99 866 arm64/Packages.gz
  0e8d39670d62bd8b152ebe8acdee05dd011db60e 2447 source/Sources
- 3837efa02e4955479f1bad868a0de750f59d6018 964 source/Sources.gz
+ 1d74dcfa22c330aa00f0468c436d1a75871a6368 964 source/Sources.gz
 SHA256:
  59728bc05636905df68d26ff43251a46b6db4a51b2904787f9c0e4f38cb610b8 772 all/Packages
  8a1bfd2e80c2d7a49ab5f4c590f78fe51252542f5caf210a12287452c4d495a0 1505 amd64/Packages
  e82a5d8e9c045e864dc0d41ca5022207246910852514244349197c9d3c094ad2 1505 arm64/Packages
- ae6296b42dba0f2e6363247a5e91390a72ca110866652559e63676cef0db5e9d 551 all/Packages.gz
- 2f0027dccfdfc9cb92205bb3c81259878a4a1670b981aabdf97fa59b48d51949 871 amd64/Packages.gz
- 6ae938272220efeb86832ed1385fc6839a605976e369972b38d887592e6e474f 866 arm64/Packages.gz
+ 0432a4a0d785c18039a4150187334fdc0c758c542646d2e6fc3d99e9f4b84997 551 all/Packages.gz
+ d416bb0072da20f88864e227559587d047a3691b380383e930b374a66d8aa6fa 871 amd64/Packages.gz
+ f8f3ac000564548b0fa01055c65a20c55aa35f04e96d4e5b3321749fab221519 866 arm64/Packages.gz
  f8d7e1b0a8f52472e5189b7665cb1f930f0b8b8a924a486d656fe838c3d129f5 2447 source/Sources
- e6ab49d9d5ca88342132207e27ef625e73f84c401a5cd969e95e6d9f15885d72 964 source/Sources.gz
+ 005b1ef4154656aff44d55e86a13e3e4c98d86590af457f5dcaebc471e98ab3f 964 source/Sources.gz
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQQEqReWkuhs8R0QPL9aMOortp0y8gUCacnOsQAKCRBaMOortp0y
-8q2vAQCbkgac8kLgmvfAtr0zt9jRDEdGcjmysqF6KP6KHuGlKAEA555kDGMPwhMw
-utrgF6qtxvrkhikwieP3SwZigxUxwwk=
-=OZ/3
+iHUEARYKAB0WIQQEqReWkuhs8R0QPL9aMOortp0y8gUCacpHsgAKCRBaMOortp0y
+8mD5AQDYRiXB7U9LQJBqg0sYizI1vPUlIK+G6whfJwkmVB7OMwEA1SO3n+fDgs8m
+f0tmxQ3y6zewqzzjSC81dg1jOb1pQQw=
+=bgiP
 -----END PGP SIGNATURE-----
