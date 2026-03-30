@@ -3,8 +3,7 @@ Label: Xibo Players
 Suite: stable
 Codename: noble
 Architectures: amd64 arm64 all
-Components: main
-Date: Mon, 30 Mar 2026 01:15:28 +0000
+Date: Mon, 30 Mar 2026 09:48:10 +0000
 MD5Sum:
  2e3fcf7c8403bcdc53b68af26c273ac6 1325 all/Packages
  ea065a555631c8c945261876a2e115c2 2058 amd64/Packages

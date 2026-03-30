@@ -1,11 +1,9 @@
 Types: deb
 URIs: https://dl.xiboplayer.org/deb/ubuntu/24.04
-Suites: stable
-Components: main
+Suites: ./
 Signed-By: /usr/share/keyrings/xiboplayer.asc
 
 Types: deb
 URIs: https://dl.xiboplayer.org/deb/debian/trixie
-Suites: stable
-Components: main
+Suites: ./
 Signed-By: /usr/share/keyrings/xiboplayer.asc

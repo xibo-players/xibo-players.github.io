@@ -3,8 +3,7 @@ Label: Xibo Players
 Suite: stable
 Codename: trixie
 Architectures: amd64 arm64 all
-Components: main
-Date: Mon, 30 Mar 2026 01:15:29 +0000
+Date: Mon, 30 Mar 2026 09:48:09 +0000
 MD5Sum:
  547a79e8694588de576d947d5d54835d 772 all/Packages
  9c84ba58373a2bf9674df466378b0c8e 1505 amd64/Packages

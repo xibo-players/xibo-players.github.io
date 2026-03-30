@@ -420,7 +420,7 @@ jobs:
                 echo "Suite: stable"
                 echo "Codename: $codename"
                 echo "Architectures: amd64 arm64 all"
-                echo "Components: main"
+                # No Components line — this is a flat repo with arch/ subdirectories
                 echo "Date: $(date -Ru)"
                 echo "MD5Sum:"
                 for f in */Packages */Packages.gz source/Sources source/Sources.gz; do
