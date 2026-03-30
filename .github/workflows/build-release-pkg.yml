@@ -40,16 +40,22 @@ jobs:
           cp _repos/xiboplayer-release/copr-keyd.repo ~/rpmbuild/SOURCES/
           cp rpm/RPM-GPG-KEY ~/rpmbuild/SOURCES/RPM-GPG-KEY-xiboplayer
 
-          # Build for both Fedora 43 and 44
-          for ver in 43 44; do
+          # Build for Fedora 43 (44 repos not available yet)
+          for ver in 43; do
             echo "Building for Fedora $ver..."
             rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec \
               --define "_version ${ver}"
           done
 
-          # Copy to output
+          # Copy to output with .fcXX in filename for proper repo classification
           mkdir -p dist
-          find ~/rpmbuild/RPMS/ -name '*.rpm' -exec cp {} dist/ \;
+          for ver in 43; do
+            for rpm in ~/rpmbuild/RPMS/noarch/xiboplayer-release-${ver}-*.noarch.rpm; do
+              [ -f "$rpm" ] || continue
+              base=$(basename "$rpm" .noarch.rpm)
+              cp "$rpm" "dist/${base}.fc${ver}.noarch.rpm"
+            done
+          done
           echo "RPM:"
           ls -lh dist/*.rpm
 
