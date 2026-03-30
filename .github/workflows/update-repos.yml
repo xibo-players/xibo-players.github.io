@@ -42,7 +42,7 @@ env:
   UBUNTU_VER: '24.04'
   DEBIAN_VER: 'trixie'
   # Skip .deb files larger than this (MB) — GitHub rejects >100MB
-  FILE_SIZE_LIMIT_MB: '95'
+  FILE_SIZE_LIMIT_MB: '999999'  # No size limit — DEBs go to R2, not git
 
 jobs:
   update:
@@ -454,29 +454,58 @@ jobs:
 
           rm -f /tmp/gpg-passphrase
 
-      # ── Commit and push ─────────────────────────────────────────────
-      - name: Push changes
+      # ── Upload DEB repo to Cloudflare R2 ─────────────────────────────
+      - name: Upload DEB repository to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          pip install awscli 2>/dev/null || pip install --user awscli 2>/dev/null || true
+
+          echo "Uploading DEB repository to R2..."
+          for suite in "deb/ubuntu/${UBUNTU_VER}" "deb/debian/${DEBIAN_VER}"; do
+            [ -d "$suite" ] || continue
+            echo "=== $suite ==="
+            # Upload all files in the suite directory recursively
+            aws s3 sync "$suite/" "s3://xiboplayer-images/$suite/" \
+              --endpoint-url "$R2_ENDPOINT" \
+              --delete \
+              --no-progress
+            echo "  Done: $suite"
+          done
+
+          # Upload GPG keys
+          for key in deb/GPG-KEY.asc deb/DEB-GPG-KEY-*.asc; do
+            [ -f "$key" ] || continue
+            aws s3 cp "$key" "s3://xiboplayer-images/$key" \
+              --endpoint-url "$R2_ENDPOINT"
+            echo "Uploaded: $key"
+          done
+
+          echo ""
+          echo "DEB repository available at:"
+          echo "  https://images.xiboplayer.org/deb/debian/${DEBIAN_VER}/"
+          echo "  https://images.xiboplayer.org/deb/ubuntu/${UBUNTU_VER}/"
+
+      # ── Commit RPM metadata to git (stays on GitHub Pages) ──────────
+      - name: Push RPM changes to git
         run: |
           cd "$GITHUB_WORKSPACE"
-          # actions/checkout sets safe.directory with a temp HOME that
-          # subsequent steps don't inherit — re-add it for our git
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Only stage repo metadata — never touch site HTML/CSS/JS
-          git add rpm/ deb/ _repos/
+          # Only stage RPM metadata — DEBs are on R2 now
+          git add rpm/ _repos/
 
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No RPM changes to commit"
             exit 0
           fi
 
-          # Build informative commit message
           TRIGGER="${{ github.event.client_payload.package || 'manual' }}"
           git commit -m "Update repositories (trigger: ${TRIGGER})"
 
-          # Retry push — each run regenerates everything from scratch,
-          # so on conflict we pull, re-commit our staged files, and push.
           for attempt in 1 2 3; do
             if git push; then
               echo "Push succeeded (attempt $attempt)"

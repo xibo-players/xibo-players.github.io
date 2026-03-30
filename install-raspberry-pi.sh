@@ -20,11 +20,11 @@ esac
 echo "Detected: $CODENAME → using APT suite $SUITE"
 
 # Install GPG key
-curl -fsSL https://dl.xiboplayer.org/deb/GPG-KEY.asc \
+curl -fsSL https://images.xiboplayer.org/deb/GPG-KEY.asc \
   | sudo tee /usr/share/keyrings/xiboplayer.asc > /dev/null
 
 # Add APT source
-echo "deb [signed-by=/usr/share/keyrings/xiboplayer.asc] https://dl.xiboplayer.org/deb/${SUITE} ./" \
+echo "deb [signed-by=/usr/share/keyrings/xiboplayer.asc] https://images.xiboplayer.org/deb/${SUITE} ./" \
   | sudo tee /etc/apt/sources.list.d/xiboplayer.list
 
 sudo apt-get update
