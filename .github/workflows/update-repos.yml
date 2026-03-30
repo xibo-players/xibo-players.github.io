@@ -460,6 +460,11 @@ jobs:
           echo "$DEB_GPG_KEY" | base64 -d | gpg --batch --pinentry-mode loopback \
             --passphrase "${DEB_GPG_PASSPHRASE}" --import
 
+          # Get primary key fingerprint — sqv (Sequoia) on Debian Trixie cannot
+          # verify signatures made by a subkey, so we must sign with the primary key.
+          PRIMARY_FP=$(gpg --list-keys --with-colons 2>/dev/null | awk -F: '/^pub/{found=1} found && /^fpr/{print $10; exit}')
+          echo "Signing with primary key: $PRIMARY_FP"
+
           # Sign Release files for all distros
           for RELEASE_FILE in "deb/ubuntu/${UBUNTU_VER}/Release" "deb/debian/${DEBIAN_VER}/Release"; do
             if [ ! -f "$RELEASE_FILE" ]; then
@@ -468,8 +473,8 @@ jobs:
             fi
 
             rm -f "${RELEASE_FILE}.gpg" "$(dirname ${RELEASE_FILE})/InRelease"
-            gpg --armor --detach-sign --output "${RELEASE_FILE}.gpg" "${RELEASE_FILE}"
-            gpg --armor --clearsign --output "$(dirname ${RELEASE_FILE})/InRelease" "${RELEASE_FILE}"
+            gpg --armor --detach-sign --default-key "${PRIMARY_FP}!" --output "${RELEASE_FILE}.gpg" "${RELEASE_FILE}"
+            gpg --armor --clearsign --default-key "${PRIMARY_FP}!" --output "$(dirname ${RELEASE_FILE})/InRelease" "${RELEASE_FILE}"
             echo "Signed: $RELEASE_FILE"
           done
 
