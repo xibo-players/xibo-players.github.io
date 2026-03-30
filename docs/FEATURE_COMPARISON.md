@@ -9,7 +9,7 @@ description: "Detailed feature comparison: XiboPlayer v0.7.9 vs upstream Xibo pl
 **Our Version:** v0.7.9 (SDK v0.7.9, PWA v0.7.9, Electron v0.7.9, Chromium v0.7.9)
 
 **Compared against:**
-- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.23 (npm, 2026-03-30) — rendering library used in Xibo's Electron/ChromeOS players
+- [xibo-layout-renderer] v1.0.24 (npm, 2026-03-30) — rendering library used in Xibo's Electron/ChromeOS players
 - [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.7 (npm, 2026-03-30) — upstream XMR client (replaced by our native implementation)
 - [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R407 (C#/.NET + CEF, 2026-03-30) — the only actively maintained upstream player
 - [Arexibo](https://github.com/xibo-players/arexibo) v0.3.2 (Rust + Qt, 2026-03-30) — PDF rendering, RPM/DEB packaging, duration fixes
@@ -39,7 +39,7 @@ description: "Detailed feature comparison: XiboPlayer v0.7.9 vs upstream Xibo pl
 
 ## Performance Comparison
 
-| Metric | XLR v1.0.23 | Windows v4 R407 | Arexibo v0.3.2 | XiboPlayer v0.7.9 |
+| Metric | XLR v1.0.24 | Windows v4 R407 | Arexibo v0.3.2 | XiboPlayer v0.7.9 |
 |--------|-------------|-----------------|---------|-------------------|
 | Initial load (cold) | 17-20s | 5-10s | 12-15s | **3-5s** |
 | Layout replay | 2-3s | 1-2s | <1s | **<0.5s** |
@@ -135,4 +135,3 @@ Features present in upstream players that XiboPlayer does not implement:
 6. **AXE/SSP ad integration** — Windows player has hooks for Broadsign AXE and SSP ad server rotation. XiboPlayer has an `isSspEnabled` stub but no active ad server integration
 7. **Cycle playback with play count** — Windows player supports per-widget play count limits within sub-playlist cycle mode. XiboPlayer supports sub-playlist cycle playback and `playCount` but the exact per-cycle reset behaviour may differ
 
-For the complete detailed comparison, visit [xiboplayer.org/features/comparison](https://www.xiboplayer.org/features/comparison).
