@@ -461,7 +461,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
         run: |
-          pip install awscli 2>/dev/null || pip install --user awscli 2>/dev/null || true
+          # Install AWS CLI for R2 uploads
+          dnf install -y awscli2 2>/dev/null || dnf install -y awscli 2>/dev/null || pip install awscli
 
           echo "Uploading DEB repository to R2..."
           for suite in "deb/ubuntu/${UBUNTU_VER}" "deb/debian/${DEBIAN_VER}"; do
