@@ -1,18 +1,18 @@
 ---
 title: Feature Comparison
-description: "Detailed feature comparison: XiboPlayer v0.7.7 vs upstream Xibo players."
+description: "Detailed feature comparison: XiboPlayer v0.7.9 vs upstream Xibo players."
 ---
 
-# Feature Comparison: XiboPlayer v0.7.7 vs Upstream Players
+# Feature Comparison: XiboPlayer v0.7.9 vs Upstream Players
 
-**Last Updated:** 2026-03-26
-**Our Version:** v0.7.7 (SDK v0.7.7, PWA v0.7.7, Electron v0.7.7, Chromium v0.7.7)
+**Last Updated:** 2026-03-30
+**Our Version:** v0.7.9 (SDK v0.7.9, PWA v0.7.9, Electron v0.7.9, Chromium v0.7.9)
 
 **Compared against:**
-- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.23 (npm, 2026-03-26) — rendering library used in Xibo's Electron/ChromeOS players
-- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.7 (npm, 2026-03-26) — upstream XMR client (replaced by our native implementation)
-- [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R407 (C#/.NET + CEF, 2026-03-26) — the only actively maintained upstream player
-- [Arexibo](https://github.com/xibo-players/arexibo) v0.3.2 (Rust + Qt, 2026-03-26) — PDF rendering, RPM/DEB packaging, duration fixes
+- [xibo-layout-renderer](https://www.npmjs.com/package/@xibosignage/xibo-layout-renderer) v1.0.23 (npm, 2026-03-30) — rendering library used in Xibo's Electron/ChromeOS players
+- [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.7 (npm, 2026-03-30) — upstream XMR client (replaced by our native implementation)
+- [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R407 (C#/.NET + CEF, 2026-03-30) — the only actively maintained upstream player
+- [Arexibo](https://github.com/xibo-players/arexibo) v0.3.2 (Rust + Qt, 2026-03-30) — PDF rendering, RPM/DEB packaging, duration fixes
 
 ---
 
@@ -39,12 +39,12 @@ description: "Detailed feature comparison: XiboPlayer v0.7.7 vs upstream Xibo pl
 
 ## Performance Comparison
 
-| Metric | XLR v1.0.23 | Windows v4 R407 | Arexibo v0.3.2 | XiboPlayer v0.7.7 |
+| Metric | XLR v1.0.23 | Windows v4 R407 | Arexibo v0.3.2 | XiboPlayer v0.7.9 |
 |--------|-------------|-----------------|---------|-------------------|
 | Initial load (cold) | 17-20s | 5-10s | 12-15s | **3-5s** |
 | Layout replay | 2-3s | 1-2s | <1s | **<0.5s** |
 | 1GB file download | ~5 min | ~5 min | ~5 min | **1-2 min** (4 parallel chunks) |
-| Memory after 10 cycles | +500MB (growing) | Stable | Stable | **Stable** (PSS-tracked, blob lifecycle + renderer recycling) |
+| Memory after 10 cycles | +500MB (growing) | Stable | Stable | **Stable (0% growth)** (PSS-tracked, blob lifecycle + renderer recycling) |
 | Bundle size | ~2MB (with video.js) | ~50MB (CEF) | ~10MB (Rust binary) | **~500KB** (minified) |
 | Widget switch time | ~200ms (recreate) | ~100ms | ~100ms | **<50ms** (visibility toggle) |
 | Multi-display sync precision | N/A | N/A (zero sync code) | N/A | **<8ms** (WebSocket relay) |
@@ -53,27 +53,27 @@ description: "Detailed feature comparison: XiboPlayer v0.7.7 vs upstream Xibo pl
 
 ---
 
-## Electron vs Chromium (v0.7.7 overnight profiling)
+## Electron vs Chromium (v0.7.9 production profiling)
 
-Both players run the same PWA. Profiled over 8 hours playing identical content on the same machine (Fedora 44, Wayland, Intel GPU).
+Both players run the same PWA. Profiled in production kiosk fullscreen mode playing identical content on the same machine (Fedora 43, Wayland, Intel UHD 630 GPU).
 
 | Metric | Electron 41 (Chrome 146) | Chromium 146 |
 |--------|-------------------------|--------------|
-| GPU PSS (real memory) | 150 MB (stable) | 100 MB (stable) |
-| Renderer PSS | 700 MB (recycled) | 1,000 MB (growing) |
-| Total CPU | 7% | 4-10% |
-| Intel GPU usage | 5.5% | 5.5% |
-| DRM render engine time | 1,200s | 44s |
-| Process count | 9 | 15 |
-| Wayland GPU accel | Yes (`--no-zygote` fix) | Yes (native) |
+| Total CPU | 5-8% | 4-7% |
+| Total PSS | 330 MB (stable) | 360 MB (stable) |
+| GPU PSS | 270 MB (stable) | 55 MB (stable) |
+| Renderer PSS | 40 MB (stable) | 280 MB (stable) |
+| GPU DRM render time | 18s | 52s |
+| Process count | 8 | 12 |
+| Memory growth | **0%** | **0%** |
+| Wayland GPU accel | Yes (GPU auto-detect) | Yes (GPU rasterization) |
 | Offline playback | Yes (content store) | Yes (content store) |
-| Renderer recycling | Yes (new PIDs hourly) | No (long-lived, grows) |
 
 **Key findings:**
-- **`--no-zygote`** fix in Electron resolves 4-year-old Wayland GPU bug ([electron#50455](https://github.com/electron/electron/issues/50455)). GPU CPU dropped from 66% to 8%, memory leak eliminated.
-- **Chromium** uses less total GPU work (44s vs 1,200s DRM time) thanks to native Wayland DRM sync.
-- **Electron** recycles renderers preventing unbounded memory growth; Chromium's main renderer grows from 300 to 900 MB over 8h then stabilizes.
-- Both players survive CMS outages — cached layouts keep playing.
+- **CPU parity** — both players at 4-8% in production fullscreen mode. GPU rasterization flags (`--enable-gpu-rasterization`, `CanvasOopRasterization`) reduced Chromium from 91% to 5%.
+- **No memory leaks** — both show 0% PSS growth over extended runs. Chromium's renderer churn (new PIDs every ~30 min from iframe content) doesn't leak — each renderer stays bounded.
+- **GPU auto-detection** — on hybrid GPU systems (Optimus), the player selects the display GPU automatically. NVIDIA render-only GPUs are skipped (can't share buffers on Wayland).
+- Both players survive CMS outages — cached layouts keep playing offline.
 
 ---
 
@@ -103,7 +103,7 @@ Both players run the same PWA. Profiled over 8 hours playing identical content o
 
 22. **1629 automated tests** — 49 test files covering all SDK packages. Windows player has zero tests, XLR has zero tests, Arexibo has only 2 tests. XiboPlayer is the only Xibo player with a meaningful test suite
 
-23. **Wayland hardware GPU acceleration** — `--no-zygote` workaround for Electron's GPU process flag propagation bug. GPU CPU: 66% to 8%, memory leak eliminated. Filed upstream as [electron#50455](https://github.com/electron/electron/issues/50455)
+23. **Wayland hardware GPU acceleration** — GPU auto-detection selects the display GPU on hybrid systems. GPU rasterization flags reduce Chromium CPU from 91% to 5%. Filed upstream as [electron#50455](https://github.com/electron/electron/issues/50455)
 
 24. **Offline-first playback** — Content store serves cached layouts and media during CMS outages. Download manager race conditions fixed (commit-before-response, key format unification)
 
