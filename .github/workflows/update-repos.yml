@@ -1,33 +1,24 @@
 name: Update Package Repositories
 
 # Centralized workflow that regenerates RPM + DEB repository metadata
-# from GitHub Release assets across all xibo-players repos.
+# from packages stored on Cloudflare R2.
 #
 # Triggered by repository_dispatch from build-rpm.yml / build-deb.yml
-# after they create a GitHub Release. Can also be run manually.
+# after they upload signed packages to R2. Can also be run manually.
 #
 # Uses a concurrency group to serialize updates — if multiple repos
 # trigger simultaneously, intermediate runs are auto-cancelled and
 # only the latest pending run executes (which regenerates everything
 # from scratch, so no data is lost).
 #
-# RPMs:  only metadata stored here (repodata XML); dnf downloads
-#        actual RPMs from GitHub Releases via baseurl.
-# DEBs:  actual .deb files copied here (apt requires them at the
-#        same URL as Packages). Files >95MB are skipped (GitHub's
-#        100MB limit). Those packages are available via GitHub
-#        Releases for manual install (gh release download + dpkg -i).
-# Images: stored in GitHub Releases only; linked from pages.
+# RPMs: stored inline alongside repodata on R2 — dnf downloads
+#       directly from dl.xiboplayer.org.
+# DEBs: stored inline alongside Packages/Release on R2 — apt
+#       downloads directly from dl.xiboplayer.org.
 
 on:
   repository_dispatch:
     types: [update-repos]
-  push:
-    branches: [main]
-    paths:
-      - 'rpm/**/*.rpm'
-      - 'deb/**/*.deb'
-      - '_repos/**'
   workflow_dispatch:
 
 concurrency:
@@ -35,109 +26,87 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   FEDORA_VERS: '43 44'
   UBUNTU_VER: '24.04'
   DEBIAN_VER: 'trixie'
-  # Skip .deb files larger than this (MB) — GitHub rejects >100MB
-  FILE_SIZE_LIMIT_MB: '999999'  # No size limit — DEBs go to R2, not git
 
 jobs:
   update:
     name: Regenerate RPM + DEB repositories
     runs-on: ubuntu-latest
     container:
-      # Must match FEDORA_VER above (env context not allowed in container.image)
       image: fedora:43
 
     defaults:
       run:
         shell: bash
-        working-directory: ${{ github.workspace }}
 
     steps:
-      # git must be installed BEFORE checkout, otherwise checkout falls
-      # back to tarball extraction (no .git dir → can't commit/push)
-      - name: Install git
-        run: dnf install -y git
-
       - uses: actions/checkout@v4
 
       - name: Install tools
-        run: dnf install -y createrepo_c dpkg dpkg-dev curl jq gnupg2
+        run: dnf install -y createrepo_c dpkg dpkg-dev curl jq gnupg2 awscli2
 
-      - name: Download release assets from all repos
+      - name: Download packages from R2
         env:
-          GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
         run: |
-          REPOS=(
-            "xibo-players/xiboplayer-chromium"
-            "xibo-players/xiboplayer-electron"
-            "xibo-players/xiboplayer-kiosk"
-            "xibo-players/arexibo"
-            "xibo-players/xibo-players.github.io"
+          BUCKET="s3://xiboplayer-images"
+          PACKAGES=(
+            "xiboplayer-chromium"
+            "xiboplayer-electron"
+            "xiboplayer-kiosk"
+            "arexibo"
+            "xibo-players.github.io"
           )
 
-          for repo in "${REPOS[@]}"; do
-            pkg=$(basename "$repo")
+          mkdir -p /tmp/assets
+          for pkg in "${PACKAGES[@]}"; do
             echo "::group::$pkg"
             mkdir -p /tmp/assets/$pkg
 
-            # Get latest non-draft release
-            release=$(curl -sfH "Authorization: token $GH_TOKEN" \
-              "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null || echo '{}')
-
-            tag=$(echo "$release" | jq -r '.tag_name // empty')
-            if [ -z "$tag" ]; then
-              echo "No release found, skipping"
-              echo "::endgroup::"
-              continue
+            # Download latest packages from R2 staging
+            if aws s3 ls "$BUCKET/packages/$pkg/latest/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
+              aws s3 sync "$BUCKET/packages/$pkg/latest/" "/tmp/assets/$pkg/" \
+                --endpoint-url "$R2_ENDPOINT" --no-progress
+              echo "Downloaded $(ls /tmp/assets/$pkg/ | wc -l) files"
+              ls -lh /tmp/assets/$pkg/
+            else
+              echo "No packages found on R2, skipping"
             fi
-            echo "Release: $tag"
-            echo "$tag" > /tmp/assets/$pkg/.tag
-            echo "$repo" > /tmp/assets/$pkg/.repo
-
-            # Download all assets
-            echo "$release" | jq -r '.assets[] | "\(.name)\t\(.size)\t\(.browser_download_url)"' | \
-            while IFS=$'\t' read -r name size url; do
-              size_mb=$((size / 1048576))
-              echo "  ${name} (${size_mb}MB)"
-              curl -sL -o "/tmp/assets/$pkg/$name" "$url"
-            done
             echo "::endgroup::"
           done
 
-      # ── RPM: generate repodata with baseurl → GitHub Releases ──────
-      - name: Generate per-repo RPM repodata
+      # ── RPM: sort packages and generate repodata ─────────────────────
+      - name: Build RPM repository
         run: |
           KNOWN_FC_TAGS=()
           for v in $FEDORA_VERS; do
             KNOWN_FC_TAGS+=("fc${v}")
           done
 
+          # Create directory structure
+          for v in $FEDORA_VERS; do
+            for arch in x86_64 aarch64 noarch SRPMS; do
+              mkdir -p rpm/fedora/${v}/$arch
+            done
+          done
+
+          # Sort RPMs from all packages into per-version/arch directories
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
-            [ -f "$pkg_dir/.tag" ] || continue
-            tag=$(cat "$pkg_dir/.tag")
-            repo=$(cat "$pkg_dir/.repo")
-            baseurl="https://github.com/$repo/releases/download/$tag"
 
-            # Check if this repo has RPMs
             shopt -s nullglob
             rpms=("$pkg_dir"*.rpm)
             shopt -u nullglob
             [ ${#rpms[@]} -gt 0 ] || continue
 
-            echo "::group::RPM: $pkg (baseurl: $baseurl)"
-
-            # Create temp dirs per Fedora version and arch
-            for v in $FEDORA_VERS; do
-              for arch in x86_64 aarch64 noarch SRPMS; do
-                mkdir -p /tmp/rpm-repo/$pkg/$v/$arch
-              done
-            done
+            echo "::group::RPM: $pkg"
 
             for rpm in "${rpms[@]}"; do
               name=$(basename "$rpm")
@@ -155,92 +124,47 @@ jobs:
                 fi
               done
 
-              # Unprefixed RPMs default to first Fedora version (legacy compatibility)
+              # Unprefixed RPMs default to first Fedora version
               if [ -z "$fc_ver" ]; then
                 fc_ver="${FEDORA_VERS%% *}"
                 clean_name="$name"
               fi
 
-              # Distribute by arch — use clean_name (stripped fc* prefix) to match standard RPM naming
+              # Distribute by arch
               if [[ "$clean_name" == *.src.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/SRPMS/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/SRPMS/$clean_name"
                 echo "  [fc${fc_ver}] SRPMS: $clean_name"
               elif [[ "$clean_name" == *.x86_64.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/x86_64/$clean_name"
                 echo "  [fc${fc_ver}] x86_64: $clean_name"
               elif [[ "$clean_name" == *.aarch64.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/aarch64/$clean_name"
                 echo "  [fc${fc_ver}] aarch64: $clean_name"
               elif [[ "$clean_name" == *.noarch.rpm ]]; then
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/x86_64/$clean_name"
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/aarch64/$clean_name"
-                cp "$rpm" "/tmp/rpm-repo/$pkg/$fc_ver/noarch/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/x86_64/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/aarch64/$clean_name"
+                cp "$rpm" "rpm/fedora/$fc_ver/noarch/$clean_name"
                 echo "  [fc${fc_ver}] noarch: $clean_name"
               fi
             done
 
-            # Generate repodata per (Fedora version, arch)
-            for v in $FEDORA_VERS; do
-              for arch in x86_64 aarch64 noarch SRPMS; do
-                if ls /tmp/rpm-repo/$pkg/$v/$arch/*.rpm &>/dev/null 2>&1; then
-                  echo "  createrepo_c fc${v}/$arch"
-                  createrepo_c --baseurl "$baseurl" /tmp/rpm-repo/$pkg/$v/$arch/
-                fi
-              done
-
-              # Save repodata to _repos structure
-              for arch in x86_64 aarch64 noarch SRPMS; do
-                target="_repos/$pkg/rpm/fedora/${v}/$arch"
-                rm -rf "$target"
-                if [ -d "/tmp/rpm-repo/$pkg/$v/$arch/repodata" ]; then
-                  mkdir -p "$target"
-                  cp -r /tmp/rpm-repo/$pkg/$v/$arch/repodata "$target/"
-                fi
-              done
-            done
-
-            # GPG key — single key for all packages, already in rpm/RPM-GPG-KEY
-
             echo "::endgroup::"
           done
 
-      - name: Merge RPM repos into unified index
-        run: |
-          WORKDIR="$(pwd)"
-
+          # Generate repodata — RPMs are inline, no baseurl needed
           for v in $FEDORA_VERS; do
-            echo "Merging Fedora $v repos..."
             for arch in x86_64 aarch64 noarch SRPMS; do
-              output="rpm/fedora/${v}/$arch"
-              mkdir -p "$output"
-
-              # Collect all per-repo repodata dirs for this arch
-              repos=()
-              for repo_dir in _repos/*/rpm/fedora/${v}/$arch; do
-                if [ -d "$repo_dir/repodata" ]; then
-                  repos+=("--repo" "${WORKDIR}/$repo_dir")
-                fi
-              done
-
-              repo_count=$(( ${#repos[@]} / 2 ))
-              if [ $repo_count -gt 0 ]; then
-                echo "  Merging $arch: $repo_count repo(s)"
-                rm -rf "$output/repodata"
-                mergerepo_c "${repos[@]}" -o "${WORKDIR}/$output"
+              dir="rpm/fedora/${v}/$arch"
+              if ls $dir/*.rpm &>/dev/null 2>&1; then
+                echo "createrepo_c $dir ($(ls $dir/*.rpm | wc -l) packages)"
+                createrepo_c "$dir"
               fi
             done
           done
 
-          echo "RPM repodata files:"
-          find rpm/fedora/ -name 'repomd.xml' 2>/dev/null
-
-      # ── DEB: download .deb files + regenerate Packages index ────────
-      # apt requires actual .deb files at the URL referenced by Packages.
-      # Since GitHub Pages serves from this repo, small DEBs are stored here.
-      # Files >95MB are skipped (GitHub's 100MB git file limit).
-      - name: Update DEB repository
+      # ── DEB: sort packages and generate APT indices ──────────────────
+      - name: Build DEB repository
         run: |
-          # Distro tag → repo path and codename mappings
           declare -A DISTRO_PATH=(
             ["ubuntu2404"]="deb/ubuntu/${UBUNTU_VER}"
             ["debiantrixie"]="deb/debian/${DEBIAN_VER}"
@@ -251,21 +175,17 @@ jobs:
           )
           KNOWN_TAGS=("ubuntu2404" "debiantrixie")
 
-          SIZE_LIMIT=$((FILE_SIZE_LIMIT_MB * 1048576))
-
-          # Create directory structure for all distros
+          # Create directory structure
           for tag in "${KNOWN_TAGS[@]}"; do
             base="${DISTRO_PATH[$tag]}"
             for arch in amd64 arm64 all; do
               mkdir -p "$base/$arch"
             done
-            # Remove old .deb files (will re-download current versions from releases)
-            find "$base" -name '*.deb' -delete
           done
 
+          # Sort DEBs from all packages
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
-            [ -f "$pkg_dir/.tag" ] || continue
 
             shopt -s nullglob
             debs=("$pkg_dir"*.deb)
@@ -276,13 +196,6 @@ jobs:
 
             for deb in "${debs[@]}"; do
               name=$(basename "$deb")
-              size=$(stat -c%s "$deb")
-              size_mb=$((size / 1048576))
-
-              if [ "$size" -gt "$SIZE_LIMIT" ]; then
-                echo "  SKIP $name (${size_mb}MB > ${FILE_SIZE_LIMIT_MB}MB — install from GitHub Releases)"
-                continue
-              fi
 
               # Parse distro tag from filename prefix (format: TAG.originalname.deb)
               distro_tag=""
@@ -295,39 +208,35 @@ jobs:
                 fi
               done
 
-              # Unprefixed DEBs go to ALL distros (e.g. xiboplayer-release)
+              # Unprefixed DEBs go to ALL distros
               if [ -z "$distro_tag" ]; then
                 clean_name="$name"
                 arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
                 for tag in "${KNOWN_TAGS[@]}"; do
                   REPO_BASE="${DISTRO_PATH[$tag]}"
                   case "$arch" in
-                    amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$tag] amd64: $clean_name (${size_mb}MB)" ;;
-                    arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$tag] arm64: $clean_name (${size_mb}MB)" ;;
-                    all)   cp "$deb" "$REPO_BASE/all/$clean_name";   echo "  [$tag] all: $clean_name (${size_mb}MB)" ;;
+                    amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$tag] amd64: $clean_name" ;;
+                    arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$tag] arm64: $clean_name" ;;
+                    all)   cp "$deb" "$REPO_BASE/all/$clean_name";   echo "  [$tag] all: $clean_name" ;;
                   esac
                 done
                 continue
               fi
 
               REPO_BASE="${DISTRO_PATH[$distro_tag]}"
-
-              # Detect architecture
               arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
               case "$arch" in
-                amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$distro_tag] amd64: $clean_name (${size_mb}MB)" ;;
-                arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$distro_tag] arm64: $clean_name (${size_mb}MB)" ;;
+                amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$distro_tag] amd64: $clean_name" ;;
+                arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$distro_tag] arm64: $clean_name" ;;
                 all)
                   cp "$deb" "$REPO_BASE/amd64/$clean_name"
                   cp "$deb" "$REPO_BASE/arm64/$clean_name"
                   cp "$deb" "$REPO_BASE/all/$clean_name"
-                  echo "  [$distro_tag] all: $clean_name (${size_mb}MB)"
+                  echo "  [$distro_tag] all: $clean_name"
                   ;;
                 *) echo "  SKIP $name (unknown arch: $arch)" ;;
               esac
             done
-
-            # GPG key — single key for all packages, already in deb/GPG-KEY.asc
 
             echo "::endgroup::"
           done
@@ -336,12 +245,10 @@ jobs:
           for tag in "${KNOWN_TAGS[@]}"; do
             base="${DISTRO_PATH[$tag]}"
             mkdir -p "$base/source"
-            rm -f "$base/source"/*.dsc "$base/source"/*.tar.*
           done
 
           for pkg_dir in /tmp/assets/*/; do
             pkg=$(basename "$pkg_dir")
-            [ -f "$pkg_dir/.tag" ] || continue
 
             shopt -s nullglob
             src_files=("$pkg_dir"*.dsc "$pkg_dir"*.orig.tar.* "$pkg_dir"*.debian.tar.*)
@@ -351,15 +258,7 @@ jobs:
             echo "::group::DEB source: $pkg"
             for src_file in "${src_files[@]}"; do
               name=$(basename "$src_file")
-              size=$(stat -c%s "$src_file")
-              size_mb=$((size / 1048576))
 
-              if [ "$size" -gt "$SIZE_LIMIT" ]; then
-                echo "  SKIP $name (${size_mb}MB > ${FILE_SIZE_LIMIT_MB}MB)"
-                continue
-              fi
-
-              # Parse distro tag from filename prefix
               distro_tag=""
               clean_name="$name"
               for tag in "${KNOWN_TAGS[@]}"; do
@@ -376,7 +275,7 @@ jobs:
 
               REPO_BASE="${DISTRO_PATH[$distro_tag]}"
               cp "$src_file" "$REPO_BASE/source/$clean_name"
-              echo "  [$distro_tag] source: $clean_name (${size_mb}MB)"
+              echo "  [$distro_tag] source: $clean_name"
             done
             echo "::endgroup::"
           done
@@ -389,17 +288,11 @@ jobs:
             echo "  Distro: $tag ($codename)"
 
             # Generate single root-level Packages index (flat repo format)
-            # dpkg-scanpackages recurses into arch subdirs and sets correct Filename: paths
             (cd "$REPO_BASE" && dpkg-scanpackages --multiversion . /dev/null > Packages 2>/dev/null && gzip -9c Packages > Packages.gz)
             pkg_count=$(grep -c '^Package:' "$REPO_BASE/Packages" 2>/dev/null || echo 0)
             echo "    $pkg_count packages in root Packages index"
 
-            # Remove old per-arch Packages files (no longer needed)
-            for arch in amd64 arm64 all; do
-              rm -f "$REPO_BASE/$arch/Packages" "$REPO_BASE/$arch/Packages.gz"
-            done
-
-            # Generate Release file with checksums (flat repo — no Components, no Architectures)
+            # Generate Release file
             (
               cd "$REPO_BASE"
               {
@@ -463,11 +356,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
         run: |
-          dnf install -y awscli2 2>/dev/null || dnf install -y awscli 2>/dev/null || pip install awscli
-
           BUCKET="s3://xiboplayer-images"
 
-          # Upload DEB repos
+          # Upload DEB repos (packages + metadata)
           echo "=== Uploading DEB repositories ==="
           for suite in "deb/ubuntu/${UBUNTU_VER}" "deb/debian/${DEBIAN_VER}"; do
             [ -d "$suite" ] || continue
@@ -476,11 +367,11 @@ jobs:
               --endpoint-url "$R2_ENDPOINT" --delete --no-progress
           done
 
-          # Upload DEB GPG key (single key for all packages)
+          # Upload DEB GPG key
           [ -f deb/GPG-KEY.asc ] && \
             aws s3 cp deb/GPG-KEY.asc "$BUCKET/deb/GPG-KEY.asc" --endpoint-url "$R2_ENDPOINT"
 
-          # Upload RPM repos
+          # Upload RPM repos (packages + repodata)
           echo "=== Uploading RPM repositories ==="
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch SRPMS; do
@@ -492,7 +383,7 @@ jobs:
             done
           done
 
-          # Upload RPM GPG key (single key for all packages)
+          # Upload RPM GPG key
           [ -f rpm/RPM-GPG-KEY ] && \
             aws s3 cp rpm/RPM-GPG-KEY "$BUCKET/rpm/RPM-GPG-KEY" --endpoint-url "$R2_ENDPOINT"
 
@@ -501,7 +392,7 @@ jobs:
             aws s3 cp rpm/xibo-players.repo "$BUCKET/rpm/xibo-players.repo" \
               --endpoint-url "$R2_ENDPOINT"
 
-          # Upload static files (install script, index redirect)
+          # Upload static files
           for f in install-raspberry-pi.sh index.html; do
             [ -f "$f" ] || continue
             aws s3 cp "$f" "$BUCKET/$f" --endpoint-url "$R2_ENDPOINT"
