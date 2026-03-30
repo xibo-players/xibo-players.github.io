@@ -1,3 +1,6 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
 Origin: xibo-players
 Label: Xibo Players
 Suite: ./
@@ -9,3 +12,10 @@ MD5Sum:
 SHA256:
  7bb2c60bace5dc517727f4fd31bde4b20edfd8b677e7ef92be24775f3ce38c96 3810 Packages
  84ee6bfe60b5d6df61a819ab6b892198aada85841bb55d6eb43905535706eab5 1018 Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQQEqReWkuhs8R0QPL9aMOortp0y8gUCacpZkgAKCRBaMOortp0y
+8iCoAQDogqoYKOaptIuvyHs58H5Mj2QD6jpYDcceKg5ugEGNlAEAxFom7EDV6gev
+KJNoLi4Dn2GOopRE7VnqN+uWmg+4zAs=
+=z1jT
+-----END PGP SIGNATURE-----

@@ -60,7 +60,7 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Installed-Size: 60880
 Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./amd64/xiboplayer-chromium_0.7.9-1_all.deb
+Filename: ./all/xiboplayer-chromium_0.7.9-1_all.deb
 Size: 8302604
 MD5sum: 8e232770f6579c74316b8c17e2d34609
 SHA1: fb139b041e94e2c103288832005e371ba47207e6
@@ -79,7 +79,7 @@ Maintainer: Pau Aliagas <linuxnow@gmail.com>
 Installed-Size: 60880
 Depends: chromium | chromium-browser | google-chrome-stable, nodejs (>= 18), jq, curl, systemd
 Recommends: x11-xserver-utils, xdotool
-Filename: ./all/xiboplayer-chromium_0.7.9-1_all.deb
+Filename: ./amd64/xiboplayer-chromium_0.7.9-1_all.deb
 Size: 8302604
 MD5sum: 8e232770f6579c74316b8c17e2d34609
 SHA1: fb139b041e94e2c103288832005e371ba47207e6
