@@ -24,12 +24,8 @@ curl -fsSL https://dl.xiboplayer.org/deb/GPG-KEY.asc \
   | sudo tee /usr/share/keyrings/xiboplayer.asc > /dev/null
 
 # Add APT source
-cat <<EOF | sudo tee /etc/apt/sources.list.d/xiboplayer.sources
-Types: deb
-URIs: https://dl.xiboplayer.org/deb/${SUITE}
-Suites: ./
-Signed-By: /usr/share/keyrings/xiboplayer.asc
-EOF
+echo "deb [signed-by=/usr/share/keyrings/xiboplayer.asc] https://dl.xiboplayer.org/deb/${SUITE} ./" \
+  | sudo tee /etc/apt/sources.list.d/xiboplayer.list
 
 sudo apt-get update
 sudo apt-get install -y xiboplayer-chromium
