@@ -199,11 +199,7 @@ jobs:
               done
             done
 
-            # Copy GPG public key
-            if ls "$pkg_dir"RPM-GPG-KEY-* &>/dev/null; then
-              mkdir -p rpm
-              cp "$pkg_dir"RPM-GPG-KEY-* rpm/
-            fi
+            # GPG key — single key for all packages, already in rpm/RPM-GPG-KEY
 
             echo "::endgroup::"
           done
@@ -322,10 +318,7 @@ jobs:
               esac
             done
 
-            # Copy GPG public key
-            if ls "$pkg_dir"DEB-GPG-KEY-* &>/dev/null; then
-              cp "$pkg_dir"DEB-GPG-KEY-* deb/
-            fi
+            # GPG key — single key for all packages, already in deb/GPG-KEY.asc
 
             echo "::endgroup::"
           done
@@ -474,11 +467,9 @@ jobs:
               --endpoint-url "$R2_ENDPOINT" --delete --no-progress
           done
 
-          # Upload DEB GPG keys
-          for key in deb/GPG-KEY.asc deb/DEB-GPG-KEY-*.asc; do
-            [ -f "$key" ] || continue
-            aws s3 cp "$key" "$BUCKET/$key" --endpoint-url "$R2_ENDPOINT"
-          done
+          # Upload DEB GPG key (single key for all packages)
+          [ -f deb/GPG-KEY.asc ] && \
+            aws s3 cp deb/GPG-KEY.asc "$BUCKET/deb/GPG-KEY.asc" --endpoint-url "$R2_ENDPOINT"
 
           # Upload RPM repos
           echo "=== Uploading RPM repositories ==="
@@ -492,11 +483,9 @@ jobs:
             done
           done
 
-          # Upload RPM GPG keys
-          for key in rpm/RPM-GPG-KEY rpm/RPM-GPG-KEY-*; do
-            [ -f "$key" ] || continue
-            aws s3 cp "$key" "$BUCKET/$key" --endpoint-url "$R2_ENDPOINT"
-          done
+          # Upload RPM GPG key (single key for all packages)
+          [ -f rpm/RPM-GPG-KEY ] && \
+            aws s3 cp rpm/RPM-GPG-KEY "$BUCKET/rpm/RPM-GPG-KEY" --endpoint-url "$R2_ENDPOINT"
 
           # Upload RPM .repo file
           [ -f rpm/xibo-players.repo ] && \
