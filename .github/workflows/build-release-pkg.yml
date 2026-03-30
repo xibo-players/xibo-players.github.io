@@ -35,12 +35,17 @@ jobs:
         run: |
           rpmdev-setuptree
 
-          # Copy sources (individual files, not a tarball)
+          # Copy sources
           cp _repos/xiboplayer-release/xiboplayer.repo ~/rpmbuild/SOURCES/
+          cp _repos/xiboplayer-release/copr-keyd.repo ~/rpmbuild/SOURCES/
           cp rpm/RPM-GPG-KEY ~/rpmbuild/SOURCES/RPM-GPG-KEY-xiboplayer
 
-          # Build
-          rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec
+          # Build for both Fedora 43 and 44
+          for ver in 43 44; do
+            echo "Building for Fedora $ver..."
+            rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec \
+              --define "_version ${ver}"
+          done
 
           # Copy to output
           mkdir -p dist
