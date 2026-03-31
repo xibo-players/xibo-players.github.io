@@ -55,7 +55,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           BUCKET="s3://xiboplayer-images"
           # Package name → GitHub repo mapping (for GH Release fallback)
@@ -73,34 +72,18 @@ jobs:
             mkdir -p /tmp/assets/$pkg
 
             # Primary: download from R2 staging (rpm/ and deb/ subdirs)
-            r2_found=false
-            for subdir in rpm deb latest; do
+            # Download from R2 staging (rpm/ and deb/ subdirs)
+            for subdir in rpm deb; do
               if aws s3 ls "$BUCKET/packages/$pkg/$subdir/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
                 aws s3 sync "$BUCKET/packages/$pkg/$subdir/" "/tmp/assets/$pkg/" \
                   --endpoint-url "$R2_ENDPOINT" --no-progress
-                r2_found=true
               fi
             done
-            if [ "$r2_found" = true ]; then
-              echo "Downloaded from R2: $(ls /tmp/assets/$pkg/ | wc -l) files"
-              ls -lh /tmp/assets/$pkg/
+            file_count=$(ls /tmp/assets/$pkg/ 2>/dev/null | wc -l)
+            if [ "$file_count" -gt 0 ]; then
+              echo "Downloaded from R2: $file_count files"
             else
-              # Fallback: download from GitHub Releases (migration period)
-              repo="${PKG_REPOS[$pkg]}"
-              echo "Not on R2 yet, trying GitHub Releases ($repo)..."
-              release=$(curl -sfH "Authorization: token $GH_TOKEN" \
-                "https://api.github.com/repos/$repo/releases/latest" 2>/dev/null || echo '{}')
-              tag=$(echo "$release" | jq -r '.tag_name // empty')
-              if [ -n "$tag" ]; then
-                echo "Release: $tag"
-                echo "$release" | jq -r '.assets[] | "\(.name)\t\(.browser_download_url)"' | \
-                while IFS=$'\t' read -r name url; do
-                  echo "  $name"
-                  curl -sL -o "/tmp/assets/$pkg/$name" "$url"
-                done
-              else
-                echo "No packages found, skipping"
-              fi
+              echo "No packages found on R2, skipping"
             fi
             echo "::endgroup::"
           done
