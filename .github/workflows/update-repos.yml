@@ -432,6 +432,11 @@ jobs:
             done
           done
 
+          # Upload RPM packages index (for website)
+          [ -f rpm/packages.json ] && \
+            aws s3 cp rpm/packages.json "$BUCKET/rpm/packages.json" \
+              --endpoint-url "$R2_ENDPOINT" --content-type "application/json"
+
           # Upload RPM GPG key
           [ -f rpm/RPM-GPG-KEY ] && \
             aws s3 cp rpm/RPM-GPG-KEY "$BUCKET/rpm/RPM-GPG-KEY" --endpoint-url "$R2_ENDPOINT"
