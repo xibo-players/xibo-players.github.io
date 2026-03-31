@@ -72,10 +72,16 @@ jobs:
             echo "::group::$pkg"
             mkdir -p /tmp/assets/$pkg
 
-            # Primary: download from R2 staging
-            if aws s3 ls "$BUCKET/packages/$pkg/latest/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
-              aws s3 sync "$BUCKET/packages/$pkg/latest/" "/tmp/assets/$pkg/" \
-                --endpoint-url "$R2_ENDPOINT" --no-progress
+            # Primary: download from R2 staging (rpm/ and deb/ subdirs)
+            r2_found=false
+            for subdir in rpm deb latest; do
+              if aws s3 ls "$BUCKET/packages/$pkg/$subdir/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
+                aws s3 sync "$BUCKET/packages/$pkg/$subdir/" "/tmp/assets/$pkg/" \
+                  --endpoint-url "$R2_ENDPOINT" --no-progress
+                r2_found=true
+              fi
+            done
+            if [ "$r2_found" = true ]; then
               echo "Downloaded from R2: $(ls /tmp/assets/$pkg/ | wc -l) files"
               ls -lh /tmp/assets/$pkg/
             else
