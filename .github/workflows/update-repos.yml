@@ -185,6 +185,32 @@ jobs:
             done
           done
 
+      - name: Generate RPM packages.json index
+        run: |
+          # Build a JSON index of all RPMs for the website package browser
+          echo '[' > rpm/packages.json
+          first=true
+          for v in $FEDORA_VERS; do
+            for arch in x86_64 aarch64 noarch; do
+              dir="rpm/fedora/${v}/$arch"
+              for rpm in $dir/*.rpm 2>/dev/null; do
+                [ -f "$rpm" ] || continue
+                [[ "$rpm" == *.src.rpm ]] && continue
+                name=$(rpm -qp --qf '%{NAME}' "$rpm" 2>/dev/null || basename "$rpm" | sed 's/-[0-9].*//')
+                ver=$(rpm -qp --qf '%{VERSION}-%{RELEASE}' "$rpm" 2>/dev/null || echo "?")
+                rpmarch=$(rpm -qp --qf '%{ARCH}' "$rpm" 2>/dev/null || echo "$arch")
+                size=$(stat -c%s "$rpm")
+                file=$(basename "$rpm")
+                url="https://dl.xiboplayer.org/$dir/$file"
+                [ "$first" = true ] && first=false || echo ',' >> rpm/packages.json
+                printf '{"name":"%s","version":"%s","arch":"%s","fedora":"%s","size":%d,"file":"%s","url":"%s"}' \
+                  "$name" "$ver" "$rpmarch" "$v" "$size" "$file" "$url" >> rpm/packages.json
+              done
+            done
+          done
+          echo ']' >> rpm/packages.json
+          echo "RPM index: $(grep -c '"name"' rpm/packages.json) packages"
+
       # ── DEB: sort packages and generate APT indices ──────────────────
       - name: Build DEB repository
         run: |
