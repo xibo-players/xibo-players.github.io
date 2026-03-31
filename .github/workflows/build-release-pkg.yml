@@ -132,15 +132,36 @@ jobs:
             sudo dnf install ./xiboplayer-release-*.noarch.rpm
             ```
 
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          dnf install -y awscli2
+          BUCKET="s3://xiboplayer-images"
+
+          # Upload RPMs
+          aws s3 rm "$BUCKET/packages/xibo-players.github.io/rpm/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
+          for file in dist/*.rpm; do
+            [ -f "$file" ] || continue
+            aws s3 cp "$file" "$BUCKET/packages/xibo-players.github.io/rpm/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
+          done
+
+          # Upload DEBs
+          aws s3 rm "$BUCKET/packages/xibo-players.github.io/deb/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
+          for file in dist/*.deb; do
+            [ -f "$file" ] || continue
+            aws s3 cp "$file" "$BUCKET/packages/xibo-players.github.io/deb/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
+          done
+
       - name: Trigger update-repos
-        if: startsWith(github.ref, 'refs/tags/')
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
-          dnf install -y curl
           curl -sf -X POST \
             -H "Authorization: token $GH_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/xibo-players/xibo-players.github.io/dispatches" \
-            -d '{"event_type": "update-repos", "client_payload": {"package": "xiboplayer-release", "repo": "xibo-players/xibo-players.github.io", "tag": "${{ github.ref_name }}"}}'
+            -d '{"event_type": "update-repos", "client_payload": {"package": "xiboplayer-release"}}'
           echo "Triggered update-repos for xiboplayer-release"
