@@ -193,7 +193,7 @@ jobs:
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch; do
               dir="rpm/fedora/${v}/$arch"
-              for rpm in $dir/*.rpm 2>/dev/null; do
+              for rpm in $dir/*.rpm; do
                 [ -f "$rpm" ] || continue
                 [[ "$rpm" == *.src.rpm ]] && continue
                 name=$(rpm -qp --qf '%{NAME}' "$rpm" 2>/dev/null || basename "$rpm" | sed 's/-[0-9].*//')
