@@ -319,6 +319,31 @@ jobs:
             codename="${DISTRO_CODENAME[$tag]}"
             echo "  Distro: $tag ($codename)"
 
+            # Remove old versions — keep only the highest version per package+arch
+            REPO_BASE="$REPO_BASE" python3 << 'PYEOF'
+import os, re, glob
+from collections import defaultdict
+
+base = os.environ['REPO_BASE']
+debs = glob.glob(f'{base}/**/*.deb', recursive=True)
+# Group by (package_name, arch)
+groups = defaultdict(list)
+for deb in debs:
+    name = os.path.basename(deb)
+    # Parse: [distro.]package_version_arch.deb
+    m = re.match(r'(?:\w+\.)?(.+?)_(.+?)_(.+?)\.deb', name)
+    if m:
+        pkg, ver, arch = m.groups()
+        groups[(pkg, arch)].append((ver, deb))
+
+for key, versions in groups.items():
+    if len(versions) > 1:
+        versions.sort(reverse=True)
+        for ver, path in versions[1:]:  # remove all but highest
+            print(f'  Removing old: {os.path.basename(path)}')
+            os.remove(path)
+PYEOF
+
             # Generate single root-level Packages index (flat repo format)
             (cd "$REPO_BASE" && dpkg-scanpackages --multiversion . /dev/null > Packages 2>/dev/null && gzip -9c Packages > Packages.gz)
             pkg_count=$(grep -c '^Package:' "$REPO_BASE/Packages" 2>/dev/null || echo 0)
