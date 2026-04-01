@@ -319,30 +319,22 @@ jobs:
             codename="${DISTRO_CODENAME[$tag]}"
             echo "  Distro: $tag ($codename)"
 
-            # Remove old versions — keep only the highest version per package+arch
-            REPO_BASE="$REPO_BASE" python3 << 'PYEOF'
-import os, re, glob
-from collections import defaultdict
-
-base = os.environ['REPO_BASE']
-debs = glob.glob(f'{base}/**/*.deb', recursive=True)
-# Group by (package_name, arch)
-groups = defaultdict(list)
-for deb in debs:
-    name = os.path.basename(deb)
-    # Parse: [distro.]package_version_arch.deb
-    m = re.match(r'(?:\w+\.)?(.+?)_(.+?)_(.+?)\.deb', name)
-    if m:
-        pkg, ver, arch = m.groups()
-        groups[(pkg, arch)].append((ver, deb))
-
-for key, versions in groups.items():
-    if len(versions) > 1:
-        versions.sort(reverse=True)
-        for ver, path in versions[1:]:  # remove all but highest
-            print(f'  Removing old: {os.path.basename(path)}')
-            os.remove(path)
-PYEOF
+            # Remove old versions — keep only highest per package+arch
+            for arch_dir in "$REPO_BASE"/amd64 "$REPO_BASE"/arm64 "$REPO_BASE"/all; do
+              [ -d "$arch_dir" ] || continue
+              # Group debs by package name, keep only newest
+              ls "$arch_dir"/*.deb 2>/dev/null | sed 's/.*\///' | sed 's/^\([a-z]*\.\)\?//' | \
+                sed 's/_[^_]*_[^_]*\.deb$//' | sort -u | while read pkg; do
+                  count=$(ls "$arch_dir"/*"${pkg}"_*.deb 2>/dev/null | wc -l)
+                  if [ "$count" -gt 1 ]; then
+                    # Sort by version descending, remove all but first
+                    ls -v "$arch_dir"/*"${pkg}"_*.deb | head -n -1 | while read old; do
+                      echo "  Removing old: $(basename $old)"
+                      rm -f "$old"
+                    done
+                  fi
+                done
+            done
 
             # Generate single root-level Packages index (flat repo format)
             (cd "$REPO_BASE" && dpkg-scanpackages --multiversion . /dev/null > Packages 2>/dev/null && gzip -9c Packages > Packages.gz)
