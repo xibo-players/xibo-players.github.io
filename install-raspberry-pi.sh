@@ -13,7 +13,7 @@ echo "Installing Xibo Player..."
 CODENAME=$(. /etc/os-release 2>/dev/null && printf '%s' "${VERSION_CODENAME:-noble}")
 case "$CODENAME" in
   trixie)   SUITE="debian/trixie" ;;
-  bookworm) SUITE="debian/12" ;;
+  bookworm) SUITE="debian/trixie" ;; # Bookworm uses trixie packages (compatible)
   noble)    SUITE="ubuntu/24.04" ;;
   *)        SUITE="debian/trixie" ;;
 esac
