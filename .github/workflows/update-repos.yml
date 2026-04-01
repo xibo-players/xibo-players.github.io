@@ -45,7 +45,7 @@ jobs:
         shell: bash
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install tools
         run: dnf install -y createrepo_c dpkg dpkg-dev curl jq gnupg2 awscli2
