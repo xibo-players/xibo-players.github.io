@@ -57,7 +57,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
-          BUCKET="${R2_BUCKET:-s3://xiboplayer-images}"
+          BUCKET="${R2_BUCKET}"
           # Package name → GitHub repo mapping (for GH Release fallback)
           declare -A PKG_REPOS=(
             ["xiboplayer-chromium"]="xibo-players/xiboplayer-chromium"
@@ -407,7 +407,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
-          BUCKET="${R2_BUCKET:-s3://xiboplayer-images}"
+          BUCKET="${R2_BUCKET}"
 
           # Upload DEB repos (packages + metadata)
           echo "=== Uploading DEB repositories ==="

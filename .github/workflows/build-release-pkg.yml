@@ -140,7 +140,7 @@ jobs:
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           dnf install -y awscli2
-          BUCKET="${R2_BUCKET:-s3://xiboplayer-images}"
+          BUCKET="${R2_BUCKET}"
 
           # Upload RPMs
           aws s3 rm "$BUCKET/packages/xibo-players.github.io/rpm/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
