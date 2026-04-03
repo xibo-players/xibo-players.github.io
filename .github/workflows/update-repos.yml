@@ -152,7 +152,6 @@ jobs:
           KNOWN_TAGS=("ubuntu2404" "debiantrixie")
 
           # DEBs are already in final paths — no sorting needed
-          done
 
           # Rebuild APT indices for each distro
           echo "Rebuilding APT indices..."
