@@ -47,19 +47,18 @@ jobs:
               --define "_version ${ver}"
           done
 
-          # Organize by Fedora version and arch for direct R2 upload
+          # Stage RPMs with fc prefix (same convention as build-rpm.yml)
+          # update-repos parses fc prefix to sort into per-version repo paths
+          mkdir -p dist/rpm
           for ver in 43 44; do
             for rpm in ~/rpmbuild/RPMS/noarch/xiboplayer-release-${ver}-*.noarch.rpm; do
               [ -f "$rpm" ] || continue
               name=$(basename "$rpm")
-              for arch in x86_64 aarch64 noarch; do
-                mkdir -p dist/rpm/fedora/${ver}/${arch}
-                cp "$rpm" "dist/rpm/fedora/${ver}/${arch}/${name}"
-              done
+              cp "$rpm" "dist/rpm/fc${ver}.${name}"
             done
           done
-          echo "RPM:"
-          find dist/rpm -name "*.rpm" -ls
+          echo "RPMs:"
+          ls -lh dist/rpm/
 
       - name: Build DEB
         run: |
@@ -110,15 +109,15 @@ jobs:
 
           echo "%_gpg_name ${GPG_KEY_ID}" >> ~/.rpmmacros
 
-          find dist/rpm -name "*.rpm" | while read rpm_file; do
-            echo "Signing: $rpm_file"
+          for rpm_file in dist/rpm/*.rpm; do
+            echo "Signing: $(basename $rpm_file)"
             rpm --addsign "$rpm_file"
           done
 
           rm -f /tmp/.gpg-passphrase
 
           echo "Verifying signatures..."
-          find dist/rpm -name "*.rpm" -exec rpm -qpi {} \; | grep -E "^(Name|Signature)" || true
+          rpm -qpi dist/rpm/*.rpm | grep -E "^(Name|Signature)" || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -139,26 +138,27 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           dnf install -y awscli2
-          BUCKET="${R2_BUCKET}"
+          BUCKET="s3://xiboplayer-images"
+          PACKAGE="xibo-players.github.io"
 
-          # Upload RPMs — already organized as dist/rpm/fedora/{ver}/{arch}/
-          # Upload directly to final repo paths, bypassing update-repos sorting
-          find dist/rpm -name "*.rpm" | while read file; do
-            # dist/rpm/fedora/43/noarch/xiboplayer-release-43-7.noarch.rpm → rpm/fedora/43/noarch/
-            rel_path="${file#dist/}"
-            dest="$BUCKET/${rel_path}"
-            echo "Uploading: $rel_path"
-            aws s3 cp "$file" "$dest" --endpoint-url "$R2_ENDPOINT"
+          # Upload RPMs to staging (same path convention as build-rpm.yml)
+          DEST="$BUCKET/packages/$PACKAGE/rpm"
+          aws s3 rm "$DEST/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
+          for file in dist/rpm/*.rpm; do
+            [ -f "$file" ] || continue
+            echo "Uploading: $(basename $file)"
+            aws s3 cp "$file" "$DEST/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
           done
 
-          # Upload DEBs
-          aws s3 rm "$BUCKET/packages/xibo-players.github.io/deb/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
+          # Upload DEBs to staging (same path convention as build-deb.yml)
+          DEST="$BUCKET/packages/$PACKAGE/deb"
+          aws s3 rm "$DEST/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
           for file in dist/*.deb; do
             [ -f "$file" ] || continue
-            aws s3 cp "$file" "$BUCKET/packages/xibo-players.github.io/deb/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
+            echo "Uploading: $(basename $file)"
+            aws s3 cp "$file" "$DEST/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
           done
 
       - name: Trigger update-repos
