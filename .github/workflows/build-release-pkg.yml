@@ -138,9 +138,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           dnf install -y awscli2
-          BUCKET="s3://xiboplayer-images"
+          BUCKET="${R2_BUCKET}"
 
           # Upload RPMs directly to final repo paths
           for ver in 43 44; do
