@@ -141,24 +141,30 @@ jobs:
         run: |
           dnf install -y awscli2
           BUCKET="s3://xiboplayer-images"
-          PACKAGE="xibo-players.github.io"
 
-          # Upload RPMs to staging (same path convention as build-rpm.yml)
-          DEST="$BUCKET/packages/$PACKAGE/rpm"
-          aws s3 rm "$DEST/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
-          for file in dist/rpm/*.rpm; do
-            [ -f "$file" ] || continue
-            echo "Uploading: $(basename $file)"
-            aws s3 cp "$file" "$DEST/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
+          # Upload RPMs directly to final repo paths
+          for ver in 43 44; do
+            for rpm in dist/rpm/fc${ver}.*.rpm; do
+              [ -f "$rpm" ] || continue
+              name=$(basename "$rpm")
+              clean_name="${name#fc${ver}.}"
+              for arch in x86_64 aarch64 noarch; do
+                echo "  $clean_name → rpm/fedora/$ver/$arch/"
+                aws s3 cp "$rpm" "$BUCKET/rpm/fedora/$ver/$arch/$clean_name" --endpoint-url "$R2_ENDPOINT"
+              done
+            done
           done
 
-          # Upload DEBs to staging (same path convention as build-deb.yml)
-          DEST="$BUCKET/packages/$PACKAGE/deb"
-          aws s3 rm "$DEST/" --recursive --endpoint-url "$R2_ENDPOINT" 2>/dev/null || true
-          for file in dist/*.deb; do
-            [ -f "$file" ] || continue
-            echo "Uploading: $(basename $file)"
-            aws s3 cp "$file" "$DEST/$(basename $file)" --endpoint-url "$R2_ENDPOINT"
+          # Upload DEBs directly to final repo paths
+          for deb in dist/*.deb; do
+            [ -f "$deb" ] || continue
+            name=$(basename "$deb")
+            for suite in deb/ubuntu/24.04 deb/debian/trixie; do
+              for arch in amd64 arm64; do
+                echo "  $name → $suite/$arch/"
+                aws s3 cp "$deb" "$BUCKET/$suite/$arch/$name" --endpoint-url "$R2_ENDPOINT"
+              done
+            done
           done
 
       - name: Trigger update-repos

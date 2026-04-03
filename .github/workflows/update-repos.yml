@@ -50,7 +50,8 @@ jobs:
       - name: Install tools
         run: dnf install -y createrepo_c dpkg dpkg-dev curl jq gnupg2 awscli2
 
-      - name: Download packages
+      # ── Download current repo from R2 and regenerate metadata ────────
+      - name: Download RPMs from R2
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -58,107 +59,22 @@ jobs:
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
           BUCKET="${R2_BUCKET}"
-          # Package name → GitHub repo mapping (for GH Release fallback)
-          declare -A PKG_REPOS=(
-            ["xiboplayer-chromium"]="xibo-players/xiboplayer-chromium"
-            ["xiboplayer-electron"]="xibo-players/xiboplayer-electron"
-            ["xiboplayer-kiosk"]="xibo-players/xiboplayer-kiosk"
-            ["arexibo"]="xibo-players/arexibo"
-            ["xibo-players.github.io"]="xibo-players/xibo-players.github.io"
-          )
 
-          mkdir -p /tmp/assets
-          for pkg in "${!PKG_REPOS[@]}"; do
-            echo "::group::$pkg"
-            mkdir -p /tmp/assets/$pkg
-
-            # Primary: download from R2 staging (rpm/ and deb/ subdirs)
-            # Download from R2 staging (rpm/ and deb/ subdirs)
-            for subdir in rpm deb; do
-              if aws s3 ls "$BUCKET/packages/$pkg/$subdir/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
-                aws s3 sync "$BUCKET/packages/$pkg/$subdir/" "/tmp/assets/$pkg/" \
-                  --endpoint-url "$R2_ENDPOINT" --no-progress
-              fi
-            done
-            file_count=$(ls /tmp/assets/$pkg/ 2>/dev/null | wc -l)
-            if [ "$file_count" -gt 0 ]; then
-              echo "Downloaded from R2: $file_count files"
-            else
-              echo "No packages found on R2, skipping"
-            fi
-            echo "::endgroup::"
-          done
-
-      # ── RPM: sort packages and generate repodata ─────────────────────
-      - name: Build RPM repository
-        run: |
-          KNOWN_FC_TAGS=()
-          for v in $FEDORA_VERS; do
-            KNOWN_FC_TAGS+=("fc${v}")
-          done
-
-          # Create directory structure
+          # Download current RPMs from final repo paths
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch SRPMS; do
-              mkdir -p rpm/fedora/${v}/$arch
+              dir="rpm/fedora/${v}/$arch"
+              mkdir -p "$dir"
+              if aws s3 ls "$BUCKET/$dir/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
+                aws s3 sync "$BUCKET/$dir/" "$dir/" \
+                  --endpoint-url "$R2_ENDPOINT" --no-progress --exclude "repodata/*"
+                echo "$dir: $(ls $dir/*.rpm 2>/dev/null | wc -l) RPMs"
+              fi
             done
           done
 
-          # Sort RPMs from all packages into per-version/arch directories
-          for pkg_dir in /tmp/assets/*/; do
-            pkg=$(basename "$pkg_dir")
-
-            shopt -s nullglob
-            rpms=("$pkg_dir"*.rpm)
-            shopt -u nullglob
-            [ ${#rpms[@]} -gt 0 ] || continue
-
-            echo "::group::RPM: $pkg"
-
-            for rpm in "${rpms[@]}"; do
-              name=$(basename "$rpm")
-              # Skip GPG key files
-              [[ "$name" == RPM-GPG-KEY-* ]] && continue
-
-              # Parse Fedora tag from filename prefix (format: fcVER.originalname.rpm)
-              fc_ver=""
-              clean_name="$name"
-              for fctag in "${KNOWN_FC_TAGS[@]}"; do
-                if [[ "$name" == "${fctag}."* ]]; then
-                  fc_ver="${fctag#fc}"
-                  clean_name="${name#${fctag}.}"
-                  break
-                fi
-              done
-
-              # Unprefixed RPMs default to first Fedora version
-              if [ -z "$fc_ver" ]; then
-                fc_ver="${FEDORA_VERS%% *}"
-                clean_name="$name"
-              fi
-
-              # Distribute by arch
-              if [[ "$clean_name" == *.src.rpm ]]; then
-                cp "$rpm" "rpm/fedora/$fc_ver/SRPMS/$clean_name"
-                echo "  [fc${fc_ver}] SRPMS: $clean_name"
-              elif [[ "$clean_name" == *.x86_64.rpm ]]; then
-                cp "$rpm" "rpm/fedora/$fc_ver/x86_64/$clean_name"
-                echo "  [fc${fc_ver}] x86_64: $clean_name"
-              elif [[ "$clean_name" == *.aarch64.rpm ]]; then
-                cp "$rpm" "rpm/fedora/$fc_ver/aarch64/$clean_name"
-                echo "  [fc${fc_ver}] aarch64: $clean_name"
-              elif [[ "$clean_name" == *.noarch.rpm ]]; then
-                cp "$rpm" "rpm/fedora/$fc_ver/x86_64/$clean_name"
-                cp "$rpm" "rpm/fedora/$fc_ver/aarch64/$clean_name"
-                cp "$rpm" "rpm/fedora/$fc_ver/noarch/$clean_name"
-                echo "  [fc${fc_ver}] noarch: $clean_name"
-              fi
-            done
-
-            echo "::endgroup::"
-          done
-
-          # Generate repodata — RPMs are inline, no baseurl needed
+      - name: Generate RPM repodata
+        run: |
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch SRPMS; do
               dir="rpm/fedora/${v}/$arch"
@@ -195,7 +111,34 @@ jobs:
           echo ']' >> rpm/packages.json
           echo "RPM index: $(grep -c '"name"' rpm/packages.json) packages"
 
-      # ── DEB: sort packages and generate APT indices ──────────────────
+      - name: Download DEBs from R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          BUCKET="${R2_BUCKET}"
+          declare -A SUITES=(
+            ["ubuntu"]="deb/ubuntu/${UBUNTU_VER}"
+            ["debian"]="deb/debian/${DEBIAN_VER}"
+          )
+
+          # Download current DEBs from final repo paths
+          for distro in "${!SUITES[@]}"; do
+            base="${SUITES[$distro]}"
+            for arch in amd64 arm64; do
+              dir="$base/$arch"
+              mkdir -p "$dir"
+              if aws s3 ls "$BUCKET/$dir/" --endpoint-url "$R2_ENDPOINT" &>/dev/null; then
+                aws s3 sync "$BUCKET/$dir/" "$dir/" \
+                  --endpoint-url "$R2_ENDPOINT" --no-progress --exclude "Packages*" --exclude "Release*" --exclude "InRelease"
+                echo "$dir: $(ls $dir/*.deb 2>/dev/null | wc -l) DEBs"
+              fi
+            done
+          done
+
+      # ── DEB: generate APT indices ───────────────────────────────────
       - name: Build DEB repository
         run: |
           declare -A DISTRO_PATH=(
@@ -208,109 +151,7 @@ jobs:
           )
           KNOWN_TAGS=("ubuntu2404" "debiantrixie")
 
-          # Create directory structure
-          for tag in "${KNOWN_TAGS[@]}"; do
-            base="${DISTRO_PATH[$tag]}"
-            for arch in amd64 arm64 all; do
-              mkdir -p "$base/$arch"
-            done
-          done
-
-          # Sort DEBs from all packages
-          for pkg_dir in /tmp/assets/*/; do
-            pkg=$(basename "$pkg_dir")
-
-            shopt -s nullglob
-            debs=("$pkg_dir"*.deb)
-            shopt -u nullglob
-            [ ${#debs[@]} -gt 0 ] || continue
-
-            echo "::group::DEB: $pkg"
-
-            for deb in "${debs[@]}"; do
-              name=$(basename "$deb")
-
-              # Parse distro tag from filename prefix (format: TAG.originalname.deb)
-              distro_tag=""
-              clean_name="$name"
-              for tag in "${KNOWN_TAGS[@]}"; do
-                if [[ "$name" == "${tag}."* ]]; then
-                  distro_tag="$tag"
-                  clean_name="${name#${tag}.}"
-                  break
-                fi
-              done
-
-              # Unprefixed DEBs go to ALL distros
-              if [ -z "$distro_tag" ]; then
-                clean_name="$name"
-                arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
-                for tag in "${KNOWN_TAGS[@]}"; do
-                  REPO_BASE="${DISTRO_PATH[$tag]}"
-                  case "$arch" in
-                    amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$tag] amd64: $clean_name" ;;
-                    arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$tag] arm64: $clean_name" ;;
-                    all)   cp "$deb" "$REPO_BASE/all/$clean_name";   echo "  [$tag] all: $clean_name" ;;
-                  esac
-                done
-                continue
-              fi
-
-              REPO_BASE="${DISTRO_PATH[$distro_tag]}"
-              arch=$(dpkg-deb -f "$deb" Architecture 2>/dev/null || echo "unknown")
-              case "$arch" in
-                amd64) cp "$deb" "$REPO_BASE/amd64/$clean_name"; echo "  [$distro_tag] amd64: $clean_name" ;;
-                arm64) cp "$deb" "$REPO_BASE/arm64/$clean_name"; echo "  [$distro_tag] arm64: $clean_name" ;;
-                all)
-                  cp "$deb" "$REPO_BASE/amd64/$clean_name"
-                  cp "$deb" "$REPO_BASE/arm64/$clean_name"
-                  cp "$deb" "$REPO_BASE/all/$clean_name"
-                  echo "  [$distro_tag] all: $clean_name"
-                  ;;
-                *) echo "  SKIP $name (unknown arch: $arch)" ;;
-              esac
-            done
-
-            echo "::endgroup::"
-          done
-
-          # Handle source DEB files (.dsc, .orig.tar.*, .debian.tar.*)
-          for tag in "${KNOWN_TAGS[@]}"; do
-            base="${DISTRO_PATH[$tag]}"
-            mkdir -p "$base/source"
-          done
-
-          for pkg_dir in /tmp/assets/*/; do
-            pkg=$(basename "$pkg_dir")
-
-            shopt -s nullglob
-            src_files=("$pkg_dir"*.dsc "$pkg_dir"*.orig.tar.* "$pkg_dir"*.debian.tar.*)
-            shopt -u nullglob
-            [ ${#src_files[@]} -gt 0 ] || continue
-
-            echo "::group::DEB source: $pkg"
-            for src_file in "${src_files[@]}"; do
-              name=$(basename "$src_file")
-
-              distro_tag=""
-              clean_name="$name"
-              for tag in "${KNOWN_TAGS[@]}"; do
-                if [[ "$name" == "${tag}."* ]]; then
-                  distro_tag="$tag"
-                  clean_name="${name#${tag}.}"
-                  break
-                fi
-              done
-              if [ -z "$distro_tag" ]; then
-                distro_tag="ubuntu2404"
-                clean_name="$name"
-              fi
-
-              REPO_BASE="${DISTRO_PATH[$distro_tag]}"
-              cp "$src_file" "$REPO_BASE/source/$clean_name"
-              echo "  [$distro_tag] source: $clean_name"
-            done
-            echo "::endgroup::"
+          # DEBs are already in final paths — no sorting needed
           done
 
           # Rebuild APT indices for each distro
