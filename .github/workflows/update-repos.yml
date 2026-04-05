@@ -73,6 +73,36 @@ jobs:
             done
           done
 
+      - name: Clean old RPM versions
+        run: |
+          # Keep only the latest version of each package per fedora/arch
+          for v in $FEDORA_VERS; do
+            for arch in x86_64 aarch64 noarch SRPMS; do
+              dir="rpm/fedora/${v}/$arch"
+              [ -d "$dir" ] || continue
+              ls "$dir"/*.rpm 2>/dev/null | sed 's/.*\///' | \
+                sed 's/-[0-9][0-9]*\..*//' | sort -u | while read pkg; do
+                  files=$(ls -v "$dir/${pkg}"-[0-9]*.rpm 2>/dev/null)
+                  count=$(echo "$files" | wc -l)
+                  if [ "$count" -gt 1 ]; then
+                    echo "$files" | head -n -1 | while read old; do
+                      echo "  Removing old: $(basename $old)"
+                      rm -f "$old"
+                    done
+                  fi
+                done
+              # Also remove RPMs from wrong Fedora version (e.g. F44 in F43 repo)
+              for rpm in "$dir"/*.rpm; do
+                [ -f "$rpm" ] || continue
+                name=$(basename "$rpm")
+                if [[ "$name" == *".fc"* ]] && [[ "$name" != *".fc${v}."* ]]; then
+                  echo "  Removing wrong version: $name (not fc${v})"
+                  rm -f "$rpm"
+                fi
+              done
+            done
+          done
+
       - name: Generate RPM repodata
         run: |
           for v in $FEDORA_VERS; do
