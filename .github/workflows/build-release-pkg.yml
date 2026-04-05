@@ -47,15 +47,12 @@ jobs:
               --define "_version ${ver}"
           done
 
-          # Stage RPMs with fc prefix (same convention as build-rpm.yml)
-          # update-repos parses fc prefix to sort into per-version repo paths
+          # RPMs now have .fc43/.fc44 in filename from %{?dist}
+          # Upload directly to final repo paths
           mkdir -p dist/rpm
-          for ver in 43 44; do
-            for rpm in ~/rpmbuild/RPMS/noarch/xiboplayer-release-${ver}-*.noarch.rpm; do
-              [ -f "$rpm" ] || continue
-              name=$(basename "$rpm")
-              cp "$rpm" "dist/rpm/fc${ver}.${name}"
-            done
+          for rpm in ~/rpmbuild/RPMS/noarch/xiboplayer-release-*.noarch.rpm; do
+            [ -f "$rpm" ] || continue
+            cp "$rpm" "dist/rpm/"
           done
           echo "RPMs:"
           ls -lh dist/rpm/
@@ -143,16 +140,16 @@ jobs:
           dnf install -y awscli2
           BUCKET="${R2_BUCKET}"
 
-          # Upload RPMs directly to final repo paths
-          for ver in 43 44; do
-            for rpm in dist/rpm/fc${ver}.*.rpm; do
-              [ -f "$rpm" ] || continue
-              name=$(basename "$rpm")
-              clean_name="${name#fc${ver}.}"
-              for arch in x86_64 aarch64 noarch; do
-                echo "  $clean_name → rpm/fedora/$ver/$arch/"
-                aws s3 cp "$rpm" "$BUCKET/rpm/fedora/$ver/$arch/$clean_name" --endpoint-url "$R2_ENDPOINT"
-              done
+          # Upload RPMs to final repo paths (parse fc version from filename)
+          for rpm in dist/rpm/*.rpm; do
+            [ -f "$rpm" ] || continue
+            name=$(basename "$rpm")
+            # Extract Fedora version from .fc43. or .fc44. in filename
+            ver=$(echo "$name" | grep -oP '\.fc\K[0-9]+')
+            [ -z "$ver" ] && echo "  SKIP (no fc tag): $name" && continue
+            for arch in x86_64 aarch64 noarch; do
+              echo "  $name → rpm/fedora/$ver/$arch/"
+              aws s3 cp "$rpm" "$BUCKET/rpm/fedora/$ver/$arch/$name" --endpoint-url "$R2_ENDPOINT"
             done
           done
 
