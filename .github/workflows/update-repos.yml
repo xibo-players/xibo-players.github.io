@@ -312,6 +312,9 @@ jobs:
             aws s3 cp deb/GPG-KEY.asc "$BUCKET/deb/GPG-KEY.asc" --endpoint-url "$R2_ENDPOINT"
 
           # Upload RPM repos (packages + repodata)
+          # No --delete: RPMs are cleaned by the cleanup step above.
+          # Using --delete here would remove RPMs uploaded by other
+          # workflows (e.g. build-release-pkg) between download and upload.
           echo "=== Uploading RPM repositories ==="
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch SRPMS; do
@@ -319,7 +322,7 @@ jobs:
               [ -d "$dir/repodata" ] || continue
               echo "  $dir"
               aws s3 sync "$dir/" "$BUCKET/$dir/" \
-                --endpoint-url "$R2_ENDPOINT" --delete --no-progress
+                --endpoint-url "$R2_ENDPOINT" --no-progress
             done
           done
 
