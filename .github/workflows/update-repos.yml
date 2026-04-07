@@ -75,22 +75,29 @@ jobs:
 
       - name: Clean old RPM versions
         run: |
-          # Keep only the latest version of each package per fedora/arch
+          # Keep only the latest version of each package per fedora/arch.
+          # Uses rpm -qp for reliable package name extraction.
           for v in $FEDORA_VERS; do
             for arch in x86_64 aarch64 noarch SRPMS; do
               dir="rpm/fedora/${v}/$arch"
               [ -d "$dir" ] || continue
-              ls "$dir"/*.rpm 2>/dev/null | sed 's/.*\///' | \
-                sed 's/-[0-9][0-9]*\..*//' | sort -u | while read pkg; do
-                  files=$(ls -v "$dir/${pkg}"-[0-9]*.rpm 2>/dev/null)
-                  count=$(echo "$files" | wc -l)
-                  if [ "$count" -gt 1 ]; then
-                    echo "$files" | head -n -1 | while read old; do
-                      echo "  Removing old: $(basename $old)"
-                      rm -f "$old"
-                    done
-                  fi
-                done
+              # Collect package names reliably via rpm -qp
+              declare -A pkg_latest=()
+              for rpm in "$dir"/*.rpm; do
+                [ -f "$rpm" ] || continue
+                pname=$(rpm -qp --qf '%{NAME}' "$rpm" 2>/dev/null) || continue
+                pkg_latest["$pname"]=1
+              done
+              for pname in "${!pkg_latest[@]}"; do
+                mapfile -t files < <(ls -v "$dir/${pname}"-[0-9]*.rpm 2>/dev/null)
+                if [ "${#files[@]}" -gt 1 ]; then
+                  for ((i=0; i<${#files[@]}-1; i++)); do
+                    echo "  Removing old: $(basename "${files[$i]}")"
+                    rm -f "${files[$i]}"
+                  done
+                fi
+              done
+              unset pkg_latest
               # Also remove RPMs from wrong Fedora version (e.g. F44 in F43 repo)
               for rpm in "$dir"/*.rpm; do
                 [ -f "$rpm" ] || continue
