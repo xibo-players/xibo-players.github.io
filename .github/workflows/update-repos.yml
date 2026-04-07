@@ -98,13 +98,25 @@ jobs:
                 fi
               done
               unset pkg_latest
-              # Also remove RPMs from wrong Fedora version (e.g. F44 in F43 repo)
+              # Remove RPMs that don't belong in this Fedora repo:
+              # 1. Wrong .fc dist tag (e.g. .fc44 in F43 repo)
+              # 2. xiboplayer-release with wrong package version (version = Fedora version)
               for rpm in "$dir"/*.rpm; do
                 [ -f "$rpm" ] || continue
                 name=$(basename "$rpm")
                 if [[ "$name" == *".fc"* ]] && [[ "$name" != *".fc${v}."* ]]; then
-                  echo "  Removing wrong version: $name (not fc${v})"
+                  echo "  Removing wrong dist tag: $name (not fc${v})"
                   rm -f "$rpm"
+                  continue
+                fi
+                # xiboplayer-release version must match the repo's Fedora version
+                pname=$(rpm -qp --qf '%{NAME}' "$rpm" 2>/dev/null) || continue
+                if [ "$pname" = "xiboplayer-release" ]; then
+                  pver=$(rpm -qp --qf '%{VERSION}' "$rpm" 2>/dev/null)
+                  if [ "$pver" != "$v" ]; then
+                    echo "  Removing wrong release: $name (version $pver != fc${v})"
+                    rm -f "$rpm"
+                  fi
                 fi
               done
             done

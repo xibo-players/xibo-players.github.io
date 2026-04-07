@@ -16,11 +16,14 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build RPM + DEB
+  build-rpm:
+    name: Build RPM (fc${{ matrix.fedora }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fedora: [43, 44]
     container:
-      image: fedora:43
+      image: fedora:${{ matrix.fedora }}
 
     steps:
       - name: Install git
@@ -29,42 +32,22 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Install tools
-        run: dnf install -y rpm-build rpmdevtools dpkg dpkg-dev rpm-sign gnupg2 pinentry
+        run: dnf install -y rpm-build rpmdevtools rpm-sign gnupg2 pinentry awscli2
 
       - name: Build RPM
         run: |
           rpmdev-setuptree
-
-          # Copy sources
           cp _repos/xiboplayer-release/xiboplayer.repo ~/rpmbuild/SOURCES/
           cp _repos/xiboplayer-release/copr-keyd.repo ~/rpmbuild/SOURCES/
           cp rpm/RPM-GPG-KEY ~/rpmbuild/SOURCES/RPM-GPG-KEY-xiboplayer
 
-          # Build for supported Fedora versions
-          for ver in 43 44; do
-            echo "Building for Fedora $ver..."
-            rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec \
-              --define "_version ${ver}"
-          done
+          rpmbuild -bb _repos/xiboplayer-release/xiboplayer-release.spec \
+            --define "_version ${{ matrix.fedora }}"
 
-          # RPMs now have .fc43/.fc44 in filename from %{?dist}
-          # Upload directly to final repo paths
           mkdir -p dist/rpm
-          for rpm in ~/rpmbuild/RPMS/noarch/xiboplayer-release-*.noarch.rpm; do
-            [ -f "$rpm" ] || continue
-            cp "$rpm" "dist/rpm/"
-          done
-          echo "RPMs:"
+          cp ~/rpmbuild/RPMS/noarch/xiboplayer-release-*.noarch.rpm dist/rpm/
+          echo "RPM:"
           ls -lh dist/rpm/
-
-      - name: Build DEB
-        run: |
-          cd _repos/xiboplayer-release
-          bash build-deb.sh
-          cp *.deb ../../dist/
-          cd ../..
-          echo "DEB:"
-          ls -lh dist/*.deb
 
       - name: Sign RPM
         env:
@@ -72,10 +55,8 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.RPM_GPG_PASSPHRASE }}
           GPG_KEY_ID: ${{ secrets.RPM_GPG_KEY_ID }}
         run: |
-          # Import GPG private key (base64-encoded secret)
           echo "$GPG_KEY" | base64 -d | gpg --batch --import
 
-          # Custom pinentry for non-interactive signing in CI
           printf '%s' "$GPG_PASSPHRASE" > /tmp/.gpg-passphrase
           chmod 600 /tmp/.gpg-passphrase
           cat > /usr/local/bin/pinentry-ci << 'PINENTRY'
@@ -113,22 +94,48 @@ jobs:
 
           rm -f /tmp/.gpg-passphrase
 
-          echo "Verifying signatures..."
-          rpm -qpi dist/rpm/*.rpm | grep -E "^(Name|Signature)" || true
+      - name: Upload to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          BUCKET="${R2_BUCKET}"
+          VER="${{ matrix.fedora }}"
+          for rpm in dist/rpm/*.rpm; do
+            [ -f "$rpm" ] || continue
+            name=$(basename "$rpm")
+            for arch in x86_64 aarch64 noarch; do
+              echo "  $name → rpm/fedora/$VER/$arch/"
+              aws s3 cp "$rpm" "$BUCKET/rpm/fedora/$VER/$arch/$name" --endpoint-url "$R2_ENDPOINT"
+            done
+          done
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: dist/*
-          generate_release_notes: false
-          body: |
-            Repository configuration package for Xibo Players.
+  build-deb:
+    name: Build DEB
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:43
 
-            Install with:
-            ```
-            sudo dnf install ./xiboplayer-release-*.noarch.rpm
-            ```
+    steps:
+      - name: Install git
+        run: dnf install -y git
+
+      - uses: actions/checkout@v6
+
+      - name: Install tools
+        run: dnf install -y dpkg dpkg-dev awscli2
+
+      - name: Build DEB
+        run: |
+          cd _repos/xiboplayer-release
+          bash build-deb.sh
+          mkdir -p ../../dist
+          cp *.deb ../../dist/
+          cd ../..
+          echo "DEB:"
+          ls -lh dist/*.deb
 
       - name: Upload to R2
         env:
@@ -137,23 +144,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: |
-          dnf install -y awscli2
           BUCKET="${R2_BUCKET}"
-
-          # Upload RPMs to final repo paths (parse fc version from filename)
-          for rpm in dist/rpm/*.rpm; do
-            [ -f "$rpm" ] || continue
-            name=$(basename "$rpm")
-            # Extract Fedora version from .fc43. or .fc44. in filename
-            ver=$(echo "$name" | grep -oP '\.fc\K[0-9]+')
-            [ -z "$ver" ] && echo "  SKIP (no fc tag): $name" && continue
-            for arch in x86_64 aarch64 noarch; do
-              echo "  $name → rpm/fedora/$ver/$arch/"
-              aws s3 cp "$rpm" "$BUCKET/rpm/fedora/$ver/$arch/$name" --endpoint-url "$R2_ENDPOINT"
-            done
-          done
-
-          # Upload DEBs directly to final repo paths
           for deb in dist/*.deb; do
             [ -f "$deb" ] || continue
             name=$(basename "$deb")
@@ -165,6 +156,11 @@ jobs:
             done
           done
 
+  trigger-update:
+    name: Trigger repository update
+    needs: [build-rpm, build-deb]
+    runs-on: ubuntu-latest
+    steps:
       - name: Trigger update-repos
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN || secrets.GITHUB_TOKEN }}
