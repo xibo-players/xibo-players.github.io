@@ -209,21 +209,31 @@ jobs:
             codename="${DISTRO_CODENAME[$tag]}"
             echo "  Distro: $tag ($codename)"
 
-            # Remove old versions — keep only highest per package+arch
+            # Remove old versions — use dpkg-deb to extract package name reliably
+            # (similar to rpm -qp for the RPM cleanup)
             for arch_dir in "$REPO_BASE"/amd64 "$REPO_BASE"/arm64 "$REPO_BASE"/all; do
               [ -d "$arch_dir" ] || continue
-              # Group debs by package name, keep only newest
-              ls "$arch_dir"/*.deb 2>/dev/null | sed 's/.*\///' | sed 's/^\([a-z]*\.\)\?//' | \
-                sed 's/_[^_]*_[^_]*\.deb$//' | sort -u | while read pkg; do
-                  count=$(ls "$arch_dir"/*"${pkg}"_*.deb 2>/dev/null | wc -l)
-                  if [ "$count" -gt 1 ]; then
-                    # Sort by version descending, remove all but first
-                    ls -v "$arch_dir"/*"${pkg}"_*.deb | head -n -1 | while read old; do
-                      echo "  Removing old: $(basename $old)"
-                      rm -f "$old"
-                    done
-                  fi
-                done
+
+              # Build name → files map via dpkg-deb
+              declare -A pkg_files=()
+              for deb in "$arch_dir"/*.deb; do
+                [ -f "$deb" ] || continue
+                pname=$(dpkg-deb -f "$deb" Package 2>/dev/null) || continue
+                pkg_files["$pname"]+="$deb"$'\n'
+              done
+
+              # For each package, keep only the newest version
+              for pname in "${!pkg_files[@]}"; do
+                files=$(echo -n "${pkg_files[$pname]}" | sort -V)
+                count=$(echo "$files" | wc -l)
+                if [ "$count" -gt 1 ]; then
+                  echo "$files" | head -n -1 | while read -r old; do
+                    echo "  Removing old: $(basename "$old")"
+                    rm -f "$old"
+                  done
+                fi
+              done
+              unset pkg_files
             done
 
             # Generate single root-level Packages index (flat repo format)
@@ -231,7 +241,12 @@ jobs:
             pkg_count=$(grep -c '^Package:' "$REPO_BASE/Packages" 2>/dev/null || echo 0)
             echo "    $pkg_count packages in root Packages index"
 
-            # Generate Release file
+            # Generate Sources index (for deb-src) — scans .dsc files in source/ subdirs
+            (cd "$REPO_BASE" && dpkg-scansources . /dev/null > Sources 2>/dev/null && gzip -9c Sources > Sources.gz) || true
+            src_count=$(grep -c '^Package:' "$REPO_BASE/Sources" 2>/dev/null || echo 0)
+            echo "    $src_count source packages in Sources index"
+
+            # Generate Release file (include Sources for deb-src support)
             (
               cd "$REPO_BASE"
               {
@@ -241,12 +256,12 @@ jobs:
                 echo "Codename: $codename"
                 echo "Date: $(date -Ru)"
                 echo "MD5Sum:"
-                for f in Packages Packages.gz; do
+                for f in Packages Packages.gz Sources Sources.gz; do
                   [ -f "$f" ] || continue
                   echo " $(md5sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
                 done
                 echo "SHA256:"
-                for f in Packages Packages.gz; do
+                for f in Packages Packages.gz Sources Sources.gz; do
                   [ -f "$f" ] || continue
                   echo " $(sha256sum "$f" | cut -d' ' -f1) $(wc -c < "$f") $f"
                 done
@@ -299,12 +314,15 @@ jobs:
           BUCKET="${R2_BUCKET}"
 
           # Upload DEB repos (packages + metadata)
+          # No --delete: DEBs are cleaned by the cleanup step above.
+          # Using --delete here would remove DEBs uploaded by other
+          # workflows (e.g. xiboplayer-electron) between download and upload.
           echo "=== Uploading DEB repositories ==="
           for suite in "deb/ubuntu/${UBUNTU_VER}" "deb/debian/${DEBIAN_VER}"; do
             [ -d "$suite" ] || continue
             echo "  $suite"
             aws s3 sync "$suite/" "$BUCKET/$suite/" \
-              --endpoint-url "$R2_ENDPOINT" --delete --no-progress
+              --endpoint-url "$R2_ENDPOINT" --no-progress
           done
 
           # Upload DEB GPG key
