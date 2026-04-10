@@ -325,9 +325,18 @@ jobs:
               --endpoint-url "$R2_ENDPOINT" --no-progress
           done
 
-          # Upload DEB GPG key
-          [ -f deb/GPG-KEY.asc ] && \
-            aws s3 cp deb/GPG-KEY.asc "$BUCKET/deb/GPG-KEY.asc" --endpoint-url "$R2_ENDPOINT"
+          # Upload DEB GPG keys
+          # GPG-KEY.asc is the canonical name, DEB-GPG-KEY-xiboplayer is
+          # the name our install docs reference (also in the repo), and
+          # DEB-GPG-KEY-xiboplayer.gpg is a binary variant. All three
+          # are byte-identical copies of the same public key. Upload
+          # whichever exist so consumers hitting any documented URL find
+          # the key (issue #64 was caused by the docs referencing
+          # DEB-GPG-KEY-xiboplayer which wasn't being uploaded).
+          for key in GPG-KEY.asc DEB-GPG-KEY-xiboplayer DEB-GPG-KEY-xiboplayer.gpg; do
+            [ -f "deb/$key" ] && \
+              aws s3 cp "deb/$key" "$BUCKET/deb/$key" --endpoint-url "$R2_ENDPOINT"
+          done
 
           # Upload RPM repos (packages + repodata)
           # No --delete: RPMs are cleaned by the cleanup step above.
