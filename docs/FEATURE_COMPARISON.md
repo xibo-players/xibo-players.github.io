@@ -12,7 +12,7 @@ description: "Detailed feature comparison: XiboPlayer v0.7.9 vs upstream Xibo pl
 - [xibo-layout-renderer] v1.0.24 (npm, 2026-03-30) — rendering library used in Xibo's Electron/ChromeOS players
 - [xibo-communication-framework](https://www.npmjs.com/package/@xibosignage/xibo-communication-framework) v0.0.7 (npm, 2026-03-30) — upstream XMR client (replaced by our native implementation)
 - [Xibo for Windows](https://github.com/xibosignage/xibo-dotnetclient) v4 R407 (C#/.NET + CEF, 2026-03-30) — the only actively maintained upstream player
-- [Arexibo](https://github.com/xibo-players/arexibo) v0.3.2 (Rust + Qt, 2026-03-30) — PDF rendering, RPM/DEB packaging, duration fixes
+- [Arexibo](https://github.com/xiboplayer/arexibo) v0.3.2 (Rust + Qt, 2026-03-30) — PDF rendering, RPM/DEB packaging, duration fixes
 
 ---
 
