@@ -28,6 +28,13 @@ install -pm 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/yum.repos.d/copr-keyd.rep
 %{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-xiboplayer
 
 %changelog
+* Sat May 30 2026 Pau Aliagas <pau@xiboplayer.org> - 44-7
+- Record formal Fedora 44 support baseline (spec is _version-parameterised;
+  matrix builds 43 + 44 in the same workflow run). F44 reached GA stable;
+  the F44 noarch RPM is published at
+  rpm/fedora/44/{x86_64,aarch64,noarch}/xiboplayer-release-44-7.fc44.noarch.rpm
+  via build-release-pkg.yml.
+
 * Mon Mar 30 2026 Pau Aliagas <linuxnow@gmail.com> - 44-2
 - Include keyd COPR repo so dnf can resolve keyd dependency
 
